@@ -9,6 +9,8 @@ npm install -g browserify
 npm install
 ```
 
+See the [React documentation](http://facebook.github.io/react/docs/getting-started.html#using-react-from-npm) for further notes on installation.
+
 ## Building
 
 ```bash
