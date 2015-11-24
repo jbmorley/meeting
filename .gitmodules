@@ -1,0 +1,3 @@
+[submodule "WebRTC-Example"]
+	path = WebRTC-Example
+	url = git@github.com:jbmorley/WebRTC-Example.git
