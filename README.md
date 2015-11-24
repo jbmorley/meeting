@@ -18,5 +18,5 @@ browserify -t reactify main.js -o bundle.js
 ## Running
 
 ```bash
-node index.js
+node service.js
 ```
