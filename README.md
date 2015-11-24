@@ -1,5 +1,7 @@
 # Distributed Communication Cell
 
+All development thus-far has been performed on OS X. It is anticipated that the same mechanisms described here will also work on Linux systems.
+
 ## Dependencies
 
 ```bash
@@ -10,6 +12,11 @@ npm install
 ## Building
 
 ```bash
-# browserify -t babelify main.jsx -o bundle.js
-browserify -t reactify main.jsx -o bundle.js
+browserify -t reactify main.js -o bundle.js
+```
+
+## Running
+
+```bash
+node index.js
 ```
