@@ -64,11 +64,11 @@ def build(options):
                  "-o", "build/bundle.js"])
 
 
-.def deploy(options):
+def deploy(options):
     with Chdir(ANSIBLE_DIR):
-        command("ansible-playbook",
-                "meeting.yml",
-                "--ask-become-pass")
+        command(["ansible-playbook",
+                 "meeting.yml",
+                 "--ask-become-pass"])
 
 
 def main():
