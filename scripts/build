@@ -1,9 +1,35 @@
-#!/bin/bash
+#!/usr/bin/env python
 
-set -e
-set -u
+import argparse
+import os
+import os.path
+import subprocess
 
-script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-root_dir="$script_dir"
+SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(SCRIPTS_DIR)
 
-browserify -t reactify main.js -o bundle.js
+
+class Chdir(object):
+
+    def __init__(self, path):
+        self._path = path
+
+    def __enter__(self):
+        self._previous = os.getcwd()
+        os.chdir(self._path)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        os.chdir(self._previous)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Build script for meeting.")
+    options = parser.parse_args()
+
+    with Chdir(ROOT_DIR):
+        subprocess.check_call(["browserify",
+                               "-t", "main.js",
+                               "-o", "bundle.js"])
+
+if __name__ == "__main__":
+    main()
