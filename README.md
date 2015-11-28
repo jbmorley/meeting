@@ -8,6 +8,8 @@ All development thus-far has been performed on OS X. It is anticipated that the 
 
 ### Dependencies
 
+From the root directory of the project:
+
 ```bash
 git submodule update --init --recursive
 npm install -g browserify
