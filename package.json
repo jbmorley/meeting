@@ -1,12 +1,14 @@
 {
-  "name": "comm-cell",
+  "name": "meeting",
   "version": "0.0.1",
-  "description": "Distributed comm cell meeting infrastructure.",
+  "description": "Suite of applications for performing distributed group video conferences and managing shared meeting boards.",
   "dependencies": {
     "babelify": "^7.0.2",
     "express": "^4.10.2",
+    "material-ui": "^0.13.4",
     "react": "^0.14.1",
     "react-dom": "^0.14.1",
+    "react-tap-event-plugin": "^0.2.1",
     "reactify": "^1.1.1",
     "socket.io": "^1.3.7"
   }

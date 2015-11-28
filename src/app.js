@@ -2,6 +2,10 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+// Provides onTouchTap
+let injectTapEventPlugin = require("react-tap-event-plugin");
+injectTapEventPlugin();
+
 var Timer = React.createClass({
   getInitialState: function() {
     return {secondsElapsed: 0};
