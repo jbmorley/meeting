@@ -9,6 +9,7 @@ All development thus-far has been performed on OS X. It is anticipated that the 
 ### Dependencies
 
 ```bash
+git submodule update --init --recursive
 npm install -g browserify
 npm install
 ```
