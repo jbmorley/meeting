@@ -28,7 +28,8 @@ def main():
 
     with Chdir(ROOT_DIR):
         subprocess.check_call(["browserify",
-                               "-t", "main.js",
+                               "-t", "reactify",
+                               "main.js",
                                "-o", "bundle.js"])
 
 if __name__ == "__main__":
