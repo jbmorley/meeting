@@ -21,7 +21,7 @@ See the [React documentation](http://facebook.github.io/react/docs/getting-start
 ### Building
 
 ```bash
-browserify -t reactify main.js -o bundle.js
+scripts/build
 ```
 
 ### Running
