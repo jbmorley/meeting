@@ -12,5 +12,13 @@
         "node_modules"
       ]
     }
+  ],
+  "build_systems":
+  [
+    {
+      "name": "build",
+      "cmd": ["scripts/build", "build"],
+      "working_dir": "${project_path}"
+    }
   ]
 }
