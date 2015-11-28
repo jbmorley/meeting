@@ -11,13 +11,14 @@ All development thus-far has been performed on OS X. It is anticipated that the 
 From the root directory of the project:
 
 ```bash
+# submodules
 git submodule update --init --recursive
 
-# Global requirements
+# global requirements
 brew install ansible
 npm install -g browserify
 
-# Local requirements
+# local requirements
 npm install
 ```
 
