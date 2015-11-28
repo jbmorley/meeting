@@ -6,6 +6,11 @@
     domain: meeting.jbmorley.co.uk
     admin: hello@jbmorley.co.uk
 
+    service:
+      name: "meeting"
+      author: "Jason Barrie Morley"
+      path: "/var/www/{{ domain }}/service.js"
+
   tasks:
 
     - name: install packages
@@ -35,6 +40,12 @@
     # - name: synchronize site
     #   synchronize: src=../site/_site/ dest="/var/www/{{ domain }}/" delete=yes
     #   become: no
+    #   notify:
+    #     - restart apache2
+
+    - name: create Node.js service
+      template: src="nodejs-service.conf" dest="/etc/init/{{ service.name }}.js"
+      become: yes
 
   handlers:
 

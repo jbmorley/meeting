@@ -49,3 +49,5 @@ From the root directory of the project:
 ```bash
 scripts/build deploy
 ```
+
+Meeting currently makes use of upstart to configure Node.js as a service on Ubuntu systems as described in [this article](http://kvz.io/blog/2009/12/15/run-nodejs-as-a-service-on-ubuntu-karmic/).
