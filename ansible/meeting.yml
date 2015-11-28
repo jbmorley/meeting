@@ -9,7 +9,8 @@
     service:
       name: "meeting"
       author: "Jason Barrie Morley"
-      path: "/var/www/{{ domain }}/service.js"
+      root: "/var/www/{{ domain }}"
+      file: "service.js"
 
   tasks:
 
@@ -37,18 +38,25 @@
       notify:
         - restart apache2
 
-    # - name: synchronize site
-    #   synchronize: src=../site/_site/ dest="/var/www/{{ domain }}/" delete=yes
-    #   become: no
-    #   notify:
-    #     - restart apache2
+    - name: synchronize site
+      synchronize: src=../build/ dest="/var/www/{{ domain }}/" delete=yes
+      become: no
+      notify:
+        - restart apache2
+        - restart node
 
     - name: create Node.js service
-      template: src="nodejs-service.conf" dest="/etc/init/{{ service.name }}.js"
+      template: src="nodejs-service.conf" dest="/etc/init/{{ service.name }}.conf"
       become: yes
+      notify:
+        - restart node
 
   handlers:
 
     - name: restart apache2
       service: name=apache2 state=restarted
+      become: yes
+
+    - name: restart node
+      service: name={{ service.name }} state=restarted
       become: yes

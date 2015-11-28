@@ -3,10 +3,14 @@
 import argparse
 import os
 import os.path
+import shutil
 import subprocess
+
+from shutil import copytree
 
 SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(SCRIPTS_DIR)
+SRC_DIR = os.path.join(ROOT_DIR, "src")
 BUILD_DIR = os.path.join(ROOT_DIR, "build")
 ANSIBLE_DIR = os.path.join(ROOT_DIR, "ansible")
 
@@ -14,7 +18,7 @@ ANSIBLE_DIR = os.path.join(ROOT_DIR, "ansible")
 class Chdir(object):
 
     def __init__(self, path):
-        self._path = path
+        self._path = os.path.abspath(path)
 
     def __enter__(self):
         self._previous = os.getcwd()
@@ -25,7 +29,8 @@ class Chdir(object):
 
 
 def safe_assert(condition, *args):
-    pass
+    if not condition:
+        raise Exception(args)
 
 
 def makedir(directory):
@@ -46,25 +51,43 @@ def emptydir(directory):
         shutil.rmtree(path)
 
 
+def copyfiles(source, destination, files):
+    for file in files:
+        source_file = os.path.join(source, file)
+        destination_file = os.path.join(destination, file)
+        shutil.copy(source_file, destination_file)
+
+
 def command(args):
     subprocess.check_call(args)
 
 
 def clean(options):
+    print "Cleaning..."
     makedir(BUILD_DIR)
     emptydir(BUILD_DIR)
 
 
 def build(options):
     clean(options)
+    print "Building..."
     with Chdir(ROOT_DIR):
         command(["browserify",
                  "-t", "reactify",
-                 "main.js",
-                 "-o", "build/bundle.js"])
+                 "-o", os.path.join(BUILD_DIR, "app.js"),
+                 os.path.join(SRC_DIR, "app.js")])
+    copyfiles(SRC_DIR, BUILD_DIR,
+              ["service.js",
+               "index.html"])
+    copytree(os.path.join(ROOT_DIR, "node_modules"),
+             os.path.join(BUILD_DIR, "node_modules"))
 
 
 def deploy(options):
+
+    if not options.skip_build:
+        build(options)
+
     with Chdir(ANSIBLE_DIR):
         command(["ansible-playbook",
                  "meeting.yml",
@@ -75,11 +98,15 @@ def main():
     parser = argparse.ArgumentParser(description="Build script for meeting.")
     subparsers = parser.add_subparsers(title="command", description="command to run")
 
-    for command, fn in {"clean": clean,
-                        "build": build,
-                        "deploy": deploy}.iteritems():
-        subparser = subparsers.add_parser(command)
-        subparser.set_defaults(fn=fn)
+    parser_clean = subparsers.add_parser("clean")
+    parser_clean.set_defaults(fn=clean)
+
+    parser_build = subparsers.add_parser("build")
+    parser_build.set_defaults(fn=build)
+
+    parser_deploy = subparsers.add_parser("deploy")
+    parser_deploy.add_argument("--skip-build", action="store_true", default=False)
+    parser_deploy.set_defaults(fn=deploy)
 
     options = parser.parse_args()
     options.fn(options)
