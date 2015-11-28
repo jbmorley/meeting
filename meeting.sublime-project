@@ -9,7 +9,8 @@
         ".git"
       ],
       "folder_exclude_patterns": [
-        "node_modules"
+        "node_modules",
+        "build"
       ]
     }
   ],
