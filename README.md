@@ -37,9 +37,13 @@ scripts/build build
 
 ### Running
 
+To run the project locally for testing, you can run the development server using the following command:
+
 ```bash
-node service.js
+scripts/build serve
 ```
+
+This simply runs the `build/service.js` file under `nodemon`. Since this uses `nodemon`, the service will be loaded when the project is rebuild using `scripts/build build`.
 
 ### Deploying
 
