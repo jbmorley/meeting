@@ -3,8 +3,11 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 
 // Provides onTouchTap
-let injectTapEventPlugin = require("react-tap-event-plugin");
+var injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
+
+const React = require('react');
+const RaisedButton = require('material-ui/lib/raised-button');
 
 var Timer = React.createClass({
   getInitialState: function() {

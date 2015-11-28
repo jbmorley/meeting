@@ -79,7 +79,8 @@ def build(options):
               ["service.js"])
     copyfiles(SRC_DIR, STATIC_BUILD_DIR,
               ["index.html",
-               "app.html"])
+               "app.html",
+               "app.css"])
     with Chdir(ROOT_DIR):
         command(["browserify",
                  "-t", "reactify",
