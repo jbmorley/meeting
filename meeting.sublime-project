@@ -5,7 +5,8 @@
       "path": ".",
       "file_exclude_patterns": [
         "*~",
-        ".gitmodules"
+        ".gitmodules",
+        ".git"
       ],
       "folder_exclude_patterns": [
         "node_modules"
