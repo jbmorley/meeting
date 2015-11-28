@@ -12,7 +12,12 @@ From the root directory of the project:
 
 ```bash
 git submodule update --init --recursive
+
+# Global requirements
+brew install ansible
 npm install -g browserify
+
+# Local requirements
 npm install
 ```
 
@@ -20,12 +25,24 @@ See the [React documentation](http://facebook.github.io/react/docs/getting-start
 
 ### Building
 
+From the root directory of the project:
+
 ```bash
-scripts/build
+scripts/build build
 ```
 
 ### Running
 
 ```bash
 node service.js
+```
+
+### Deploying
+
+Deployment is performed using Ansible which can be configured in the `ansible` directory.
+
+From the root directory of the project:
+
+```bash
+scripts/build deploy
 ```
