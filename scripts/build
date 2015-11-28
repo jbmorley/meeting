@@ -8,6 +8,7 @@ import subprocess
 SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(SCRIPTS_DIR)
 BUILD_DIR = os.path.join(ROOT_DIR, "build")
+ANSIBLE_DIR = os.path.join(ROOT_DIR, "ansible")
 
 
 class Chdir(object):
@@ -45,22 +46,29 @@ def emptydir(directory):
         shutil.rmtree(path)
 
 
+def command(args):
+    subprocess.check_call(args)
+
+
 def clean(options):
     makedir(BUILD_DIR)
     emptydir(BUILD_DIR)
 
 
 def build(options):
-    clean()
+    clean(options)
     with Chdir(ROOT_DIR):
-        subprocess.check_call(["browserify",
-                               "-t", "reactify",
-                               "main.js",
-                               "-o", "build/bundle.js"])
+        command(["browserify",
+                 "-t", "reactify",
+                 "main.js",
+                 "-o", "build/bundle.js"])
 
 
-def deploy(options):
-    pass
+.def deploy(options):
+    with Chdir(ANSIBLE_DIR):
+        command("ansible-playbook",
+                "meeting.yml",
+                "--ask-become-pass")
 
 
 def main():
