@@ -19,6 +19,7 @@ brew install ansible
 brew install nodejs
 brew install npm
 npm install -g browserify
+npm install -g nodemon
 
 # local requirements
 npm install

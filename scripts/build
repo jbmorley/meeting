@@ -14,6 +14,8 @@ SRC_DIR = os.path.join(ROOT_DIR, "src")
 BUILD_DIR = os.path.join(ROOT_DIR, "build")
 ANSIBLE_DIR = os.path.join(ROOT_DIR, "ansible")
 
+STATIC_BUILD_DIR = os.path.join(BUILD_DIR, "static")
+
 
 class Chdir(object):
 
@@ -33,7 +35,7 @@ def safe_assert(condition, *args):
         raise Exception(args)
 
 
-def makedir(directory):
+def makedirs(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
     safe_assert(os.path.isdir(directory))
@@ -64,34 +66,43 @@ def command(args):
 
 def clean(options):
     print "Cleaning..."
-    makedir(BUILD_DIR)
-    emptydir(BUILD_DIR)
+    if os.path.exists(BUILD_DIR):
+        emptydir(BUILD_DIR)
 
 
 def build(options):
     clean(options)
     print "Building..."
+    makedirs(BUILD_DIR)
+    makedirs(STATIC_BUILD_DIR)
+    copyfiles(SRC_DIR, BUILD_DIR,
+              ["service.js"])
+    copyfiles(SRC_DIR, STATIC_BUILD_DIR,
+              ["index.html",
+               "app.html"])
     with Chdir(ROOT_DIR):
         command(["browserify",
                  "-t", "reactify",
-                 "-o", os.path.join(BUILD_DIR, "app.js"),
+                 "-o", os.path.join(STATIC_BUILD_DIR, "app.js"),
                  os.path.join(SRC_DIR, "app.js")])
-    copyfiles(SRC_DIR, BUILD_DIR,
-              ["service.js",
-               "index.html"])
     copytree(os.path.join(ROOT_DIR, "node_modules"),
              os.path.join(BUILD_DIR, "node_modules"))
 
 
 def deploy(options):
-
     if not options.skip_build:
         build(options)
-
     with Chdir(ANSIBLE_DIR):
         command(["ansible-playbook",
                  "meeting.yml",
                  "--ask-become-pass"])
+
+
+def serve(options):
+    if not options.skip_build:
+        build(options)
+    with Chdir(BUILD_DIR):
+        command(["nodemon", "service.js"])
 
 
 def main():
@@ -107,6 +118,10 @@ def main():
     parser_deploy = subparsers.add_parser("deploy")
     parser_deploy.add_argument("--skip-build", action="store_true", default=False)
     parser_deploy.set_defaults(fn=deploy)
+
+    parser_serve = subparsers.add_parser("serve")
+    parser_serve.add_argument("--skip-build", action="store_true", default=False)
+    parser_serve.set_defaults(fn=serve)
 
     options = parser.parse_args()
     options.fn(options)

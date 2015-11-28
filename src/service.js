@@ -1,14 +1,13 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var express = require('express'),
+    path = require('path'),
+    http = require('http'),
+    socket = require('socket.io');
 
-app.get('/', function(req, res){
-  res.sendfile('index.html');
-});
+var app = express(),
+    server = http.Server(app),
+    io = socket(server);
 
-app.get('/bundle.js', function(req, res){
-    res.sendfile('bundle.js');
-});
+app.use(express.static(path.join(__dirname, 'static')));
 
 io.on('connection', function(socket){
   console.log('a user connected');
@@ -19,6 +18,6 @@ io.on('connection', function(socket){
   });
 });
 
-http.listen(3000, function(){
+server.listen(3000, function(){
   console.log('listening on *:3000');
 });
