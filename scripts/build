@@ -61,7 +61,10 @@ def copyfiles(source, destination, files):
 
 
 def command(args):
-    subprocess.check_call(args)
+    try:
+        subprocess.check_call(args)
+    except subprocess.CalledProcessError:
+        exit("Unable to run command %s" % list(args))
 
 
 def clean(options):
@@ -85,7 +88,7 @@ def build(options):
         command(["browserify",
                  "-t", "reactify",
                  "-o", os.path.join(STATIC_BUILD_DIR, "app.js"),
-                 os.path.join(SRC_DIR, "app.js")])
+                 os.path.join(SRC_DIR, "app.jsx")])
     copytree(os.path.join(ROOT_DIR, "node_modules"),
              os.path.join(BUILD_DIR, "node_modules"))
 
