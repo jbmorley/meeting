@@ -7,6 +7,7 @@ import subprocess
 
 SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(SCRIPTS_DIR)
+BUILD_DIR = os.path.join(ROOT_DIR, "build")
 
 
 class Chdir(object):
@@ -22,15 +23,40 @@ class Chdir(object):
         os.chdir(self._previous)
 
 
+def safe_assert(condition, *args):
+    pass
+
+
+def makedir(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    safe_assert(os.path.isdir(directory))
+
+
+def emptydir(directory):
+    """
+    Remove all the files in a directory.
+    """
+    for path in os.listdir(directory):
+      path = os.path.join(directory, path)
+      if os.path.isfile(path):
+        os.unlink(path)
+      else:
+        shutil.rmtree(path)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Build script for meeting.")
     options = parser.parse_args()
+
+    makedir(BUILD_DIR)
+    emptydir(BUILD_DIR)
 
     with Chdir(ROOT_DIR):
         subprocess.check_call(["browserify",
                                "-t", "reactify",
                                "main.js",
-                               "-o", "bundle.js"])
+                               "-o", "build/bundle.js"])
 
 if __name__ == "__main__":
     main()
