@@ -1,0 +1,40 @@
+---
+- hosts: meeting
+  vars:
+
+    port: 80
+    domain: meeting.jbmorley.co.uk
+    admin: hello@jbmorley.co.uk
+
+  tasks:
+
+    - name: install packages
+      apt: name={{ item }} update_cache=yes state=latest
+      with_items:
+        - apache2
+      become: yes
+
+    - name: create virtual host file
+      template: src=virtualhost.conf dest="/etc/apache2/sites-available/{{ domain }}.conf"
+      become: yes
+
+    - name: enable site
+      command: a2ensite "{{ domain }}"
+      args:
+        creates: "/etc/apache2/sites-enabled/{{ domain }}.conf"
+      become: yes
+      notify:
+        - restart apache2
+
+    - name: create site directory
+      file: path="/var/www/{{ domain }}" state=directory owner="{{ ansible_user_id }}" group="{{ ansible_user_id }}"
+      become: yes
+
+    - name: synchronize site
+      synchronize: src=../site/_site/ dest="/var/www/{{ domain }}/" delete=yes
+      become: no
+
+  handlers:
+
+    - name: restart apache2
+      service: name=apache2 state=restarted
