@@ -16,6 +16,8 @@ git submodule update --init --recursive
 
 # global requirements
 brew install ansible
+brew install nodejs
+brew install npm
 npm install -g browserify
 
 # local requirements
