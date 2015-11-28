@@ -45,18 +45,37 @@ def emptydir(directory):
         shutil.rmtree(path)
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Build script for meeting.")
-    options = parser.parse_args()
-
+def clean(options):
     makedir(BUILD_DIR)
     emptydir(BUILD_DIR)
 
+
+def build(options):
+    clean()
     with Chdir(ROOT_DIR):
         subprocess.check_call(["browserify",
                                "-t", "reactify",
                                "main.js",
                                "-o", "build/bundle.js"])
+
+
+def deploy(options):
+    pass
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Build script for meeting.")
+    subparsers = parser.add_subparsers(title="command", description="command to run")
+
+    for command, fn in {"clean": clean,
+                        "build": build,
+                        "deploy": deploy}.iteritems():
+        subparser = subparsers.add_parser(command)
+        subparser.set_defaults(fn=fn)
+
+    options = parser.parse_args()
+    options.fn(options)
+
 
 if __name__ == "__main__":
     main()
