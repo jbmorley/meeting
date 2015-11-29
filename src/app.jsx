@@ -31,11 +31,24 @@ const ListItem = require('material-ui/lib/lists/list-item');
 const Checkbox = require('material-ui/lib/checkbox');
 const FloatingActionButton = require('material-ui/lib/floating-action-button');
 
+const Menu = require('material-ui/lib/menus/menu');
+const MenuItem = require('material-ui/lib/menu/menu-item');
+const MenuDivider = require('material-ui/lib/menus/menu-divider');
+const LeftNav = require('material-ui/lib/left-nav');
+
 const MessageList = require('./message-list.jsx');
+
+const Paper = require('material-ui/lib/paper');
 
 const ToggleStarIcon = require('material-ui/lib/svg-icons/toggle/star');
 const CommunicationChatIcon = require('material-ui/lib/svg-icons/communication/chat');
 const AVVideocamIcon = require('material-ui/lib/svg-icons/av/videocam');
+
+var menuItems = [
+  { route: 'get-started', text: 'Get Started' },
+  { route: 'customization', text: 'Customization' },
+  { route: 'components', text: 'Components' },
+];
 
 var MeetingApp = React.createClass({
 
@@ -55,21 +68,32 @@ var MeetingApp = React.createClass({
         this.setState({items: nextItems, text: nextText});
     },
 
+    _touch: function(e) {
+        this.refs.leftNav.toggle();
+    },
+
     render: function() {
         return (
             <div>
-            <AppBar title="Meeting" />
-            <List>
-            {this.state.items}
-            </List>
-            <TextField onChange={this.onChange} value={this.state.text} hintText="New URL" />
-            <RaisedButton label="Add URL" onTouchTap={this.handleSubmit} primary={true} disabled={!this.state.text} />
-            <MessageList messages={this.state.messages} />
-            <FloatingActionButton onTouchTap={this._startCall}>
-                <AVVideocamIcon />
-            </FloatingActionButton>
-            <video className="vid-small" src={this.state.localStream} autoPlay />
-            <video className="vid-big" src={this.state.remoteStream} autoPlay />
+                <AppBar 
+                    title="Meeting" 
+                    onLeftIconButtonTouchTap={this._touch} />
+                <List>
+                    {this.state.items}
+                </List>
+                <TextField onChange={this.onChange} value={this.state.text} hintText="New URL" />
+                <RaisedButton label="Add URL" onTouchTap={this.handleSubmit} primary={true} disabled={!this.state.text} />
+                <MessageList messages={this.state.messages} />
+                <FloatingActionButton onTouchTap={this._startCall}>
+                    <AVVideocamIcon />
+                </FloatingActionButton>
+                <Paper zDepth={1}>
+                    <video className="vid-big" src={this.state.remoteStream} autoPlay />
+                    <Paper zDepth={1}>
+                        <video className="vid-small" src={this.state.localStream} autoPlay />
+                    </Paper>
+                </Paper>
+                <LeftNav ref="leftNav" docked={false} menuItems={menuItems} />
             </div>
         );
     },
