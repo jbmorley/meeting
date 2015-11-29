@@ -29,8 +29,13 @@ const List = require('material-ui/lib/lists/list');
 const ListDivider = require('material-ui/lib/lists/list');
 const ListItem = require('material-ui/lib/lists/list-item');
 const Checkbox = require('material-ui/lib/checkbox');
+const FloatingActionButton = require('material-ui/lib/floating-action-button');
 
 const MessageList = require('./message-list.jsx');
+
+const ToggleStarIcon = require('material-ui/lib/svg-icons/toggle/star');
+const CommunicationChatIcon = require('material-ui/lib/svg-icons/communication/chat');
+const AVVideocamIcon = require('material-ui/lib/svg-icons/av/videocam');
 
 var MeetingApp = React.createClass({
 
@@ -60,8 +65,20 @@ var MeetingApp = React.createClass({
             <TextField onChange={this.onChange} value={this.state.text} hintText="New URL" />
             <RaisedButton label="Add URL" onTouchTap={this.handleSubmit} primary={true} disabled={!this.state.text} />
             <MessageList messages={this.state.messages} />
+            <FloatingActionButton onTouchTap={this._startCall}>
+                <AVVideocamIcon />
+            </FloatingActionButton>
+            <video src={this.state.localStream} autoPlay />
             </div>
         );
+    },
+
+    _startCall: function() {
+        engine.startCall();
+    },
+
+    _setLocalStream: function(url) {
+        this.setState({localStream: url});
     },
 
     _onMessageReceived: function(message) {
@@ -82,9 +99,15 @@ var engine = {
         self._meeting = meeting;
         self._socket = io()
         self._socket.on('chat message', function(msg) {
+
             console.log('Received: ' + msg);
             self._meeting._onMessageReceived(msg);
-        })
+
+        }).on('server-call-notify', function() {
+
+            alert('Server notified call!');
+
+        });
     },
 
     sendMessage: function(message) {
@@ -94,9 +117,24 @@ var engine = {
 
     startCall: function() {
         var self = this;
-        self.join
-    }
+        // self._socket.emit('client-call-start');
+        webRTC.startCall();
+    },
+
+    addIceCandidate: function(candidate) {
+        var self = this;
+        self._socket.emit('client-call-add-ice-candidate', candidate);
+    },
+
+    setSession: function(session) {
+        var self = this;
+        self._socket.emit('client-call-set-session', session);
+    },
 
 };
+
+webRTC.onIceCandidate = function (candidate) { engine.addIceCandidate(candidate); }
+webRTC.onSessionDescription = function(session) { engine.setSession(session); }
+webRTC.onAttachLocalStream = function(stream) { meeting._setLocalStream(stream); }
 
 engine.connect(meeting)
