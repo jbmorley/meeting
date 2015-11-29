@@ -30,16 +30,10 @@ const ListDivider = require('material-ui/lib/lists/list');
 const ListItem = require('material-ui/lib/lists/list-item');
 const Checkbox = require('material-ui/lib/checkbox');
 
-var socket = io();
-socket.emit('chat message', 'Some message sent here!');
-socket.on('chat message', function(msg) {
-    console.log('Received: ' + msg);
-});
-
 var MeetingApp = React.createClass({
 
     getInitialState: function() {
-        return {items: [], text: ''};
+        return {items: [], text: '', messages: ''};
     },
 
     onChange: function(e) {
@@ -60,12 +54,29 @@ var MeetingApp = React.createClass({
             <List>
             {this.state.items}
             </List>
-            <TextField onChange={this.onChange} value={this.state.text} hintText="New task" />
-            <RaisedButton label="Add task" onTouchTap={this.handleSubmit} primary={true} />
+            <div>{this.state.messages}</div>
+            <TextField onChange={this.onChange} value={this.state.text} hintText="New URL" />
+            <RaisedButton label="Add URL" onTouchTap={this.handleSubmit} primary={true} />
             </div>
         );
+    },
+
+    _onMessageReceived: function(message) {
+        this.setState({messages: this.state.messages.concat(message)})
     }
 
 });
 
-ReactDOM.render(<MeetingApp />, document.getElementById('app'));
+var meeting = ReactDOM.render(
+    <MeetingApp />,
+    document.getElementById('app')
+);
+
+var messages = "";
+
+var socket = io();
+socket.emit('chat message', 'Some message sent here!');
+socket.on('chat message', function(msg) {
+    console.log('Received: ' + msg);
+    meeting._onMessageReceived(msg);
+});
