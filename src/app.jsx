@@ -45,7 +45,7 @@ var MeetingApp = React.createClass({
     handleSubmit: function(e) {
         e.preventDefault();
         var nextItems = this.state.items.concat([<ListItem primaryText={this.state.text} />]);
-        socket.emit('chat message', this.state.text);
+        engine.sendMessage(this.state.text);
         var nextText = '';
         this.setState({items: nextItems, text: nextText});
     },
@@ -75,8 +75,28 @@ var meeting = ReactDOM.render(
     document.getElementById('app')
 );
 
-var socket = io();
-socket.on('chat message', function(msg) {
-    console.log('Received: ' + msg);
-    meeting._onMessageReceived(msg);
-});
+var engine = {
+
+    connect: function(meeting) {
+        var self = this;
+        self._meeting = meeting;
+        self._socket = io()
+        self._socket.on('chat message', function(msg) {
+            console.log('Received: ' + msg);
+            self._meeting._onMessageReceived(msg);
+        })
+    },
+
+    sendMessage: function(message) {
+        var self = this;
+        self._socket.emit('chat message', message);
+    },
+
+    startCall: function() {
+        var self = this;
+        self.join
+    }
+
+};
+
+engine.connect(meeting)
