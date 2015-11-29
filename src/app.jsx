@@ -76,7 +76,6 @@ var meeting = ReactDOM.render(
 );
 
 var socket = io();
-socket.emit('chat message', 'Some message sent here!');
 socket.on('chat message', function(msg) {
     console.log('Received: ' + msg);
     meeting._onMessageReceived(msg);
