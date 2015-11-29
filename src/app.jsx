@@ -14,26 +14,6 @@ const ListDivider = require('material-ui/lib/lists/list');
 const ListItem = require('material-ui/lib/lists/list-item');
 const Checkbox = require('material-ui/lib/checkbox');
 
-var Timer = React.createClass({
-  getInitialState: function() {
-    return {secondsElapsed: 0};
-  },
-  tick: function() {
-    this.setState({secondsElapsed: this.state.secondsElapsed + 1});
-  },
-  componentDidMount: function() {
-    this.interval = setInterval(this.tick, 1000);
-  },
-  componentWillUnmount: function() {
-    clearInterval(this.interval);
-  },
-  render: function() {
-    return (
-      <div>Seconds Elapsed: {this.state.secondsElapsed}</div>
-    );
-  }
-});
-
 var TodoApp = React.createClass({
 
   getInitialState: function() {
@@ -66,5 +46,4 @@ var TodoApp = React.createClass({
 
 });
 
-ReactDOM.render(<Timer />, document.getElementById('timer'));
 ReactDOM.render(<TodoApp />, document.getElementById('app'));
