@@ -30,10 +30,12 @@ const ListDivider = require('material-ui/lib/lists/list');
 const ListItem = require('material-ui/lib/lists/list-item');
 const Checkbox = require('material-ui/lib/checkbox');
 
+const MessageList = require('./message-list.jsx');
+
 var MeetingApp = React.createClass({
 
     getInitialState: function() {
-        return {items: [], text: '', messages: ''};
+        return {items: [], text: '', messages: []};
     },
 
     onChange: function(e) {
@@ -42,7 +44,8 @@ var MeetingApp = React.createClass({
 
     handleSubmit: function(e) {
         e.preventDefault();
-        var nextItems = this.state.items.concat([<ListItem leftCheckbox={<Checkbox />} primaryText={this.state.text} />]);
+        var nextItems = this.state.items.concat([<ListItem primaryText={this.state.text} />]);
+        socket.emit('chat message', this.state.text);
         var nextText = '';
         this.setState({items: nextItems, text: nextText});
     },
@@ -54,9 +57,9 @@ var MeetingApp = React.createClass({
             <List>
             {this.state.items}
             </List>
-            <div>{this.state.messages}</div>
             <TextField onChange={this.onChange} value={this.state.text} hintText="New URL" />
-            <RaisedButton label="Add URL" onTouchTap={this.handleSubmit} primary={true} />
+            <RaisedButton label="Add URL" onTouchTap={this.handleSubmit} primary={true} disabled={!this.state.text} />
+            <MessageList messages={this.state.messages} />
             </div>
         );
     },
@@ -71,8 +74,6 @@ var meeting = ReactDOM.render(
     <MeetingApp />,
     document.getElementById('app')
 );
-
-var messages = "";
 
 var socket = io();
 socket.emit('chat message', 'Some message sent here!');
