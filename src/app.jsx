@@ -14,7 +14,7 @@ const ListDivider = require('material-ui/lib/lists/list');
 const ListItem = require('material-ui/lib/lists/list-item');
 const Checkbox = require('material-ui/lib/checkbox');
 
-var TodoApp = React.createClass({
+var MeetingApp = React.createClass({
 
   getInitialState: function() {
     return {items: [], text: ''};
@@ -46,4 +46,4 @@ var TodoApp = React.createClass({
 
 });
 
-ReactDOM.render(<TodoApp />, document.getElementById('app'));
+ReactDOM.render(<MeetingApp />, document.getElementById('app'));
