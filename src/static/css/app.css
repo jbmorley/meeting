@@ -2,10 +2,24 @@ body  {
     font-family: 'Roboto', sans-serif;
 }
 
-.vid-small {
-    width: 200px;
+.video-remote {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    line-height: 0;
 }
 
-.vid-big {
+.video-remote > video {
     width: 400px;
+}
+
+.video-local {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    line-height: 0;
+}
+
+.video-local > video {
+    width: 100px;
 }
