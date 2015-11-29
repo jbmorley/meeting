@@ -68,7 +68,8 @@ var MeetingApp = React.createClass({
             <FloatingActionButton onTouchTap={this._startCall}>
                 <AVVideocamIcon />
             </FloatingActionButton>
-            <video src={this.state.localStream} autoPlay />
+            <video className="vid-small" src={this.state.localStream} autoPlay />
+            <video className="vid-big" src={this.state.remoteStream} autoPlay />
             </div>
         );
     },
@@ -79,6 +80,10 @@ var MeetingApp = React.createClass({
 
     _setLocalStream: function(url) {
         this.setState({localStream: url});
+    },
+
+    _setRemoteStream: function(url) {
+        this.setState({remoteStream: url});
     },
 
     _onMessageReceived: function(message) {
@@ -101,9 +106,11 @@ var engine = {
         self._socket.on('chat message', function(msg) {
             self._meeting._onMessageReceived(msg);
         }).on('server-call-add-ice-candidate', function(candidate) {
-            console.log('server-call-add-ice-candidate: ' + candidate);
-        }).on('client-call-set-session', function(session) {
-            console.log('client-call-set-session: ' + session);
+            webRTC.addIceCandidate(JSON.parse(candidate));
+        }).on('server-call-set-session', function(session) {
+            webRTC.handleSessionDescription(JSON.parse(session)).catch(function(error) {
+                alert("Something went wrong: " + error);
+            });
         });
     },
 
@@ -130,6 +137,11 @@ var engine = {
     setLocalStream: function(stream) {
         var self = this;
         self._meeting._setLocalStream(stream);
+    },
+
+    setRemoteStream: function(stream) {
+        var self = this;
+        self._meeting._setRemoteStream(stream);
     }
 
 };
@@ -137,5 +149,6 @@ var engine = {
 webRTC.onIceCandidate = function (candidate) { engine.addIceCandidate(candidate); }
 webRTC.onSessionDescription = function(session) { engine.setSession(session); }
 webRTC.onAttachLocalStream = function(stream) { engine.setLocalStream(stream); }
+webRTC.onAttachRemoteStream = function(stream) { engine.setRemoteStream(stream); }
 
 engine.connect(meeting)

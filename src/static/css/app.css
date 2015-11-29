@@ -1,3 +1,11 @@
 body  {
     font-family: 'Roboto', sans-serif;
 }
+
+.vid-small {
+    width: 200px;
+}
+
+.vid-big {
+    width: 400px;
+}

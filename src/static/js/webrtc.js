@@ -31,23 +31,15 @@ var webRTC = {
         console.log("WARNING: webRTC.onIceCandidate not implemented");
     },
 
-    // Glue code to tell us when we've received an incoming stream. Feels like this really needs to be a callback.
-    // Interestingly this should just flatten down to one callback which is addStream(LOCAL/REMOTE, URL);
-
-    // _gotDescription: function(description) {
-    //     console.log('Received session description: ' + JSON.stringify({'sdp': description}));
-
-    //     // peerConnection.setLocalDescription(description, function () {
-    //     //     serverConnection.send(JSON.stringify({'sdp': description}));
-    //     // }, function() {console.log('set description error')});
-    // },
-
     onAddRemoteStream: function(event) {
-        console.log('Received a remote stream');
-        // remoteVideo.src = window.URL.createObjectURL(event.stream);
+        if (webRTC.onAttachRemoteStream != null) {
+            webRTC.onAttachRemoteStream(window.URL.createObjectURL(event.stream));
+        } else {
+            console.log("ERROR: onAttachRemoteStream not defined");
+        }
     },
 
-    checkSupport: function() {
+    _checkSupport: function() {
         var self = this;
         return new Promise(function(resolve, reject) {
             if (navigator.getUserMedia) {
@@ -59,31 +51,45 @@ var webRTC = {
         });
     },
 
-    getUserMedia: function() {
+    _getUserMedia: function(details) {
         var self = this;
-        return new Promise(function(resolve, reject) {
+
+        if (window.getUserMediaPromise != null) {
+            return window.getUserMediaPromise;
+        }
+
+        window.getUserMediaPromise = new Promise(function(resolve, reject) {
             navigator.getUserMedia({ video: true, audio: true }, function(localStream) {
                 console.log("Successfully got local stream");
-                resolve(localStream);
+                details.peerConnection.addStream(localStream);
+                details.localStream = localStream;
+                resolve(details);
             }, reject);
         });
+
+        return window.getUserMediaPromise;
     },
 
-    attachLocalStream: function(stream) {
+    _attachLocalStream: function(details) {
         var self = this;
         return new Promise(function(resolve, reject) {
             if (webRTC.onAttachLocalStream != null) {
-                webRTC.onAttachLocalStream(window.URL.createObjectURL(stream));
+                webRTC.onAttachLocalStream(window.URL.createObjectURL(details.localStream));
             } else {
                 reject("onAttachLocalStream not defined");
             }
-            resolve(stream);
+            resolve(details);
         });
     },
 
-    getPeerConnection: function(localStream) {
+    _getPeerConnection: function() {
+
+        if (window.peerConnectionPromise != null) {
+            return window.peerConnectionPromise;
+        }
+
         console.log("Configuring a new peer connection");
-        return new Promise(function(resolve, reject) {
+        window.peerConnectionPromise = new Promise(function(resolve, reject) {
             console.log("Creating new RTCPeerConnection");
             peerConnection = new RTCPeerConnection(peerConnectionConfig);
             peerConnection.onicecandidate = function(event) {
@@ -92,25 +98,23 @@ var webRTC = {
                 }
             };
             peerConnection.onaddstream = function(event) { webRTC.onAddRemoteStream(event); }
-            resolve(peerConnection);
-
-            console.log("Adding local stream to peer connection");
-            peerConnection.addStream(localStream);
-
-            resolve(peerConnection);
+            resolve({peerConnection: peerConnection});
         });
+
+        return window.peerConnectionPromise;
     },
 
-    createOffer: function(peerConnection) {
+    _createOffer: function(details) {
         console.log("Creating the offer");
         return new Promise(function(resolve, reject) {
-            peerConnection.createOffer(function(description) {
-                resolve({peerConnection: peerConnection, description: description});
+            details.peerConnection.createOffer(function(description) {
+                details.description = description;
+                resolve(details);
             }, reject);
         });
     },
 
-    setLocalDescription: function(details) {
+    _setLocalDescription: function(details) {
         return new Promise(function(resolve, reject) {
             details.peerConnection.setLocalDescription(details.description, function() {
                 resolve(details);
@@ -118,7 +122,7 @@ var webRTC = {
         });
     },
 
-    sendDescription: function(details) {
+    _sendDescription: function(details) {
         console.log("Sending the session description to the server");
         return new Promise(function(resolve, reject) {
             if (webRTC.onSessionDescription) {
@@ -130,21 +134,84 @@ var webRTC = {
         });
     },
 
+    _createAnswer: function(details) {
+        console.log("Creating answer");
+        return new Promise(function (resolve, reject) {
+            peerConnection.createAnswer(function(description) {
+                details.description = description;
+                resolve(details);
+            }, reject);
+        });
+    },
+
+    _addIceCandidate: function(candidate) {
+        return function(details) {
+            console.log("Add ice candidate");
+            return new Promise(function(resolve, reject) {
+                details.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                resolve(details);
+            });
+        }
+    },
+
+    _setRemoteDescription: function(description) {
+        return function(details) {
+            console.log("Add remote description");
+            return new Promise(function(resolve, reject) {
+                details.peerConnection.setRemoteDescription(new RTCSessionDescription(description), function() {
+                    resolve(details);
+                }, reject);
+            });
+        }
+    },
+
     startCall: function() {
         var self = this;
-        self.checkSupport()
-            .then(self.getUserMedia)
-            .then(self.attachLocalStream)
-            .then(self.getPeerConnection)
-            .then(self.createOffer)
-            .then(self.setLocalDescription)
-            .then(self.sendDescription)
+        self._checkSupport()
+            .then(self._getPeerConnection)
+            .then(self._getUserMedia)
+            .then(self._attachLocalStream)
+            .then(self._createOffer)
+            .then(self._setLocalDescription)
+            .then(self._sendDescription)
             .catch(function(error) {
                 alert("Unable to start call: " + error);
             });
     },
 
-    joinCall: function() {
+    addIceCandidate: function(candidate) {
+        var self = this;
+        self._checkSupport()
+            .then(self._getPeerConnection)
+            .then(self._addIceCandidate(candidate))
+            .catch(function(error) {
+                alert("Unable to add ice candidiate: " + error);
+            });
+    },
+
+    handleSessionDescription: function(description) {
+        var self = this;
+
+        if (description.type == "answer") {
+
+            return self._checkSupport()
+                .then(self._getPeerConnection)
+                .then(self._getUserMedia)
+                .then(self._attachLocalStream)
+                .then(self._setRemoteDescription(description))
+
+        } else {
+
+            return self._checkSupport()
+                .then(self._getPeerConnection)
+                .then(self._getUserMedia)
+                .then(self._attachLocalStream)
+                .then(self._setRemoteDescription(description))
+                .then(self._createAnswer)
+                .then(self._setLocalDescription)
+                .then(self._sendDescription)
+
+        }
 
     },
 
