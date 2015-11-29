@@ -1,13 +1,31 @@
-var express = require('express'),
-    path = require('path'),
-    http = require('http'),
-    socket = require('socket.io');
+/*
+ * Copyright (C) 2015 InSeven Limited.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 
-var app = express(),
-    server = http.Server(app),
-    io = socket(server);
+var Express = require('express'),
+    Path = require('path'),
+    HTTP = require('http'),
+    SocketIO = require('socket.io');
 
-app.use(express.static(path.join(__dirname, 'static')));
+var app = Express(),
+    server = HTTP.Server(app),
+    io = SocketIO(server);
+
+app.use(Express.static(Path.join(__dirname, 'static')));
 
 io.on('connection', function(socket){
   console.log('a user connected');
