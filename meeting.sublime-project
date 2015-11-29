@@ -18,7 +18,7 @@
   [
     {
       "name": "build",
-      "cmd": ["scripts/build", "build"],
+      "cmd": ["scripts/meeting", "build"],
       "working_dir": "${project_path}"
     }
   ]
