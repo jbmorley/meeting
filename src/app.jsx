@@ -99,14 +99,11 @@ var engine = {
         self._meeting = meeting;
         self._socket = io()
         self._socket.on('chat message', function(msg) {
-
-            console.log('Received: ' + msg);
             self._meeting._onMessageReceived(msg);
-
-        }).on('server-call-notify', function() {
-
-            alert('Server notified call!');
-
+        }).on('server-call-add-ice-candidate', function(candidate) {
+            console.log('server-call-add-ice-candidate: ' + candidate);
+        }).on('client-call-set-session', function(session) {
+            console.log('client-call-set-session: ' + session);
         });
     },
 
@@ -117,7 +114,6 @@ var engine = {
 
     startCall: function() {
         var self = this;
-        // self._socket.emit('client-call-start');
         webRTC.startCall();
     },
 
@@ -131,10 +127,15 @@ var engine = {
         self._socket.emit('client-call-set-session', session);
     },
 
+    setLocalStream: function(stream) {
+        var self = this;
+        self._meeting._setLocalStream(stream);
+    }
+
 };
 
 webRTC.onIceCandidate = function (candidate) { engine.addIceCandidate(candidate); }
 webRTC.onSessionDescription = function(session) { engine.setSession(session); }
-webRTC.onAttachLocalStream = function(stream) { meeting._setLocalStream(stream); }
+webRTC.onAttachLocalStream = function(stream) { engine.setLocalStream(stream); }
 
 engine.connect(meeting)

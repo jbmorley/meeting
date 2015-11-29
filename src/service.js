@@ -25,8 +25,6 @@ var app = Express(),
     server = HTTP.Server(app),
     io = SocketIO(server);
 
-var call = { session: null, candidates: [] };
-
 app.use(Express.static(Path.join(__dirname, 'static')));
 
 io.on('connection', function(socket) {
@@ -43,22 +41,15 @@ io.on('connection', function(socket) {
 
     io.emit('chat message', msg);
 
-  }).on('client-call-start', function(msg) {
-
-    console.log('client requested a new call');
-    io.emit('server-call-notify');
-
   }).on('client-call-add-ice-candidate', function(candidate) {
 
     console.log('received ice candidate: ' + candidate);
-    call.candidates.push(candidate);
-    io.emit('server-call-add-ice-candidate', candidate);
+    socket.broadcast.emit('server-call-add-ice-candidate', candidate);
 
   }).on('client-call-set-session', function(session) {
 
-    // TODO Handle the error case where a client is attempting to overwrite a session.
     console.log('received session description: ' + session);
-    call.session = session;
+    socket.broadcast.emit('server-call-set-session', session);
 
   });
 });
