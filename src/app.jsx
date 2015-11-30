@@ -107,7 +107,7 @@ var MeetingApp = React.createClass({
                     : (<FloatingActionButton style={{position: "fixed",
                                                      bottom: "36px",
                                                      right: "36px",
-                                                     zIndex: 100}}
+                                                     zIndex: 8}}
                            onTouchTap={this._startCall}>
                        <AVVideocamIcon />
                 </FloatingActionButton>)}
