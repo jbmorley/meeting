@@ -44,8 +44,7 @@ state = {
     1: {uuid: 1, url: "charts/bar.html"},
     2: {uuid: 2, url: "charts/pie.html"},
     3: {uuid: 3, url: "charts/line.html"},
-    4: {uuid: 4, url: "http://jbmorley.co.uk"},
-    5: {uuid: 5, url: "http://pdavision.co.uk"}
+    5: {uuid: 5, url: "charts/table.html"}
   }
 };
 
