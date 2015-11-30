@@ -5,7 +5,7 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
 	</head>
 	<body>
-		<div id="canvas-holder">
+		<div id="canvas-holder" style="width: 100%; margin: auto;">
 			<canvas id="chart-area" style="width: 80%; margin: auto;"/>
 		</div>
 	<script>
@@ -46,7 +46,7 @@
 
 			window.onload = function(){
 				var ctx = document.getElementById("chart-area").getContext("2d");
-				window.myPie = new Chart(ctx).Pie(pieData);
+				window.myPie = new Chart(ctx).Pie(pieData, {responsive : true});
 			};
 
 
