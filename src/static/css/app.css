@@ -32,7 +32,7 @@ body  {
 }
 
 .grid-item {
-    min-width: 300px;
+    min-width: 400px;
     margin: 8px;
     flex-grow: 1;
     line-height: 0;
