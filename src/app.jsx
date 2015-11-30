@@ -47,7 +47,7 @@ const ToggleStarIcon = require('material-ui/lib/svg-icons/toggle/star');
 const CommunicationChatIcon = require('material-ui/lib/svg-icons/communication/chat');
 const AVVideocamIcon = require('material-ui/lib/svg-icons/av/videocam');
 
-const MessageList = require('./message-list.jsx');
+const ItemGrid = require('./item-grid.jsx');
 const VideoCall = require('./video-call.jsx');
 
 var menuItems = [
@@ -83,7 +83,7 @@ var MeetingApp = React.createClass({
 
     handleSubmit: function(e) {
         e.preventDefault();
-        engine.sendMessage(this.state.text);
+        engine.addItem(this.state.text);
         this.setState({text: ''});
     },
 
@@ -115,7 +115,7 @@ var MeetingApp = React.createClass({
                 <div className="content">
 
                     <div>
-                        <MessageList messages={this.state.messages} />
+                        <ItemGrid items={this.state.messages} onRemoveItem={this._removeItem} />
                         <TextField onChange={this.onChange} value={this.state.text} hintText="New URL" />
                         <RaisedButton label="Add URL" onTouchTap={this.handleSubmit} primary={true} disabled={!this.state.text} />
                     </div>
@@ -145,7 +145,11 @@ var MeetingApp = React.createClass({
 
     _setItems: function(items) {
         this.setState({messages: items})
-    }
+    },
+
+    _removeItem: function(uuid) {
+        engine.removeItem(uuid);
+    },
 
 });
 
@@ -173,9 +177,14 @@ var engine = {
         });
     },
 
-    sendMessage: function(message) {
+    addItem: function(url) {
         var self = this;
-        self._socket.emit('client-add-item', JSON.stringify({url: message}));
+        self._socket.emit('client-add-item', JSON.stringify({url: url}));
+    },
+
+    removeItem: function(uuid) {
+        var self = this;
+        self._socket.emit('client-remove-item', JSON.stringify({uuid: uuid}));
     },
 
     startCall: function() {

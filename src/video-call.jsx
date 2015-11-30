@@ -32,10 +32,6 @@ var VideoCall = React.createClass({
         );
     },
 
-    _removeItem: function() {
-        alert("REMOVE ITEM!");
-    }
-
 });
 
 module.exports = VideoCall;

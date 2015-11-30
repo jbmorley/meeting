@@ -40,34 +40,46 @@ app.use(Express.static(Path.join(__dirname, 'static')));
 
 state = {
   // items: []
-  items: [
-    {uuid: 1, url: "http://jbmorley.co.uk/photos/2015/11/san-francisco/20-image.jpg"},
-    {uuid: 2, url: "http://www.dx13.co.uk"},
-    {uuid: 3, url: "http://bbc.com/news"},
-    {uuid: 4, url: "http://jbmorley.co.uk"},
-    {uuid: 4, url: "http://pdavision.co.uk"}
-  ]
+  items: {
+    1: {uuid: 1, url: "http://jbmorley.co.uk/photos/2015/11/san-francisco/20-image.jpg"},
+    2: {uuid: 2, url: "http://www.dx13.co.uk"},
+    3: {uuid: 3, url: "http://bbc.com/news"},
+    4: {uuid: 4, url: "http://jbmorley.co.uk"},
+    5: {uuid: 5, url: "http://pdavision.co.uk"}
+  }
 };
 
-io.on('connection', function(socket) {
-  console.log('a user connected');
+function sendItems(socket) {
+  var items = [];
+  for (var uuid in state.items) {
+    if (state.items.hasOwnProperty(uuid)) {
+      items.push(state.items[uuid]);
+    }
+  }
+  io.emit('server-set-items', JSON.stringify(items));
+}
 
-  // TODO Broadcast the current call information to the current user.
-  // TODO Store the user which established a call and revoke the call when they disconnect.
+io.on('connection', function(socket) {
 
   // Send the current state to the newly connected client.
-  socket.emit('server-set-items', JSON.stringify(state.items));
+  sendItems(socket);
 
   socket.on('disconnect', function() {
 
     console.log('user disconnected');
 
-  }).on('client-add-item', function(msg) {
+  }).on('client-add-item', function(message) {
 
-    item = JSON.parse(msg);
+    item = JSON.parse(message);
     item.uuid = guid();
-    state.items = state.items.concat([item]);
-    io.emit('server-set-items', JSON.stringify(state.items));
+    state.items[item.uuid] = item;
+    sendItems(socket);
+
+  }).on('client-remove-item', function(message) {
+
+    message = JSON.parse(message);
+    delete state.items[message.uuid];
+    sendItems(socket);
 
   }).on('client-call-add-ice-candidate', function(candidate) {
 

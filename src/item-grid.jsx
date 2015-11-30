@@ -33,17 +33,23 @@ const Avatar = require('material-ui/lib/avatar');
 
 const IconNavigationClose = require('material-ui/lib/svg-icons/navigation/close');
 
-var MessageList = React.createClass({
+var ItemGrid = React.createClass({
 
     render: function() {
+        var self = this;
         return (
             <div className="grid">
-                {this.props.messages.map(function(item) {
+                {this.props.items.map(function(item) {
                     return (
                         <Card
-                            className="grid-item"
-                            key={item.url}>
-                            <CardText style={{padding: '0'}} expandable={true}>
+                            key={item.uuid}
+                            className="grid-item">
+                            <CardText style={{padding: '0'}}>
+                                <IconButton onTouchTap={function(e) {
+                                    self.props.onRemoveItem(item.uuid);
+                                }}>
+                                    <IconNavigationClose />
+                                </IconButton>
                             </CardText>
                             <CardText style={{padding: '0'}}>
                                 <iframe scrolling="no" src={item.url}></iframe>
@@ -55,10 +61,6 @@ var MessageList = React.createClass({
         );
     },
 
-    _removeItem: function() {
-        alert("REMOVE ITEM!");
-    }
-
 });
 
-module.exports = MessageList;
+module.exports = ItemGrid;
