@@ -21,6 +21,10 @@ body  {
     margin: 0;
 }
 
+.content {
+    margin-top: 64px;
+}
+
 .grid {
     margin: 8px;
     display: flex;

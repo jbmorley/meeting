@@ -97,13 +97,8 @@ var MeetingApp = React.createClass({
                 <AppBar 
                     title="Meeting" 
                     className="app-bar"
-                    onLeftIconButtonTouchTap={this._touch} />
-
-                <div>
-                    <MessageList messages={this.state.messages} />
-                    <TextField onChange={this.onChange} value={this.state.text} hintText="New URL" />
-                    <RaisedButton label="Add URL" onTouchTap={this.handleSubmit} primary={true} disabled={!this.state.text} />
-                </div>
+                    onLeftIconButtonTouchTap={this._touch}
+                    style={{position: "fixed", top: "0"}} />
 
                 {this.state.state == CallState.CONNECTED
                     ? (<VideoCall 
@@ -117,7 +112,17 @@ var MeetingApp = React.createClass({
                        <AVVideocamIcon />
                 </FloatingActionButton>)}
 
-                <LeftNav ref="leftNav" docked={false} menuItems={menuItems} />
+                <div className="content">
+
+                    <div>
+                        <MessageList messages={this.state.messages} />
+                        <TextField onChange={this.onChange} value={this.state.text} hintText="New URL" />
+                        <RaisedButton label="Add URL" onTouchTap={this.handleSubmit} primary={true} disabled={!this.state.text} />
+                    </div>
+
+                    <LeftNav ref="leftNav" docked={false} menuItems={menuItems} />
+
+                </div>
             </div>
         );
     },
