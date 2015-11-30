@@ -22,6 +22,9 @@ const ReactDOM = require('react-dom');
 var injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
 
+const ThemeManager = require('material-ui/lib/styles/theme-manager');
+const CustomTheme = require('./custom-theme.jsx');
+
 const AppBar = require('material-ui/lib/app-bar');
 const RaisedButton = require('material-ui/lib/raised-button');
 const TextField = require('material-ui/lib/text-field');
@@ -54,6 +57,15 @@ var menuItems = [
 
 var MeetingApp = React.createClass({
 
+    //the key passed through context must be called "muiTheme"
+    childContextTypes: {
+        muiTheme: React.PropTypes.object,
+    },
+
+    getChildContext: function () {
+        return {muiTheme: ThemeManager.getMuiTheme(CustomTheme) };
+    },
+
     getInitialState: function() {
         return {items: [], text: '', messages: []};
     },
@@ -77,6 +89,7 @@ var MeetingApp = React.createClass({
             <div>
                 <AppBar 
                     title="Meeting" 
+                    className="app-bar"
                     iconElementRight={
                         <IconButton tooltip="Start call"
                                     touch={true}
@@ -87,9 +100,12 @@ var MeetingApp = React.createClass({
                     }
                     onLeftIconButtonTouchTap={this._touch} 
                     onRightIconButtonTouchTap={this._startCall} />
-                <MessageList messages={this.state.messages} />
-                <TextField onChange={this.onChange} value={this.state.text} hintText="New URL" />
-                <RaisedButton label="Add URL" onTouchTap={this.handleSubmit} primary={true} disabled={!this.state.text} />
+
+                <div className="content">
+                    <MessageList messages={this.state.messages} />
+                    <TextField onChange={this.onChange} value={this.state.text} hintText="New URL" />
+                    <RaisedButton label="Add URL" onTouchTap={this.handleSubmit} primary={true} disabled={!this.state.text} />
+                </div>
                 <Paper zDepth={1} className="video-remote">
                     <video src={this.state.remoteStream} autoPlay />
                     <Paper zDepth={1} className="video-local">
