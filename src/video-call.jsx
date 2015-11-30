@@ -16,54 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-body  {
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-}
+const React = require('react');
+const Paper = require('material-ui/lib/paper');
 
-.grid {
-    margin: 8px;
-    display: flex;
-    flex-wrap: wrap;
-}
+var VideoCall = React.createClass({
 
-.grid-item {
-    min-width: 300px;
-    margin: 8px;
-    flex-grow: 1;
-    line-height: 0;
-}
+    render: function() {
+        return (
+            <Paper zDepth={3} className="video-remote">
+                <video src={this.props.remoteStream} autoPlay />
+                <div className="video-local">
+                    <video src={this.props.localStream} autoPlay />
+                </div>
+            </Paper>
+        );
+    },
 
-.grid-item iframe {
-    border: 0;
-    width: 100%;
-    height: 300px;
-}
+    _removeItem: function() {
+        alert("REMOVE ITEM!");
+    }
 
-.video-remote {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    line-height: 0;
-    z-index: 100;
-}
+});
 
-.video-remote > video {
-    width: 400px;
-}
-
-.video-local {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    line-height: 0;
-}
-
-.video-local {
-    border: 1px solid white;
-    border-radius: 1px;
-}
-
-.video-local > video {
-    width: 100px;
-}
+module.exports = VideoCall;

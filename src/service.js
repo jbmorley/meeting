@@ -25,7 +25,29 @@ var app = Express(),
     server = HTTP.Server(app),
     io = SocketIO(server);
 
+// TODO Something nicer than this please.
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}
+
 app.use(Express.static(Path.join(__dirname, 'static')));
+
+state = {
+  // items: []
+  items: [
+    {uuid: 1, url: "http://jbmorley.co.uk/photos/2015/11/san-francisco/20-image.jpg"},
+    {uuid: 2, url: "http://www.dx13.co.uk"},
+    {uuid: 3, url: "http://bbc.com/news"},
+    {uuid: 4, url: "http://jbmorley.co.uk"},
+    {uuid: 4, url: "http://pdavision.co.uk"}
+  ]
+};
 
 io.on('connection', function(socket) {
   console.log('a user connected');
@@ -33,13 +55,19 @@ io.on('connection', function(socket) {
   // TODO Broadcast the current call information to the current user.
   // TODO Store the user which established a call and revoke the call when they disconnect.
 
+  // Send the current state to the newly connected client.
+  socket.emit('server-set-items', JSON.stringify(state.items));
+
   socket.on('disconnect', function() {
 
     console.log('user disconnected');
 
-  }).on('chat message', function(msg) {
+  }).on('client-add-item', function(msg) {
 
-    io.emit('chat message', msg);
+    item = JSON.parse(msg);
+    item.uuid = guid();
+    state.items = state.items.concat([item]);
+    io.emit('server-set-items', JSON.stringify(state.items));
 
   }).on('client-call-add-ice-candidate', function(candidate) {
 

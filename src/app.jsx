@@ -48,12 +48,19 @@ const CommunicationChatIcon = require('material-ui/lib/svg-icons/communication/c
 const AVVideocamIcon = require('material-ui/lib/svg-icons/av/videocam');
 
 const MessageList = require('./message-list.jsx');
+const VideoCall = require('./video-call.jsx');
 
 var menuItems = [
   { route: 'get-started', text: 'Get Started' },
   { route: 'customization', text: 'Customization' },
   { route: 'components', text: 'Components' },
 ];
+
+const CallState = {
+    DISCONNECTED: 0,
+    CONNECTING: 1,
+    CONNECTED: 2,
+};
 
 var MeetingApp = React.createClass({
 
@@ -67,7 +74,7 @@ var MeetingApp = React.createClass({
     },
 
     getInitialState: function() {
-        return {items: [], text: '', messages: []};
+        return {items: [], text: '', messages: [], state: CallState.DISCONNECTED};
     },
 
     onChange: function(e) {
@@ -90,28 +97,26 @@ var MeetingApp = React.createClass({
                 <AppBar 
                     title="Meeting" 
                     className="app-bar"
-                    iconElementRight={
-                        <IconButton tooltip="Start call"
-                                    touch={true}
-                                    tooltipPosition="bottom-left"
-                                    onTouchTap={this._startCall}>
-                            <AVVideocamIcon />
-                        </IconButton>
-                    }
-                    onLeftIconButtonTouchTap={this._touch} 
-                    onRightIconButtonTouchTap={this._startCall} />
+                    onLeftIconButtonTouchTap={this._touch} />
 
-                <div className="content">
+                <div>
                     <MessageList messages={this.state.messages} />
                     <TextField onChange={this.onChange} value={this.state.text} hintText="New URL" />
                     <RaisedButton label="Add URL" onTouchTap={this.handleSubmit} primary={true} disabled={!this.state.text} />
                 </div>
-                <Paper zDepth={1} className="video-remote">
-                    <video src={this.state.remoteStream} autoPlay />
-                    <Paper zDepth={1} className="video-local">
-                        <video src={this.state.localStream} autoPlay />
-                    </Paper>
-                </Paper>
+
+                {this.state.state == CallState.CONNECTED
+                    ? (<VideoCall 
+                           localStream={this.state.localStream}
+                           remoteStream={this.state.remoteStream} />)
+                    : (<FloatingActionButton style={{position: "fixed",
+                                                     bottom: "36px",
+                                                     right: "36px",
+                                                     zIndex: 100}}
+                           onTouchTap={this._startCall}>
+                       <AVVideocamIcon />
+                </FloatingActionButton>)}
+
                 <LeftNav ref="leftNav" docked={false} menuItems={menuItems} />
             </div>
         );
@@ -119,6 +124,10 @@ var MeetingApp = React.createClass({
 
     _startCall: function() {
         engine.startCall();
+    },
+
+    _callConnected: function() {
+        this.setState({state: CallState.CONNECTED});
     },
 
     _setLocalStream: function(url) {
@@ -129,8 +138,8 @@ var MeetingApp = React.createClass({
         this.setState({remoteStream: url});
     },
 
-    _onMessageReceived: function(message) {
-        this.setState({messages: this.state.messages.concat(message)})
+    _setItems: function(items) {
+        this.setState({messages: items})
     }
 
 });
@@ -146,12 +155,14 @@ var engine = {
         var self = this;
         self._meeting = meeting;
         self._socket = io()
-        self._socket.on('chat message', function(msg) {
-            self._meeting._onMessageReceived(msg);
+        self._socket.on('server-set-items', function(msg) {
+            self._meeting._setItems(JSON.parse(msg));
         }).on('server-call-add-ice-candidate', function(candidate) {
             webRTC.addIceCandidate(JSON.parse(candidate));
         }).on('server-call-set-session', function(session) {
-            webRTC.handleSessionDescription(JSON.parse(session)).catch(function(error) {
+            webRTC.handleSessionDescription(JSON.parse(session)).then(function(details) {
+                self._meeting._callConnected();
+            }).catch(function(error) {
                 alert("Something went wrong: " + error);
             });
         });
@@ -159,7 +170,7 @@ var engine = {
 
     sendMessage: function(message) {
         var self = this;
-        self._socket.emit('chat message', message);
+        self._socket.emit('client-add-item', JSON.stringify({url: message}));
     },
 
     startCall: function() {
