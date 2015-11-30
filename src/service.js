@@ -41,9 +41,8 @@ app.use(Express.static(Path.join(__dirname, 'static')));
 state = {
   // items: []
   items: {
-    1: {uuid: 1, url: "http://jbmorley.co.uk/photos/2015/11/san-francisco/20-image.jpg"},
-    2: {uuid: 2, url: "http://www.dx13.co.uk"},
-    3: {uuid: 3, url: "http://bbc.com/news"},
+    1: {uuid: 1, url: "charts/bar.html"},
+    3: {uuid: 3, url: "charts/pie.html"},
     4: {uuid: 4, url: "http://jbmorley.co.uk"},
     5: {uuid: 5, url: "http://pdavision.co.uk"}
   }
