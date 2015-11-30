@@ -30,6 +30,14 @@
       file: path="/var/www/{{ domain }}" state=directory owner="{{ ansible_user_id }}" group="{{ ansible_user_id }}"
       become: yes
 
+    - name: enable proxy_http
+      command: a2enmod proxy_http
+      args:
+        creates: "/etc/apache2/sites-enabled/proxy_http.load"
+      become: yes
+      notify:
+        - restart apache2
+
     - name: enable site
       command: a2ensite "{{ domain }}"
       args:

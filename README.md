@@ -57,4 +57,4 @@ scripts/build deploy
 
 Meeting currently makes use of upstart to configure Node.js as a service on Ubuntu systems as described in [this article](http://kvz.io/blog/2009/12/15/run-nodejs-as-a-service-on-ubuntu-karmic/).
 
-_The current meeting service is configured to listen on port 3000 so you will likely need to add a firewall exception for this. Ultimately, it should be possible to change the service port within the Ansible configuration and the default will be set to port 80 as one might expect._
+_The current meeting service is configured to listen on port 3000 so you will likely need to add a firewall exception for this or configure a reverse proxy. Ultimately, it should be possible to change the service port within the Ansible configuration and the default will be set to port 80 as one might expect._
