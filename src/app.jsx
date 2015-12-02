@@ -26,6 +26,7 @@ const AppBar = require('material-ui/lib/app-bar');
 const AVVideocamIcon = require('material-ui/lib/svg-icons/av/videocam');
 const Checkbox = require('material-ui/lib/checkbox');
 const CommunicationChatIcon = require('material-ui/lib/svg-icons/communication/chat');
+const Dialog = require('material-ui/lib/dialog');
 const FloatingActionButton = require('material-ui/lib/floating-action-button');
 const IconButton = require('material-ui/lib/icon-button');
 const IconMenu = require('material-ui/lib/menus/icon-menu');
@@ -70,7 +71,13 @@ var MeetingApp = React.createClass({
     },
 
     getInitialState: function() {
-        return {items: [], text: '', messages: [], state: CallState.DISCONNECTED};
+        return {
+            items: [],
+            text: '',
+            messages: [],
+            state: CallState.DISCONNECTED,
+            showAddItemDialog: false
+        };
     },
 
     onChange: function(e) {
@@ -87,8 +94,20 @@ var MeetingApp = React.createClass({
         this.refs.leftNav.toggle();
     },
 
+    _addItem: function(e) {
+        this.setState({showAddItemDialog: true});
+    },
+
     _resetItems: function(e) {
         engine.resetItems();
+    },
+
+    _onAddItemDialogSubmit: function() {
+        this.setState({showAddItemDialog: false});
+    },
+
+    _onAddItemDialogClose: function() {
+        this.setState({showAddItemDialog: false});
     },
 
     render: function() {
@@ -103,8 +122,20 @@ var MeetingApp = React.createClass({
                         <IconMenu iconButtonElement={
                           <IconButton><MoreVertIcon /></IconButton>
                         }>
+                          <MenuItem primaryText="Add item" onTouchTap={this._addItem} />
                           <MenuItem primaryText="Reset items" onTouchTap={this._resetItems} />
                         </IconMenu>} />
+
+                <Dialog
+                    title="Add item"
+                    actions={[
+                        { text: "Cancel" },
+                        { text: "OK", onTouchTap: this._onAddItemDialogSubmit, ref: "OK" }
+                    ]}
+                    actionFocus="submit"
+                    open={this.state.showAddItemDialog}
+                    onRequestClose={this._onAddItemDialogClose}
+                    modal={false} />
 
                 {this.state.state == CallState.CONNECTED
                     ? (<VideoCall 
