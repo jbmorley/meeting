@@ -84,12 +84,6 @@ var MeetingApp = React.createClass({
         this.setState({text: e.target.value});
     },
 
-    handleSubmit: function(e) {
-        e.preventDefault();
-        engine.addItem(this.state.text);
-        this.setState({text: ''});
-    },
-
     _touch: function(e) {
         this.refs.leftNav.toggle();
     },
@@ -104,10 +98,13 @@ var MeetingApp = React.createClass({
 
     _onAddItemDialogSubmit: function() {
         this.setState({showAddItemDialog: false});
+        engine.addItem(this.state.text);
+        this.setState({text: ''});
     },
 
     _onAddItemDialogClose: function() {
         this.setState({showAddItemDialog: false});
+        this.setState({text: ''});
     },
 
     render: function() {
@@ -135,7 +132,9 @@ var MeetingApp = React.createClass({
                     actionFocus="submit"
                     open={this.state.showAddItemDialog}
                     onRequestClose={this._onAddItemDialogClose}
-                    modal={false} />
+                    modal={false}>
+                    <TextField onChange={this.onChange} value={this.state.text} hintText="New URL" />
+                </Dialog>
 
                 {this.state.state == CallState.CONNECTED
                     ? (<VideoCall 
@@ -150,15 +149,8 @@ var MeetingApp = React.createClass({
                 </FloatingActionButton>)}
 
                 <div className="content">
-
-                    <div>
-                        <ItemGrid items={this.state.messages} onRemoveItem={this._removeItem} />
-                        <TextField onChange={this.onChange} value={this.state.text} hintText="New URL" />
-                        <RaisedButton label="Add URL" onTouchTap={this.handleSubmit} primary={true} disabled={!this.state.text} />
-                    </div>
-
+                    <ItemGrid items={this.state.messages} onRemoveItem={this._removeItem} />
                     <LeftNav ref="leftNav" docked={false} menuItems={menuItems} />
-
                 </div>
             </div>
         );
