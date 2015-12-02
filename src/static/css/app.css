@@ -27,16 +27,15 @@ body  {
 }
 
 .grid {
-    margin: 8px;
+    padding: 24px;
     display: flex;
     flex-wrap: wrap;
 }
 
 .grid-item {
     min-width: 400px;
-    margin: 8px;
+    margin: 12px;
     flex-grow: 1;
-    line-height: 0;
 }
 
 .grid-item iframe {

@@ -73,15 +73,20 @@ var MeetingApp = React.createClass({
     getInitialState: function() {
         return {
             items: [],
-            text: '',
+            newItemTitle: '',
+            newItemURL: '',
             messages: [],
             state: CallState.DISCONNECTED,
             showAddItemDialog: false
         };
     },
 
-    onChange: function(e) {
-        this.setState({text: e.target.value});
+    onChangeTitle: function(e) {
+        this.setState({newItemTitle: e.target.value});
+    },
+
+    onChangeURL: function(e) {
+        this.setState({newItemURL: e.target.value});
     },
 
     _touch: function(e) {
@@ -98,8 +103,8 @@ var MeetingApp = React.createClass({
 
     _onAddItemDialogSubmit: function() {
         this.setState({showAddItemDialog: false});
-        engine.addItem(this.state.text);
-        this.setState({text: ''});
+        engine.addItem({title: this.state.newItemTitle, url: this.state.newItemURL});
+        this.setState({newItemTitle: '', newItemURL: ''});
     },
 
     _onAddItemDialogClose: function() {
@@ -133,7 +138,8 @@ var MeetingApp = React.createClass({
                     open={this.state.showAddItemDialog}
                     onRequestClose={this._onAddItemDialogClose}
                     modal={false}>
-                    <TextField onChange={this.onChange} value={this.state.text} hintText="New URL" />
+                    <TextField onChange={this.onChangeTitle} value={this.state.newItemTitle} hintText="Title" />
+                    <TextField onChange={this.onChangeURL} value={this.state.newItemURL} hintText="URL" />
                 </Dialog>
 
                 {this.state.state == CallState.CONNECTED
@@ -211,9 +217,9 @@ var engine = {
         self._socket.emit('client-reset-items');
     },
 
-    addItem: function(url) {
+    addItem: function(item) {
         var self = this;
-        self._socket.emit('client-add-item', JSON.stringify({url: url}));
+        self._socket.emit('client-add-item', JSON.stringify(item));
     },
 
     removeItem: function(uuid) {

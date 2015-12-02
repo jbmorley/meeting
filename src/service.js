@@ -41,10 +41,10 @@ function guid() {
 app.use(Express.static(Path.join(__dirname, 'static')));
 
 DEFAULT_ITEMS = {
-  1: {uuid: 1, url: "charts/bar.html"},
-  2: {uuid: 2, url: "charts/pie.html"},
-  3: {uuid: 3, url: "charts/line.html"},
-  5: {uuid: 5, url: "charts/table.html"}
+  1: {uuid: 1, title: "Bar chart", url: "charts/bar.html"},
+  2: {uuid: 2, title: "Pie chart", url: "charts/pie.html"},
+  3: {uuid: 3, title: "Line chart", url: "charts/line.html"},
+  4: {uuid: 4, title: "Continuous improvement", url: "charts/table.html"}
 };
 
 state = {
