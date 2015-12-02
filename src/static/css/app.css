@@ -19,11 +19,11 @@
 body  {
     font-family: 'Roboto', sans-serif;
     margin: 0;
+    background-color: #eee;
 }
 
 .content {
     margin-top: 64px;
-    background-color: #eee;
 }
 
 .grid {
