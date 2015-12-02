@@ -32,7 +32,7 @@ See the [React documentation](http://facebook.github.io/react/docs/getting-start
 From the root directory of the project:
 
 ```bash
-scripts/build build
+scripts/meeting build
 ```
 
 ### Running
@@ -40,10 +40,10 @@ scripts/build build
 To run the project locally for testing, you can run the development server using the following command:
 
 ```bash
-scripts/build serve
+scripts/meeting serve
 ```
 
-This simply runs the `build/service.js` file under `nodemon`. Since this uses `nodemon`, the service will be loaded when the project is rebuild using `scripts/build build`.
+This simply runs the `build/service.js` file under `nodemon`. Since this uses `nodemon`, the service will be loaded when the project is rebuilt using `scripts/meeting build`.
 
 ### Deploying
 
@@ -52,7 +52,7 @@ Deployment is performed using Ansible which can be configured in the `ansible` d
 From the root directory of the project:
 
 ```bash
-scripts/build deploy
+scripts/meeting deploy
 ```
 
 Meeting currently makes use of upstart to configure Node.js as a service on Ubuntu systems as described in [this article](http://kvz.io/blog/2009/12/15/run-nodejs-as-a-service-on-ubuntu-karmic/).
