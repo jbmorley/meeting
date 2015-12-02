@@ -22,31 +22,27 @@ const ReactDOM = require('react-dom');
 var injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
 
-const ThemeManager = require('material-ui/lib/styles/theme-manager');
-const CustomTheme = require('./custom-theme.jsx');
-
 const AppBar = require('material-ui/lib/app-bar');
-const RaisedButton = require('material-ui/lib/raised-button');
-const TextField = require('material-ui/lib/text-field');
+const AVVideocamIcon = require('material-ui/lib/svg-icons/av/videocam');
+const Checkbox = require('material-ui/lib/checkbox');
+const CommunicationChatIcon = require('material-ui/lib/svg-icons/communication/chat');
+const FloatingActionButton = require('material-ui/lib/floating-action-button');
+const IconButton = require('material-ui/lib/icon-button');
+const IconMenu = require('material-ui/lib/menus/icon-menu');
+const LeftNav = require('material-ui/lib/left-nav');
 const List = require('material-ui/lib/lists/list');
 const ListDivider = require('material-ui/lib/lists/list');
 const ListItem = require('material-ui/lib/lists/list-item');
-const Checkbox = require('material-ui/lib/checkbox');
-const FloatingActionButton = require('material-ui/lib/floating-action-button');
-
 const Menu = require('material-ui/lib/menus/menu');
-const MenuItem = require('material-ui/lib/menu/menu-item');
 const MenuDivider = require('material-ui/lib/menus/menu-divider');
-const LeftNav = require('material-ui/lib/left-nav');
-
-const IconButton = require('material-ui/lib/icon-button');
-
+const MenuItem = require('material-ui/lib/menus/menu-item');
+const MoreVertIcon = require('material-ui/lib/svg-icons/navigation/more-vert');
 const Paper = require('material-ui/lib/paper');
+const RaisedButton = require('material-ui/lib/raised-button');
+const TextField = require('material-ui/lib/text-field');
+const ThemeManager = require('material-ui/lib/styles/theme-manager');
 
-const ToggleStarIcon = require('material-ui/lib/svg-icons/toggle/star');
-const CommunicationChatIcon = require('material-ui/lib/svg-icons/communication/chat');
-const AVVideocamIcon = require('material-ui/lib/svg-icons/av/videocam');
-
+const CustomTheme = require('./custom-theme.jsx');
 const ItemGrid = require('./item-grid.jsx');
 const VideoCall = require('./video-call.jsx');
 
@@ -91,6 +87,10 @@ var MeetingApp = React.createClass({
         this.refs.leftNav.toggle();
     },
 
+    _resetItems: function(e) {
+        engine.resetItems();
+    },
+
     render: function() {
         return (
             <div>
@@ -98,7 +98,13 @@ var MeetingApp = React.createClass({
                     title="Meeting" 
                     className="app-bar"
                     onLeftIconButtonTouchTap={this._touch}
-                    style={{position: "fixed", top: "0"}} />
+                    style={{position: "fixed", top: "0"}}
+                    iconElementRight={
+                        <IconMenu iconButtonElement={
+                          <IconButton><MoreVertIcon /></IconButton>
+                        }>
+                          <MenuItem primaryText="Reset items" onTouchTap={this._resetItems} />
+                        </IconMenu>} />
 
                 {this.state.state == CallState.CONNECTED
                     ? (<VideoCall 
@@ -175,6 +181,11 @@ var engine = {
                 alert("Something went wrong: " + error);
             });
         });
+    },
+
+    resetItems: function() {
+        var self = this;
+        self._socket.emit('client-reset-items');
     },
 
     addItem: function(url) {

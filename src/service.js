@@ -16,6 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+var update = require('react-addons-update');
+
 var Express = require('express'),
     Path = require('path'),
     HTTP = require('http'),
@@ -38,15 +40,20 @@ function guid() {
 
 app.use(Express.static(Path.join(__dirname, 'static')));
 
-state = {
-  // items: []
-  items: {
-    1: {uuid: 1, url: "charts/bar.html"},
-    2: {uuid: 2, url: "charts/pie.html"},
-    3: {uuid: 3, url: "charts/line.html"},
-    5: {uuid: 5, url: "charts/table.html"}
-  }
+DEFAULT_ITEMS = {
+  1: {uuid: 1, url: "charts/bar.html"},
+  2: {uuid: 2, url: "charts/pie.html"},
+  3: {uuid: 3, url: "charts/line.html"},
+  5: {uuid: 5, url: "charts/table.html"}
 };
+
+state = {
+  items: {}
+};
+
+function resetItems() {
+  state.items = update(DEFAULT_ITEMS, {});
+}
 
 function sendItems(socket) {
   var items = [];
@@ -58,6 +65,8 @@ function sendItems(socket) {
   io.emit('server-set-items', JSON.stringify(items));
 }
 
+resetItems();
+
 io.on('connection', function(socket) {
 
   // Send the current state to the newly connected client.
@@ -65,7 +74,10 @@ io.on('connection', function(socket) {
 
   socket.on('disconnect', function() {
 
-    console.log('user disconnected');
+  }).on('client-reset-items', function(message) {
+
+    resetItems();
+    sendItems(socket);
 
   }).on('client-add-item', function(message) {
 
@@ -82,12 +94,10 @@ io.on('connection', function(socket) {
 
   }).on('client-call-add-ice-candidate', function(candidate) {
 
-    console.log('received ice candidate: ' + candidate);
     socket.broadcast.emit('server-call-add-ice-candidate', candidate);
 
   }).on('client-call-set-session', function(session) {
 
-    console.log('received session description: ' + session);
     socket.broadcast.emit('server-call-set-session', session);
 
   });
