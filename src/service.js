@@ -17,6 +17,7 @@
  */
 
 var update = require('react-addons-update');
+var guid = require('./guid.js');
 
 var Express = require('express'),
     Path = require('path'),
@@ -26,17 +27,6 @@ var Express = require('express'),
 var app = Express(),
     server = HTTP.Server(app),
     io = SocketIO(server);
-
-// TODO Something nicer than this please.
-function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  }
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-    s4() + '-' + s4() + s4() + s4();
-}
 
 app.use(Express.static(Path.join(__dirname, 'static')));
 
@@ -51,18 +41,28 @@ state = {
   items: {}
 };
 
+function values() {
+  var items = [];
+  for (var uuid in state.items) {
+    if (state.items.hasOwnProperty(uuid)) {
+      items.push(update(state.items[uuid], {}));
+    }
+  }
+  return items;
+}
+
 function resetItems() {
   state.items = update(DEFAULT_ITEMS, {});
 }
 
 function sendItems(socket) {
-  var items = [];
-  for (var uuid in state.items) {
-    if (state.items.hasOwnProperty(uuid)) {
-      items.push(state.items[uuid]);
-    }
+  io.emit('server-set-items', JSON.stringify(values(state.items)));
+}
+
+function parseJSON(callback) {
+  return function(message) {
+    callback(JSON.parse(message));
   }
-  io.emit('server-set-items', JSON.stringify(items));
 }
 
 resetItems();
@@ -79,20 +79,20 @@ io.on('connection', function(socket) {
     resetItems();
     sendItems(socket);
 
-  }).on('client-add-item', function(message) {
+  }).on('client-add-item', parseJSON(function(item) {
 
-    item = JSON.parse(message);
     item.uuid = guid();
     state.items[item.uuid] = item;
     sendItems(socket);
 
-  }).on('client-remove-item', function(message) {
+  })).on('client-remove-item', parseJSON(function(message) {
 
-    message = JSON.parse(message);
     delete state.items[message.uuid];
     sendItems(socket);
 
-  }).on('client-call-add-ice-candidate', function(candidate) {
+  })).on('client-set-selection', parseJSON(function(message) {
+
+  })).on('client-call-add-ice-candidate', function(candidate) {
 
     socket.broadcast.emit('server-call-add-ice-candidate', candidate);
 

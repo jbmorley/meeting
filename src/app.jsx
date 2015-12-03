@@ -155,7 +155,7 @@ var MeetingApp = React.createClass({
                 </FloatingActionButton>)}
 
                 <div className="content">
-                    <ItemGrid items={this.state.messages} onRemoveItem={this._removeItem} />
+                    <ItemGrid items={this.state.messages} onRemoveItem={this._removeItem} onSelect={this._selectItem} />
                     <LeftNav ref="leftNav" docked={false} menuItems={menuItems} />
                 </div>
             </div>
@@ -184,6 +184,10 @@ var MeetingApp = React.createClass({
 
     _removeItem: function(uuid) {
         engine.removeItem(uuid);
+    },
+
+    _selectItem: function(uuid) {
+        alert("Select " + uuid);
     },
 
 });
@@ -225,6 +229,11 @@ var engine = {
     removeItem: function(uuid) {
         var self = this;
         self._socket.emit('client-remove-item', JSON.stringify({uuid: uuid}));
+    },
+
+    selectItem: function(uuid) {
+        var self = this;
+        self._socket.emit('client-set-selection', JSON.stringify({uuid: uuid}));
     },
 
     startCall: function() {

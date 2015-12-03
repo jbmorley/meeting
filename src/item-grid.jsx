@@ -50,6 +50,9 @@ var ItemGrid = React.createClass({
                             <CardHeader
                                 title={item.title}
                                 subtitle={item.url}
+                                onTouchTap={function(e) {
+                                    self.props.onSelect(item.uuid);
+                                }}
                                 avatar={<Avatar>{item.title.charAt(0)}</Avatar>}>
                                 <IconMenu iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}>
                                     <MenuItem primaryText="Remove" onTouchTap={function(e) {
