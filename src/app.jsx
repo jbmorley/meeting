@@ -81,12 +81,12 @@ var MeetingApp = React.createClass({
             items: [],
             users: [],
             state: CallState.DISCONNECTED,
-            showUserDetailsDialog: true,
+            showUserDetailsDialog: false,
             showAddItemDialog: false,
             selection: undefined,
 
-            user: undefined,
-            email: undefined,
+            user: 'Jason Barrie Morley',
+            email: 'jason.morley@inseven.co.uk',
 
         };
     },
