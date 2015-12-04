@@ -133,16 +133,17 @@ var MeetingApp = React.createClass({
 
     _onCloseFullscreenDocument: function() {
         var self = this;
-        self.setState({selection: undefined});
+        engine.clearSelection();
     },
 
     render: function() {
+        var self = this;
         return (
             <div>
                 <AppBar 
                     title="Meeting" 
                     className="app-bar"
-                    onLeftIconButtonTouchTap={function() { this.refs.leftNav.toggle(); }}
+                    onLeftIconButtonTouchTap={function() { self.refs.leftNav.toggle(); }}
                     style={{
                         position: "fixed",
                         top: "0"
@@ -281,7 +282,11 @@ var engine = {
 
             self._meeting.setState({users: users});
 
-        })).on('server-set-selection', parse_message(function(selection) {
+        })).on('server-clear-selection', function() {
+
+            self._meeting.setState({selection: undefined});
+
+        }).on('server-set-selection', parse_message(function(selection) {
 
             for (i in self._meeting.state.items) {
                 item = self._meeting.state.items[i];
@@ -329,6 +334,11 @@ var engine = {
     removeItem: function(uuid) {
         var self = this;
         self._sendMessage('client-remove-item', {uuid: uuid});
+    },
+
+    clearSelection: function() {
+        var self = this;
+        self._socket.emit('client-clear-selection');
     },
 
     selectItem: function(uuid) {

@@ -121,7 +121,12 @@ io.on('connection', function(socket) {
     state.selection = message.uuid;
     broadcastSelection();
 
-  })).on('client-call-add-ice-candidate', function(candidate) {
+  })).on('client-clear-selection', function() {
+
+    state.selection = undefined;
+    io.emit('server-clear-selection');
+
+  }).on('client-call-add-ice-candidate', function(candidate) {
 
     socket.broadcast.emit('server-call-add-ice-candidate', candidate);
 
