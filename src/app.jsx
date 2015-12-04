@@ -18,6 +18,7 @@
 
 const React = require('react');
 const ReactDOM = require('react-dom');
+const LinkedStateMixin = require('react-addons-linked-state-mixin');
 
 var injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
@@ -43,6 +44,7 @@ const RaisedButton = require('material-ui/lib/raised-button');
 const TextField = require('material-ui/lib/text-field');
 const ThemeManager = require('material-ui/lib/styles/theme-manager');
 
+
 const CustomTheme = require('./custom-theme.jsx');
 const ItemGrid = require('./item-grid.jsx');
 const VideoCall = require('./video-call.jsx');
@@ -61,7 +63,8 @@ const CallState = {
 
 var MeetingApp = React.createClass({
 
-    //the key passed through context must be called "muiTheme"
+    mixins: [LinkedStateMixin],
+
     childContextTypes: {
         muiTheme: React.PropTypes.object,
     },
@@ -75,42 +78,61 @@ var MeetingApp = React.createClass({
             items: [],
             newItemTitle: '',
             newItemURL: '',
-            messages: [],
+            items: [],
+            users: [],
             state: CallState.DISCONNECTED,
+            showUserDetailsDialog: true,
             showAddItemDialog: false,
             selection: undefined,
+
+            user: undefined,
+            email: undefined,
+
         };
     },
 
     onChangeTitle: function(e) {
-        this.setState({newItemTitle: e.target.value});
+        var self = this;
+        self.setState({newItemTitle: e.target.value});
     },
 
     onChangeURL: function(e) {
-        this.setState({newItemURL: e.target.value});
+        var self = this;
+        self.setState({newItemURL: e.target.value});
     },
 
     _touch: function(e) {
-        this.refs.leftNav.toggle();
+        var self = this;
+        self.refs.leftNav.toggle();
     },
 
     _addItem: function(e) {
-        this.setState({showAddItemDialog: true});
+        var self = this;
+        self.setState({showAddItemDialog: true});
     },
 
     _resetItems: function(e) {
+        var self = this;
         engine.resetItems();
     },
 
+    _onUserDetailsDialogSubmit: function() {
+        var self = this;
+        engine.setUser({name: self.state.name, email: self.state.email});
+        self.setState({showUserDetailsDialog: false});
+    },
+
     _onAddItemDialogSubmit: function() {
-        this.setState({showAddItemDialog: false});
-        engine.addItem({title: this.state.newItemTitle, url: this.state.newItemURL});
-        this.setState({newItemTitle: '', newItemURL: ''});
+        var self = this;
+        self.setState({showAddItemDialog: false});
+        engine.addItem({title: self.state.newItemTitle, url: self.state.newItemURL});
+        self.setState({newItemTitle: '', newItemURL: ''});
     },
 
     _onAddItemDialogClose: function() {
-        this.setState({showAddItemDialog: false});
-        this.setState({text: ''});
+        var self = this;
+        self.setState({showAddItemDialog: false});
+        self.setState({text: ''});
     },
 
     render: function() {
@@ -130,6 +152,23 @@ var MeetingApp = React.createClass({
                         </IconMenu>} />
 
                 <Dialog
+                    title="Set user details"
+                    actions={[
+                        { text: "OK", onTouchTap: this._onUserDetailsDialogSubmit, ref: "OK" }
+                    ]}
+                    actionFocus="submit"
+                    open={this.state.showUserDetailsDialog}>
+                    <TextField
+                        style={{width: "100%"}}
+                        valueLink={this.linkState('name')}
+                        hintText="Name" /><br />
+                    <TextField
+                        style={{width: "100%"}}
+                        valueLink={this.linkState('email')}
+                        hintText="E-mail Address" />
+                </Dialog>
+
+                <Dialog
                     title="Add item"
                     actions={[
                         { text: "Cancel" },
@@ -137,9 +176,8 @@ var MeetingApp = React.createClass({
                     ]}
                     actionFocus="submit"
                     open={this.state.showAddItemDialog}
-                    onRequestClose={this._onAddItemDialogClose}
-                    modal={false}>
-                    <TextField onChange={this.onChangeTitle} value={this.state.newItemTitle} hintText="Title" />
+                    onRequestClose={this._onAddItemDialogClose}>
+                    <TextField onChange={this.onChangeTitle} value={this.state.newItemTitle} hintText="Title" /><br />
                     <TextField onChange={this.onChangeURL} value={this.state.newItemURL} hintText="URL" />
                 </Dialog>
 
@@ -157,7 +195,7 @@ var MeetingApp = React.createClass({
 
                 <div className="content">
                     <ItemGrid
-                        items={this.state.messages}
+                        items={this.state.items}
                         selection={this.state.selection}
                         onRemoveItem={this._removeItem}
                         onSelect={this._selectItem} />
@@ -168,35 +206,23 @@ var MeetingApp = React.createClass({
     },
 
     _startCall: function() {
+        var self = this;
         engine.startCall();
     },
 
     _callConnected: function() {
-        this.setState({state: CallState.CONNECTED});
-    },
-
-    _setLocalStream: function(url) {
-        this.setState({localStream: url});
-    },
-
-    _setRemoteStream: function(url) {
-        this.setState({remoteStream: url});
-    },
-
-    _setItems: function(items) {
-        this.setState({messages: items})
+        var self = this;
+        self.setState({state: CallState.CONNECTED});
     },
 
     _removeItem: function(uuid) {
+        var self = this;
         engine.removeItem(uuid);
     },
 
     _selectItem: function(uuid) {
+        var self = this;
         engine.selectItem(uuid);
-    },
-
-    setSelection: function(uuid) {
-        this.setState({selection: uuid});
     },
 
 });
@@ -206,31 +232,54 @@ var meeting = ReactDOM.render(
     document.getElementById('app')
 );
 
+function parse_message(callback) {
+  return function(message) {
+    callback(JSON.parse(message));
+  }
+}
+
 var engine = {
 
     connect: function(meeting) {
         var self = this;
         self._meeting = meeting;
         self._socket = io()
-        self._socket.on('server-set-items', function(msg) {
-            self._meeting._setItems(JSON.parse(msg));
-        }).on('server-set-selection', function(msg) {
-            selection = JSON.parse(msg);
-            self._meeting.setSelection(selection.uuid);
-        }).on('server-call-add-ice-candidate', function(candidate) {
-            webRTC.addIceCandidate(JSON.parse(candidate));
-        }).on('server-call-set-session', function(session) {
-            webRTC.handleSessionDescription(JSON.parse(session)).then(function(details) {
+        self._socket.on('server-set-items', parse_message(function(items) {
+
+            self._meeting.setState({items: items});
+
+        })).on('server-set-users', parse_message(function(users) {
+
+            self._meeting.setState({users: users});
+            console.log(users);
+
+        })).on('server-set-selection', parse_message(function(selection) {
+
+            self._meeting.setState({selection: selection.uuid});
+
+        })).on('server-call-add-ice-candidate', parse_message(function(candidate) {
+
+            webRTC.addIceCandidate(candidate);
+
+        })).on('server-call-set-session', parse_message(function(session) {
+
+            webRTC.handleSessionDescription(session).then(function(details) {
                 self._meeting._callConnected();
             }).catch(function(error) {
                 alert("Something went wrong: " + error);
             });
-        });
+
+        }));
     },
 
     _sendMessage: function(message, parameters) {
         var self = this;
         self._socket.emit(message, JSON.stringify(parameters));
+    },
+
+    setUser: function(user) {
+        var self = this;
+        self._sendMessage('client-set-user', user);
     },
 
     resetItems: function() {
@@ -270,12 +319,12 @@ var engine = {
 
     setLocalStream: function(stream) {
         var self = this;
-        self._meeting._setLocalStream(stream);
+        self._meeting.setState({localStream: stream});
     },
 
     setRemoteStream: function(stream) {
         var self = this;
-        self._meeting._setRemoteStream(stream);
+        self._meeting.setState({remoteStream: stream});
     }
 
 };

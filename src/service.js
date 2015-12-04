@@ -40,13 +40,14 @@ DEFAULT_ITEMS = {
 state = {
   items: {},
   selection: undefined,
+  users: {},
 };
 
-function values() {
+function values(object) {
   var items = [];
-  for (var uuid in state.items) {
-    if (state.items.hasOwnProperty(uuid)) {
-      items.push(update(state.items[uuid], {}));
+  for (var key in object) {
+    if (object.hasOwnProperty(key)) {
+      items.push(update(object[key], {}));
     }
   }
   return items;
@@ -64,45 +65,58 @@ function broadcastItems() {
   io.emitJSON('server-set-items', values(state.items));
 }
 
+function broadcastUsers() {
+  io.emitJSON('server-set-users', values(state.users));
+}
+
 function broadcastSelection() {
   io.emitJSON('server-set-selection', {uuid: state.selection});
 }
 
-function parseJSON(callback) {
+function parse_message(callback) {
   return function(message) {
     callback(JSON.parse(message));
   }
 }
 
-// TODO Handle error cases in messages.
-// TODO Consider sending responses to messages to allow for better feedback in the UI
-
 resetItems();
 
 io.on('connection', function(socket) {
 
+  state.users[socket] = {uuid: guid(), name: '', email: ''};
   broadcastItems();
+  broadcastUsers();
   broadcastSelection();
 
   socket.on('disconnect', function() {
 
-  }).on('client-reset-items', function(message) {
+    delete state.users[socket];
+    broadcastUsers();
+
+  }).on('client-set-user', parse_message(function(user) {
+
+    console.log("User " + user.name + " with email " + user.email + " connected");
+    state.users[socket].name = user.name;
+    state.users[socket].email = user.email;
+    broadcastUsers();
+
+  })).on('client-reset-items', function(message) {
 
     resetItems();
     broadcastItems();
 
-  }).on('client-add-item', parseJSON(function(item) {
+  }).on('client-add-item', parse_message(function(item) {
 
     item.uuid = guid();
     state.items[item.uuid] = item;
     broadcastItems();
 
-  })).on('client-remove-item', parseJSON(function(message) {
+  })).on('client-remove-item', parse_message(function(message) {
 
     delete state.items[message.uuid];
     broadcastItems();
 
-  })).on('client-set-selection', parseJSON(function(message) {
+  })).on('client-set-selection', parse_message(function(message) {
 
     state.selection = message.uuid;
     broadcastSelection();

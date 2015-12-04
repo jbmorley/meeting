@@ -7,6 +7,7 @@
     "express": "^4.10.2",
     "material-ui": "^0.13.4",
     "react": "^0.14.1",
+    "react-addons-linked-state-mixin": "^0.14.3",
     "react-addons-update": "^0.14.3",
     "react-dom": "^0.14.1",
     "react-tap-event-plugin": "^0.2.1",
