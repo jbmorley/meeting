@@ -36,11 +36,6 @@ body  {
     min-width: 400px;
     margin: 12px;
     flex-grow: 1;
-    border: 2px solid transparent;
-}
-
-.selected {
-    border: 2px solid #ff5252;
 }
 
 .grid-item iframe {

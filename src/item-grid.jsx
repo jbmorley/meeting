@@ -44,7 +44,7 @@ var ItemGrid = React.createClass({
                     return (
                         <Card
                             key={item.uuid}
-                            className={item.uuid == self.props.selection ? "grid-item selected" : "grid-item"}
+                            className="grid-item"
                             style={{boxShadow: "0px 1px 6px rgba(0, 0, 0, 0.06), 0px 1px 4px rgba(0, 0, 0, 0.06)"}}>
 
                             <CardHeader

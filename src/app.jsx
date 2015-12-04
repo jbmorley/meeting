@@ -44,9 +44,9 @@ const RaisedButton = require('material-ui/lib/raised-button');
 const TextField = require('material-ui/lib/text-field');
 const ThemeManager = require('material-ui/lib/styles/theme-manager');
 
-
 const CustomTheme = require('./custom-theme.jsx');
 const ItemGrid = require('./item-grid.jsx');
+const ItemView = require('./item-view.jsx');
 const VideoCall = require('./video-call.jsx');
 
 var menuItems = [
@@ -81,6 +81,7 @@ var MeetingApp = React.createClass({
             items: [],
             users: [],
             state: CallState.DISCONNECTED,
+
             showUserDetailsDialog: false,
             showAddItemDialog: false,
             selection: undefined,
@@ -99,11 +100,6 @@ var MeetingApp = React.createClass({
     onChangeURL: function(e) {
         var self = this;
         self.setState({newItemURL: e.target.value});
-    },
-
-    _touch: function(e) {
-        var self = this;
-        self.refs.leftNav.toggle();
     },
 
     _addItem: function(e) {
@@ -135,21 +131,36 @@ var MeetingApp = React.createClass({
         self.setState({text: ''});
     },
 
+    _onCloseFullscreenDocument: function() {
+        var self = this;
+        self.setState({selection: undefined});
+    },
+
     render: function() {
         return (
             <div>
                 <AppBar 
                     title="Meeting" 
                     className="app-bar"
-                    onLeftIconButtonTouchTap={this._touch}
-                    style={{position: "fixed", top: "0"}}
+                    onLeftIconButtonTouchTap={function() { this.refs.leftNav.toggle(); }}
+                    style={{
+                        position: "fixed",
+                        top: "0"
+                    }}
                     iconElementRight={
                         <IconMenu iconButtonElement={
-                          <IconButton><MoreVertIcon /></IconButton>
+                            <IconButton>
+                                <MoreVertIcon />
+                            </IconButton>
                         }>
-                          <MenuItem primaryText="Add item" onTouchTap={this._addItem} />
-                          <MenuItem primaryText="Reset items" onTouchTap={this._resetItems} />
-                        </IconMenu>} />
+                            <MenuItem
+                                primaryText="Add item"
+                                onTouchTap={this._addItem} />
+                            <MenuItem
+                                primaryText="Reset items"
+                                onTouchTap={this._resetItems} />
+                        </IconMenu>
+                    } />
 
                 <Dialog
                     title="Set user details"
@@ -177,8 +188,14 @@ var MeetingApp = React.createClass({
                     actionFocus="submit"
                     open={this.state.showAddItemDialog}
                     onRequestClose={this._onAddItemDialogClose}>
-                    <TextField onChange={this.onChangeTitle} value={this.state.newItemTitle} hintText="Title" /><br />
-                    <TextField onChange={this.onChangeURL} value={this.state.newItemURL} hintText="URL" />
+                    <TextField
+                        onChange={this.onChangeTitle}
+                        value={this.state.newItemTitle}
+                        hintText="Title" /><br />
+                    <TextField
+                        onChange={this.onChangeURL}
+                        value={this.state.newItemURL}
+                        hintText="URL" />
                 </Dialog>
 
                 {this.state.state == CallState.CONNECTED
@@ -193,14 +210,26 @@ var MeetingApp = React.createClass({
                        <AVVideocamIcon />
                 </FloatingActionButton>)}
 
+                {this.state.selection != undefined
+                    ? (
+                        <ItemView
+                            title={this.state.selection.title}
+                            url={this.state.selection.url}
+                            onRequestClose={this._onCloseFullscreenDocument} />)
+                    : ''}
+
                 <div className="content">
                     <ItemGrid
                         items={this.state.items}
-                        selection={this.state.selection}
                         onRemoveItem={this._removeItem}
-                        onSelect={this._selectItem} />
-                    <LeftNav ref="leftNav" docked={false} menuItems={menuItems} />
+                        onSelect={this._onSelectItem} />
                 </div>
+
+                <LeftNav
+                    ref="leftNav"
+                    docked={false}
+                    menuItems={menuItems} />
+
             </div>
         );
     },
@@ -220,7 +249,7 @@ var MeetingApp = React.createClass({
         engine.removeItem(uuid);
     },
 
-    _selectItem: function(uuid) {
+    _onSelectItem: function(uuid) {
         var self = this;
         engine.selectItem(uuid);
     },
@@ -251,11 +280,16 @@ var engine = {
         })).on('server-set-users', parse_message(function(users) {
 
             self._meeting.setState({users: users});
-            console.log(users);
 
         })).on('server-set-selection', parse_message(function(selection) {
 
-            self._meeting.setState({selection: selection.uuid});
+            for (i in self._meeting.state.items) {
+                item = self._meeting.state.items[i];
+                if (item.uuid == selection.uuid) {
+                    console.log("Setting selection to " + selection.uuid);
+                    self._meeting.setState({selection: item});
+                }
+            }
 
         })).on('server-call-add-ice-candidate', parse_message(function(candidate) {
 
