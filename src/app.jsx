@@ -77,7 +77,8 @@ var MeetingApp = React.createClass({
             newItemURL: '',
             messages: [],
             state: CallState.DISCONNECTED,
-            showAddItemDialog: false
+            showAddItemDialog: false,
+            selection: undefined,
         };
     },
 
@@ -155,7 +156,11 @@ var MeetingApp = React.createClass({
                 </FloatingActionButton>)}
 
                 <div className="content">
-                    <ItemGrid items={this.state.messages} onRemoveItem={this._removeItem} onSelect={this._selectItem} />
+                    <ItemGrid
+                        items={this.state.messages}
+                        selection={this.state.selection}
+                        onRemoveItem={this._removeItem}
+                        onSelect={this._selectItem} />
                     <LeftNav ref="leftNav" docked={false} menuItems={menuItems} />
                 </div>
             </div>
@@ -187,7 +192,11 @@ var MeetingApp = React.createClass({
     },
 
     _selectItem: function(uuid) {
-        alert("Select " + uuid);
+        engine.selectItem(uuid);
+    },
+
+    setSelection: function(uuid) {
+        this.setState({selection: uuid});
     },
 
 });
@@ -205,6 +214,9 @@ var engine = {
         self._socket = io()
         self._socket.on('server-set-items', function(msg) {
             self._meeting._setItems(JSON.parse(msg));
+        }).on('server-set-selection', function(msg) {
+            selection = JSON.parse(msg);
+            self._meeting.setSelection(selection.uuid);
         }).on('server-call-add-ice-candidate', function(candidate) {
             webRTC.addIceCandidate(JSON.parse(candidate));
         }).on('server-call-set-session', function(session) {
@@ -216,6 +228,11 @@ var engine = {
         });
     },
 
+    _sendMessage: function(message, parameters) {
+        var self = this;
+        self._socket.emit(message, JSON.stringify(parameters));
+    },
+
     resetItems: function() {
         var self = this;
         self._socket.emit('client-reset-items');
@@ -223,17 +240,17 @@ var engine = {
 
     addItem: function(item) {
         var self = this;
-        self._socket.emit('client-add-item', JSON.stringify(item));
+        self._sendMessage('client-add-item', item);
     },
 
     removeItem: function(uuid) {
         var self = this;
-        self._socket.emit('client-remove-item', JSON.stringify({uuid: uuid}));
+        self._sendMessage('client-remove-item', {uuid: uuid});
     },
 
     selectItem: function(uuid) {
         var self = this;
-        self._socket.emit('client-set-selection', JSON.stringify({uuid: uuid}));
+        self._sendMessage('client-set-selection', {uuid: uuid});
     },
 
     startCall: function() {

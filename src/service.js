@@ -38,7 +38,8 @@ DEFAULT_ITEMS = {
 };
 
 state = {
-  items: {}
+  items: {},
+  selection: undefined,
 };
 
 function values() {
@@ -51,12 +52,20 @@ function values() {
   return items;
 }
 
+io.emitJSON = function(message, parameters) {
+  io.emit(message, JSON.stringify(parameters));
+};
+
 function resetItems() {
   state.items = update(DEFAULT_ITEMS, {});
 }
 
-function sendItems(socket) {
-  io.emit('server-set-items', JSON.stringify(values(state.items)));
+function broadcastItems() {
+  io.emitJSON('server-set-items', values(state.items));
+}
+
+function broadcastSelection() {
+  io.emitJSON('server-set-selection', {uuid: state.selection});
 }
 
 function parseJSON(callback) {
@@ -65,32 +74,38 @@ function parseJSON(callback) {
   }
 }
 
+// TODO Handle error cases in messages.
+// TODO Consider sending responses to messages to allow for better feedback in the UI
+
 resetItems();
 
 io.on('connection', function(socket) {
 
-  // Send the current state to the newly connected client.
-  sendItems(socket);
+  broadcastItems();
+  broadcastSelection();
 
   socket.on('disconnect', function() {
 
   }).on('client-reset-items', function(message) {
 
     resetItems();
-    sendItems(socket);
+    broadcastItems();
 
   }).on('client-add-item', parseJSON(function(item) {
 
     item.uuid = guid();
     state.items[item.uuid] = item;
-    sendItems(socket);
+    broadcastItems();
 
   })).on('client-remove-item', parseJSON(function(message) {
 
     delete state.items[message.uuid];
-    sendItems(socket);
+    broadcastItems();
 
   })).on('client-set-selection', parseJSON(function(message) {
+
+    state.selection = message.uuid;
+    broadcastSelection();
 
   })).on('client-call-add-ice-candidate', function(candidate) {
 
