@@ -6,5 +6,6 @@ build
 
 src/.htpasswd
 src/.htgroup
+src/config.jsx
 
 src/static/examples

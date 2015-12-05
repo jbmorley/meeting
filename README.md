@@ -27,6 +27,34 @@ npm install
 
 See the [React documentation](http://facebook.github.io/react/docs/getting-started.html#using-react-from-npm) for further notes on installation.
 
+### Configuration
+
+Before you are able to build the project, you will need to create some initial configuration files:
+
+1. WebRTC requires that you provide some STUN and/or TURN (hole-punching and relay respectively) servers in order to negotate a connection.
+
+   To do this, create `src/config.jsx` containing your ICE and TURN server details. For example,
+
+   ```javascript
+   module.exports = {
+       'iceServers': [
+           {
+               'url': 'stun:stun.services.mozilla.com'
+           },
+           {
+               'url': 'stun:stun.l.google.com:19302'
+           },
+           {
+               'url': 'turn:relay.inseven.co.uk:3478',
+               'username': 'user',
+               'credential': 'pass',
+           },
+       ]
+   };
+   ```
+   
+    Mozilla and Google host ICE servers but do not provide TURN servers (as these are costly to run). Both the Mozilla and Google STUN servers should be safe to use, but you will need to bring your own TURN server (`relay.inseven.co.uk` does not exist).
+
 ### Building
 
 From the root directory of the project:

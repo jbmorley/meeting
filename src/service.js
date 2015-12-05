@@ -17,7 +17,7 @@
  */
 
 var update = require('react-addons-update');
-var guid = require('./guid.js');
+var guid = require('./lib/guid.js');
 
 var Express = require('express'),
     Path = require('path'),
@@ -39,7 +39,6 @@ DEFAULT_ITEMS = {
   6: {uuid: 6, title: "% Clicked a link", url: "examples/clicked.pdf"},
   7: {uuid: 7, title: "Continuous improvement", url: "charts/table.html"},
   8: {uuid: 8, title: "Bar chart", url: "charts/bar.html"},
-
 };
 
 state = {

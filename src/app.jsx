@@ -44,10 +44,12 @@ const RaisedButton = require('material-ui/lib/raised-button');
 const TextField = require('material-ui/lib/text-field');
 const ThemeManager = require('material-ui/lib/styles/theme-manager');
 
-const CustomTheme = require('./custom-theme.jsx');
-const ItemGrid = require('./item-grid.jsx');
-const ItemView = require('./item-view.jsx');
-const VideoCall = require('./video-call.jsx');
+const CustomTheme = require('./lib/custom-theme.jsx');
+const ItemGrid = require('./lib/item-grid.jsx');
+const ItemView = require('./lib/item-view.jsx');
+const VideoCall = require('./lib/video-call.jsx');
+
+const webRTC = require('./lib/webrtc.jsx');
 
 var menuItems = [
   { route: 'get-started', text: 'Get Started' },
