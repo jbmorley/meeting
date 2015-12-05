@@ -23,6 +23,10 @@ window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnecti
 window.RTCIceCandidate = window.RTCIceCandidate || window.mozRTCIceCandidate || window.webkitRTCIceCandidate;
 window.RTCSessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription;
 
+var constraints = {
+    offerToReceiveAudio: true,
+    offerToReceiveVideo: true
+};
 
 var webRTC = {
 
@@ -113,7 +117,7 @@ var webRTC = {
             details.peerConnection.createOffer(function(description) {
                 details.description = description;
                 resolve(details);
-            }, reject);
+            }, reject, constraints);
         });
     },
 
@@ -143,7 +147,7 @@ var webRTC = {
             peerConnection.createAnswer(function(description) {
                 details.description = description;
                 resolve(details);
-            }, reject);
+            }, reject, constraints);
         });
     },
 
