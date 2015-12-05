@@ -195,17 +195,31 @@ var MeetingApp = React.createClass({
                         hintText="URL" />
                 </Dialog>
 
-                {this.state.state == CallState.CONNECTED
-                    ? (<VideoCall 
-                           localStream={this.state.localStream}
-                           remoteStream={this.state.remoteStream} />)
-                    : (<FloatingActionButton style={{position: "fixed",
-                                                     bottom: "36px",
-                                                     right: "36px",
-                                                     zIndex: 8}}
-                           onTouchTap={this._startCall}>
-                       <AVVideocamIcon />
-                </FloatingActionButton>)}
+                {function() {
+
+                    if (webRTC.isSupported()) {
+                        if (self.state.state == CallState.CONNECTED) {
+                            return (
+                                <VideoCall 
+                                    localStream={this.state.localStream}
+                                    remoteStream={this.state.remoteStream} />
+                            );
+                        } else {
+                            return (
+                                <FloatingActionButton
+                                    style={{
+                                        position: "fixed",
+                                        bottom: "36px",
+                                        right: "36px",
+                                        zIndex: 8}}
+                                    onTouchTap={this._startCall}>
+                                    <AVVideocamIcon />
+                                </FloatingActionButton>
+                            );
+                        }
+                    }
+
+                }()}
 
                 {this.state.selection != undefined
                     ? (

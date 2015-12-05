@@ -26,6 +26,10 @@ window.RTCSessionDescription = window.RTCSessionDescription || window.mozRTCSess
 
 var webRTC = {
 
+    isSupported: function() {
+        return navigator.getUserMedia != undefined;
+    },
+
     // onIceCandidate: null,
     onIceCandidate: function(candidate) {
         console.log("WARNING: webRTC.onIceCandidate not implemented");
@@ -42,7 +46,7 @@ var webRTC = {
     _checkSupport: function() {
         var self = this;
         return new Promise(function(resolve, reject) {
-            if (navigator.getUserMedia) {
+            if (self.isSupported()) {
                 console.log("WebRTC is available");
                 resolve(true);
             } else {
