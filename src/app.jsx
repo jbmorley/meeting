@@ -201,8 +201,8 @@ var MeetingApp = React.createClass({
                         if (self.state.state == CallState.CONNECTED) {
                             return (
                                 <VideoCall 
-                                    localStream={this.state.localStream}
-                                    remoteStream={this.state.remoteStream} />
+                                    localStream={self.state.localStream}
+                                    remoteStream={self.state.remoteStream} />
                             );
                         } else {
                             return (
@@ -212,7 +212,7 @@ var MeetingApp = React.createClass({
                                         bottom: "36px",
                                         right: "36px",
                                         zIndex: 8}}
-                                    onTouchTap={this._startCall}>
+                                    onTouchTap={self._startCall}>
                                     <AVVideocamIcon />
                                 </FloatingActionButton>
                             );
