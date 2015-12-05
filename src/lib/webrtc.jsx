@@ -241,7 +241,7 @@ var webRTC = {
                 .then(self._createAnswer)
                 .then(self._setLocalDescription)
                 .then(self._sendDescription)
-                .then(self._setState(webRTC.CONNECTED))
+                .then(self._setState(webRTC.CONNECTED));
 
         }
 

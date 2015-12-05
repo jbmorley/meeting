@@ -41,6 +41,7 @@ const MenuItem = require('material-ui/lib/menus/menu-item');
 const MoreVertIcon = require('material-ui/lib/svg-icons/navigation/more-vert');
 const Paper = require('material-ui/lib/paper');
 const RaisedButton = require('material-ui/lib/raised-button');
+const Snackbar = require('material-ui/lib/snackbar');
 const TextField = require('material-ui/lib/text-field');
 const ThemeManager = require('material-ui/lib/styles/theme-manager');
 
@@ -235,6 +236,11 @@ var MeetingApp = React.createClass({
                         onRemoveItem={this._onRemoveItem}
                         onSelect={this._onSelectItem} />
                 </div>
+
+                <Snackbar
+                    message="Incoming call"
+                    action="Accept"
+                    onActionTouchTap={this._handleAction}/>
 
             </div>
         );
