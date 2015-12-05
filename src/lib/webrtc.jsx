@@ -154,7 +154,7 @@ var webRTC = {
         console.log("Sending the session description to the server");
         return new Promise(function(resolve, reject) {
             if (webRTC.onSessionDescription) {
-                webRTC.onSessionDescription(JSON.stringify(details.description))
+                webRTC.onSessionDescription(details.description)
                 resolve(details);
             } else {
                 reject("onSessionDescription not defined");

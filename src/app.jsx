@@ -74,6 +74,7 @@ var MeetingApp = React.createClass({
 
     getInitialState: function() {
         return {
+
             items: [],
             newItemTitle: '',
             newItemURL: '',
@@ -87,6 +88,9 @@ var MeetingApp = React.createClass({
 
             user: 'Jason Barrie Morley',
             email: 'jason.morley@inseven.co.uk',
+
+            offer: undefined,
+            answer: undefined,
 
         };
     },
@@ -237,10 +241,18 @@ var MeetingApp = React.createClass({
                         onSelect={this._onSelectItem} />
                 </div>
 
-                <Snackbar
-                    message="Incoming call"
-                    action="Accept"
-                    onActionTouchTap={this._handleAction}/>
+                {function() {
+                    if (self.state.offer != undefined &&
+                        self.state.callState == webRTC.DISCONNECTED) {
+                        return (
+                            <Snackbar
+                                openOnMount={true}
+                                message="Incoming call"
+                                action="Accept"
+                                onActionTouchTap={this._handleCallAccept} />
+                        );
+                    }
+                }()}
 
             </div>
         );
@@ -266,6 +278,12 @@ var MeetingApp = React.createClass({
         engine.setSelection(index);
     },
 
+    _handleCallAccept: function() {
+        var self = this;
+        alert("HANDLE CALL ACCEPT");
+        webRTC.handleSessionDescription(self.state.offer);
+    },
+
 });
 
 var meeting = ReactDOM.render(
@@ -288,18 +306,22 @@ var engine = {
                 items: state.items,
                 users: values(state.users),
                 selection: state.selection != undefined ? state.items[state.selection] : undefined,
+                offer: state.offer,
+                answer: state.answer,
             });
+
+            if (state.answer != undefined && webRTC.state == webRTC.OFFERING) {
+                webRTC.handleSessionDescription(state.answer);
+            }
 
         })).on('server-call-add-ice-candidate', parse_message(function(candidate) {
 
-            webRTC.addIceCandidate(candidate);
+            if (webRTC.state != webRTC.UNSUPPORTED) {
+                webRTC.addIceCandidate(candidate);
+            }
 
         })).on('server-call-set-session', parse_message(function(session) {
 
-            webRTC.handleSessionDescription(session)
-                .catch(function(error) {
-                    alert("Something went wrong: " + error);
-                });
 
         }));
     },
@@ -346,7 +368,14 @@ var engine = {
 
     setSession: function(session) {
         var self = this;
-        self._socket.emit('client-call-set-session', session);
+        console.log(session);
+        if (session.type == "offer") {
+            self._sendMessage('client-call-set-offer', session);
+        } else if (session.type == "answer") {
+            self._sendMessage('client-call-set-answer', session)
+        } else {
+            alert("Unsupported session type!");
+        }
     },
 
     setLocalStream: function(stream) {

@@ -47,6 +47,8 @@ state = {
   items: {},
   selection: undefined,
   users: {},
+  offer: undefined,
+  answer: undefined,
 };
 
 io.emitJSON = function(message, parameters) {
@@ -104,11 +106,17 @@ io.on('connection', function(socket) {
 
     socket.broadcast.emit('server-call-add-ice-candidate', candidate);
 
-  }).on('client-call-set-session', function(session) {
+  }).on('client-call-set-offer', parse_message(function(offer) {
 
-    socket.broadcast.emit('server-call-set-session', session);
+    state.offer = offer;
+    broadcastState();
 
-  });
+  })).on('client-call-set-answer', parse_message(function(session) {
+
+    state.answer = answer;
+    broadcastState();
+
+  }));
 });
 
 server.listen(3000, function(){
