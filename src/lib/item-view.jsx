@@ -21,6 +21,7 @@ const React = require('react');
 const AppBar = require('material-ui/lib/app-bar');
 const IconButton = require('material-ui/lib/icon-button');
 const NavigationClose = require('material-ui/lib/svg-icons/navigation/close');
+const Paper = require('material-ui/lib/paper');
 
 var ItemView = React.createClass({
 
@@ -71,20 +72,37 @@ var ItemView = React.createClass({
                         </IconButton>
                     } />
 
-                <iframe
+                <div
                     style={{
-                        boxSizing: 'border-box',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
                         width: this.state.width + 'px',
-                        height: (this.state.height - 64) + 'px',
-                        border: '0',
-                        margin: 'auto',
-                        marginTop: '64px',
-                        backgroundColor: '#fff',
+                        height: this.state.height + 'px',
+                        textAlign: 'center',
                     }}
-                    src={this.props.url} />
+                >
+
+                    <Paper
+                        style={{
+                            boxSizing: 'border-box',
+                            width: Math.min(1024, this.state.width) + 'px',
+                            height: (this.state.height - 64) + 'px',
+                            margin: 'auto',
+                            marginTop: '64px',
+                        }}
+                        zDepth={2}
+                    >
+                        <iframe
+                            style={{
+                                boxSizing: 'border-box',
+                                width: Math.min(1024, this.state.width) + 'px',
+                                height: (this.state.height - 64) + 'px',
+                                border: '0',
+                                margin: 'auto',
+                                backgroundColor: '#fff',
+                            }}
+                            src={this.props.url} />
+                    </Paper>
+
+                </div>
 
             </div>
         );
