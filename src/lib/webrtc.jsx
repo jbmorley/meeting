@@ -30,7 +30,6 @@ var webRTC = {
         return navigator.getUserMedia != undefined;
     },
 
-    // onIceCandidate: null,
     onIceCandidate: function(candidate) {
         console.log("WARNING: webRTC.onIceCandidate not implemented");
     },
