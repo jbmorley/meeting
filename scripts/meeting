@@ -81,7 +81,7 @@ def build(options):
     print "Building..."
     static_dir = os.path.join(BUILD_DIR, "static")
     makedirs(BUILD_DIR)
-    copyfiles(SRC_DIR, BUILD_DIR, ["service.js", "guid.js"])
+    copyfiles(SRC_DIR, BUILD_DIR, ["service.js", "guid.js", ".htpasswd", ".htgroup"])
     sync(os.path.join(SRC_DIR, "static"), static_dir)
     with Chdir(ROOT_DIR):
         command(["browserify", "-t", "reactify",

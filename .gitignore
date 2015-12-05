@@ -1,3 +1,10 @@
-node_modules
-build
 meeting.sublime-workspace
+
+node_modules
+
+build
+
+src/.htpasswd
+src/.htgroup
+
+src/static/examples

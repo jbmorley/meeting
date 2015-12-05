@@ -33,7 +33,15 @@
     - name: enable proxy_http
       command: a2enmod proxy_http
       args:
-        creates: "/etc/apache2/sites-enabled/proxy_http.load"
+        creates: "/etc/apache2/mods-enabled/proxy_http.load"
+      become: yes
+      notify:
+        - restart apache2
+
+    - name: enable authz_groupfile
+      command: a2enmod authz_groupfile
+      args:
+        creates: "/etc/apache2/mods-enabled/authz_groupfile.load"
       become: yes
       notify:
         - restart apache2
