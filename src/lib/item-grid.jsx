@@ -40,7 +40,7 @@ var ItemGrid = React.createClass({
         var self = this;
         return (
             <div className="grid">
-                {this.props.items.map(function(item) {
+                {this.props.items.map(function(item, index) {
                     return (
                         <Card
                             key={item.uuid}
@@ -72,7 +72,7 @@ var ItemGrid = React.createClass({
                                         right: 0,
                                     }}
                                     onTouchTap={function(event) {
-                                        self.props.onRemoveItem(item.uuid);
+                                        self.props.onRemoveItem(index);
                                     }} >
                                     <CloseIcon />
                                 </IconButton>
@@ -106,7 +106,7 @@ var ItemGrid = React.createClass({
                                             cursor: 'zoom-in',
                                         }}
                                         onTouchTap={function(event) {
-                                            self.props.onSelect(item.uuid);
+                                            self.props.onSelect(index);
                                         }} >
                                     </div>
                                 </div>

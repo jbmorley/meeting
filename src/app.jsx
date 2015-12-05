@@ -131,7 +131,7 @@ var MeetingApp = React.createClass({
 
     _onCloseFullscreenDocument: function() {
         var self = this;
-        engine.clearSelection();
+        engine.setSelection(undefined);
     },
 
     render: function() {
@@ -231,7 +231,7 @@ var MeetingApp = React.createClass({
                 <div className="content">
                     <ItemGrid
                         items={this.state.items}
-                        onRemoveItem={this._removeItem}
+                        onRemoveItem={this._onRemoveItem}
                         onSelect={this._onSelectItem} />
                 </div>
 
@@ -249,14 +249,14 @@ var MeetingApp = React.createClass({
         self.setState({state: CallState.CONNECTED});
     },
 
-    _removeItem: function(uuid) {
+    _onRemoveItem: function(index) {
         var self = this;
-        engine.removeItem(uuid);
+        engine.removeItem(index);
     },
 
-    _onSelectItem: function(uuid) {
+    _onSelectItem: function(index) {
         var self = this;
-        engine.selectItem(uuid);
+        engine.setSelection(index);
     },
 
 });
@@ -274,8 +274,11 @@ var engine = {
         self._socket = io()
         self._socket.on('server-set-state', parse_message(function(state) {
 
+            console.log("Updating state...");
+            console.log(state);
+
             self._meeting.setState({
-                items: values(state.items),
+                items: state.items,
                 users: values(state.users),
                 selection: state.selection != undefined ? state.items[state.selection] : undefined,
             });
@@ -315,19 +318,14 @@ var engine = {
         self._sendMessage('client-add-item', item);
     },
 
-    removeItem: function(uuid) {
+    removeItem: function(index) {
         var self = this;
-        self._sendMessage('client-remove-item', {uuid: uuid});
+        self._sendMessage('client-remove-item', {index: index});
     },
 
-    clearSelection: function() {
+    setSelection: function(index) {
         var self = this;
-        self._socket.emit('client-clear-selection');
-    },
-
-    selectItem: function(uuid) {
-        var self = this;
-        self._sendMessage('client-set-selection', {uuid: uuid});
+        self._sendMessage('client-set-selection', {index: index});
     },
 
     startCall: function() {

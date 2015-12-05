@@ -32,16 +32,16 @@ var app = Express(),
 
 app.use(Express.static(Path.join(__dirname, 'static')));
 
-DEFAULT_ITEMS = {
-  1: {uuid: 1, title: "UWO Activity - Sessions/Users", url: "examples/activity.pdf"},
-  2: {uuid: 2, title: "UWO Engagement - Pages/Session", url: "examples/engagement_pages_session.pdf"},
-  3: {uuid: 3, title: "UWO Engagement - Av Session Duration", url: "examples/engagement_session_duration.pdf"},
-  4: {uuid: 4, title: "Unique opens of UWO campaign (CM)", url: "examples/unique_opens.pdf"},
-  5: {uuid: 5, title: "% Unsubscribed (CM)", url: "examples/unsubscribed.pdf"},
-  6: {uuid: 6, title: "% Clicked a link (CM)", url: "examples/clicked.pdf"},
-  7: {uuid: 7, title: "Continuous improvement", url: "charts/table.html"},
-  8: {uuid: 8, title: "Bar chart", url: "charts/bar.html"},
-};
+DEFAULT_ITEMS = [
+  {uuid: guid(), title: "UWO Activity - Sessions/Users", url: "examples/activity.pdf"},
+  {uuid: guid(), title: "UWO Engagement - Pages/Session", url: "examples/engagement_pages_session.pdf"},
+  {uuid: guid(), title: "UWO Engagement - Av Session Duration", url: "examples/engagement_session_duration.pdf"},
+  {uuid: guid(), title: "Unique opens of UWO campaign (CM)", url: "examples/unique_opens.pdf"},
+  {uuid: guid(), title: "% Unsubscribed (CM)", url: "examples/unsubscribed.pdf"},
+  {uuid: guid(), title: "% Clicked a link (CM)", url: "examples/clicked.pdf"},
+  {uuid: guid(), title: "Continuous improvement", url: "charts/table.html"},
+  {uuid: guid(), title: "Bar chart", url: "charts/bar.html"},
+];
 
 state = {
   items: {},
@@ -75,7 +75,6 @@ io.on('connection', function(socket) {
 
   }).on('client-set-user', parse_message(function(user) {
 
-    console.log("User " + user.name + " with email " + user.email + " connected");
     state.users[socket].name = user.name;
     state.users[socket].email = user.email;
     broadcastState();
@@ -93,20 +92,15 @@ io.on('connection', function(socket) {
 
   })).on('client-remove-item', parse_message(function(message) {
 
-    delete state.items[message.uuid];
+    state.items.splice(message.index, 1);
     broadcastState();
 
   })).on('client-set-selection', parse_message(function(message) {
 
-    state.selection = message.uuid;
+    state.selection = message.index;
     broadcastState();
 
-  })).on('client-clear-selection', function() {
-
-    state.selection = undefined;
-    broadcastState();
-
-  }).on('client-call-add-ice-candidate', function(candidate) {
+  })).on('client-call-add-ice-candidate', function(candidate) {
 
     socket.broadcast.emit('server-call-add-ice-candidate', candidate);
 
