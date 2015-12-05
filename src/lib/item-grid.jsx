@@ -93,6 +93,7 @@ var ItemGrid = React.createClass({
                                             left: 0,
                                             width: "100%",
                                             height: "100%",
+                                            cursor: 'zoom-in',
                                         }}
                                         onTouchTap={function(event) {
                                             self.props.onSelect(item.uuid);

@@ -24,6 +24,22 @@ const NavigationClose = require('material-ui/lib/svg-icons/navigation/close');
 
 var ItemView = React.createClass({
 
+    updateDimensions: function() {
+        this.setState({width: window.innerWidth, height: window.innerHeight});
+    },
+
+    componentWillMount: function() {
+        this.updateDimensions();
+    },
+
+    componentDidMount: function() {
+        window.addEventListener("resize", this.updateDimensions);
+    },
+
+    componentWillUnmount: function() {
+        window.removeEventListener("resize", this.updateDimensions);
+    },
+
     render: function() {
         var self = this;
         return (
@@ -37,49 +53,38 @@ var ItemView = React.createClass({
                     height: '100%',
                     zIndex: 10,
                     backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                }}>
-                <div
+                }}
+            >
+
+                <AppBar
                     style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        height: '100%',
+                        boxShadow: 0,
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
                     }}
-                    onTouchTap={this.props.onRequestClose}
-                >
+                    title={this.props.title}
+                    iconElementLeft={
+                        <IconButton
+                            onTouchTap={self.props.onRequestClose}>
+                            <NavigationClose />
+                        </IconButton>
+                    } />
 
-                    <AppBar
-                        style={{boxShadow: 0}}
-                        title={this.props.title}
-                        iconElementLeft={
-                            <IconButton
-                                onTouchTap={self.props.onRequestClose}>
-                                <NavigationClose />
-                            </IconButton>
-                        } />
-
-                    <div
-                        style={{
-                            position: 'relative',
-                            boxSizing: 'border-box',
-                            flexGrow: '1',
-                            backgroundColor: '#fff',
-                            maxWidth: '600px',
-                            maxHeight: '600px',
-                            margin: 'auto',
-                            display: 'flex',
-                            flexDirection: 'column',
-                        }}>
-                        <iframe
-                            style={{
-                                width: '100%',
-                                height: '100%',
-                                border: '0',
-                                flexGrow: '1',
-                            }}
-                            src={this.props.url} />
-                    </div>
-
-                </div>
+                <iframe
+                    style={{
+                        boxSizing: 'border-box',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: this.state.width + 'px',
+                        height: (this.state.height - 64) + 'px',
+                        border: '0',
+                        margin: 'auto',
+                        marginTop: '64px',
+                        backgroundColor: '#fff',
+                    }}
+                    src={this.props.url} />
 
             </div>
         );
