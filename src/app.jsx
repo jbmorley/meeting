@@ -51,12 +51,6 @@ const VideoCall = require('./lib/video-call.jsx');
 
 const webRTC = require('./lib/webrtc.jsx');
 
-var menuItems = [
-  { route: 'get-started', text: 'Get Started' },
-  { route: 'customization', text: 'Customization' },
-  { route: 'components', text: 'Components' },
-];
-
 const CallState = {
     DISCONNECTED: 0,
     CONNECTING: 1,
@@ -145,7 +139,7 @@ var MeetingApp = React.createClass({
                 <AppBar 
                     title="Meeting" 
                     className="app-bar"
-                    onLeftIconButtonTouchTap={function() { self.refs.leftNav.toggle(); }}
+                    iconElementLeft={<IconButton />}
                     style={{
                         position: "fixed",
                         top: "0"
@@ -227,11 +221,6 @@ var MeetingApp = React.createClass({
                         onRemoveItem={this._removeItem}
                         onSelect={this._onSelectItem} />
                 </div>
-
-                <LeftNav
-                    ref="leftNav"
-                    docked={false}
-                    menuItems={menuItems} />
 
             </div>
         );
