@@ -78,7 +78,7 @@ var MeetingApp = React.createClass({
             newItemURL: '',
             items: [],
             users: [],
-            state: CallState.DISCONNECTED,
+            callState: webRTC.DISCONNECTED,
 
             showUserDetailsDialog: false,
             showAddItemDialog: false,
@@ -199,14 +199,16 @@ var MeetingApp = React.createClass({
 
                 {function() {
 
-                    if (webRTC.isSupported()) {
-                        if (self.state.state == CallState.CONNECTED) {
+                    switch (self.state.callState) {
+                        case webRTC.UNSUPPORTED:
+                            return '';
+                        case webRTC.CONNECTED:
                             return (
                                 <VideoCall 
                                     localStream={self.state.localStream}
                                     remoteStream={self.state.remoteStream} />
                             );
-                        } else {
+                        case webRTC.DISCONNECTED:
                             return (
                                 <FloatingActionButton
                                     style={{
@@ -218,7 +220,6 @@ var MeetingApp = React.createClass({
                                     <AVVideocamIcon />
                                 </FloatingActionButton>
                             );
-                        }
                     }
 
                 }()}
@@ -290,7 +291,7 @@ var engine = {
         })).on('server-call-set-session', parse_message(function(session) {
 
             webRTC.handleSessionDescription(session).then(function(details) {
-                self._meeting._callConnected();
+                self._meeting.setState({callState: webRTC.state});
             }).catch(function(error) {
                 alert("Something went wrong: " + error);
             });
@@ -359,5 +360,6 @@ webRTC.onIceCandidate = function (candidate) { engine.addIceCandidate(candidate)
 webRTC.onSessionDescription = function(session) { engine.setSession(session); }
 webRTC.onAttachLocalStream = function(stream) { engine.setLocalStream(stream); }
 webRTC.onAttachRemoteStream = function(stream) { engine.setRemoteStream(stream); }
+webRTC.onStateChange = function(state) { console.log("STATE: " + state); }
 
-engine.connect(meeting)
+engine.connect(meeting);

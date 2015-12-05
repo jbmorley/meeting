@@ -28,11 +28,19 @@ var constraints = {
     offerToReceiveVideo: true
 };
 
+function isSupported() {
+    return navigator.getUserMedia != undefined;
+}
+
 var webRTC = {
 
-    isSupported: function() {
-        return navigator.getUserMedia != undefined;
-    },
+    UNSUPPORTED: 0,
+    DISCONNECTED: 1,
+    OFFERING: 2,
+    ANSWERING: 3,
+    CONNECTED: 4,
+
+    state: isSupported() ? this.DISCONNECTED : this.UNSUPPORTED,
 
     onIceCandidate: function(candidate) {
         console.log("WARNING: webRTC.onIceCandidate not implemented");
@@ -49,7 +57,7 @@ var webRTC = {
     _checkSupport: function() {
         var self = this;
         return new Promise(function(resolve, reject) {
-            if (self.isSupported()) {
+            if (isSupported()) {
                 console.log("WebRTC is available");
                 resolve(true);
             } else {
@@ -121,6 +129,19 @@ var webRTC = {
         });
     },
 
+    _setState: function(state) {
+        webRTC.state = state;
+        console.log("Setting WebRTC state to " + state + "...");
+        if (webRTC.onStateChange != undefined) {
+            webRTC.onStateChange(state);
+        }
+        return function(details) {
+            return new Promise(function(resolve, reject) {
+                resolve(details);
+            });
+        };
+    },
+
     _setLocalDescription: function(details) {
         return new Promise(function(resolve, reject) {
             details.peerConnection.setLocalDescription(details.description, function() {
@@ -175,6 +196,7 @@ var webRTC = {
     startCall: function() {
         var self = this;
         self._checkSupport()
+            .then(self._setState(webRTC.OFFERING))
             .then(self._getPeerConnection)
             .then(self._getUserMedia)
             .then(self._attachLocalStream)
@@ -206,10 +228,12 @@ var webRTC = {
                 .then(self._getUserMedia)
                 .then(self._attachLocalStream)
                 .then(self._setRemoteDescription(description))
+                .then(self._setState(webRTC.CONNECTED))
 
         } else {
 
             return self._checkSupport()
+                .then(self._setState(webRTC.ANSWERING))
                 .then(self._getPeerConnection)
                 .then(self._getUserMedia)
                 .then(self._attachLocalStream)
@@ -217,6 +241,7 @@ var webRTC = {
                 .then(self._createAnswer)
                 .then(self._setLocalDescription)
                 .then(self._sendDescription)
+                .then(self._setState(webRTC.CONNECTED))
 
         }
 
