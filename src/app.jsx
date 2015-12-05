@@ -290,11 +290,10 @@ var engine = {
 
         })).on('server-call-set-session', parse_message(function(session) {
 
-            webRTC.handleSessionDescription(session).then(function(details) {
-                self._meeting.setState({callState: webRTC.state});
-            }).catch(function(error) {
-                alert("Something went wrong: " + error);
-            });
+            webRTC.handleSessionDescription(session)
+                .catch(function(error) {
+                    alert("Something went wrong: " + error);
+                });
 
         }));
     },
@@ -352,7 +351,12 @@ var engine = {
     setRemoteStream: function(stream) {
         var self = this;
         self._meeting.setState({remoteStream: stream});
-    }
+    },
+
+    setCallState: function(state) {
+        var self = this;
+        self._meeting.setState({callState: state});
+    },
 
 };
 
@@ -360,6 +364,6 @@ webRTC.onIceCandidate = function (candidate) { engine.addIceCandidate(candidate)
 webRTC.onSessionDescription = function(session) { engine.setSession(session); }
 webRTC.onAttachLocalStream = function(stream) { engine.setLocalStream(stream); }
 webRTC.onAttachRemoteStream = function(stream) { engine.setRemoteStream(stream); }
-webRTC.onStateChange = function(state) { console.log("STATE: " + state); }
+webRTC.onStateChange = function(state) { engine.setCallState(state); }
 
 engine.connect(meeting);
