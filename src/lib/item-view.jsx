@@ -17,6 +17,7 @@
  */
 
 const React = require('react');
+const ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 
 const AppBar = require('material-ui/lib/app-bar');
 const IconButton = require('material-ui/lib/icon-button');
@@ -44,67 +45,80 @@ var ItemView = React.createClass({
     render: function() {
         var self = this;
         return (
-            <div
-                style={{
-                    position: 'fixed',
-                    boxSizing: 'border-box',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    zIndex: 10,
-                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                }}
+            <ReactCSSTransitionGroup
+                transitionName="example"
+                transitionEnterTimeout={150}
+                transitionLeaveTimeout={150}
             >
+                {function() {
+                    if (self.props.open) {
+                        return (
+                            <div
+                                key={self.props.item.url}
+                                style={{
+                                    position: 'fixed',
+                                    boxSizing: 'border-box',
+                                    top: 0,
+                                    left: 0,
+                                    width: '100%',
+                                    height: '100%',
+                                    zIndex: 10,
+                                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                                }}
+                            >
 
-                <AppBar
-                    style={{
-                        boxShadow: 0,
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                    }}
-                    title={this.props.title}
-                    iconElementLeft={
-                        <IconButton
-                            onTouchTap={self.props.onRequestClose}>
-                            <NavigationClose />
-                        </IconButton>
-                    } />
+                                <AppBar
+                                    style={{
+                                        boxShadow: 0,
+                                        position: 'fixed',
+                                        top: 0,
+                                        left: 0,
+                                    }}
+                                    title={self.props.item.title}
+                                    iconElementLeft={
+                                        <IconButton
+                                            onTouchTap={self.props.onRequestClose}>
+                                            <NavigationClose />
+                                        </IconButton>
+                                    } />
 
-                <div
-                    style={{
-                        width: this.state.width + 'px',
-                        height: this.state.height + 'px',
-                        textAlign: 'center',
-                    }}
-                >
+                                <div
+                                    style={{
+                                        width: self.state.width + 'px',
+                                        height: self.state.height + 'px',
+                                        textAlign: 'center',
+                                    }}
+                                >
 
-                    <Paper
-                        style={{
-                            boxSizing: 'border-box',
-                            width: Math.min(1024, this.state.width) + 'px',
-                            height: (this.state.height - 64) + 'px',
-                            margin: 'auto',
-                            marginTop: '64px',
-                        }}
-                        zDepth={2}
-                    >
-                        <iframe
-                            style={{
-                                boxSizing: 'border-box',
-                                width: Math.min(1024, this.state.width) + 'px',
-                                height: (this.state.height - 64) + 'px',
-                                border: '0',
-                                margin: 'auto',
-                                backgroundColor: '#fff',
-                            }}
-                            src={this.props.url} />
-                    </Paper>
+                                    <Paper
+                                        style={{
+                                            boxSizing: 'border-box',
+                                            width: Math.min(1024, self.state.width) + 'px',
+                                            height: (self.state.height - 64) + 'px',
+                                            margin: 'auto',
+                                            marginTop: '64px',
+                                        }}
+                                        zDepth={2}
+                                    >
+                                        <iframe
+                                            style={{
+                                                boxSizing: 'border-box',
+                                                width: Math.min(1024, self.state.width) + 'px',
+                                                height: (self.state.height - 64) + 'px',
+                                                border: '0',
+                                                margin: 'auto',
+                                                backgroundColor: '#fff',
+                                            }}
+                                            src={self.props.item.url} />
+                                    </Paper>
 
-                </div>
+                                </div>
 
-            </div>
+                            </div>
+                        );
+                    }
+                }()}
+            </ReactCSSTransitionGroup>
         );
     },
 

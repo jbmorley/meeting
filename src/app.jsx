@@ -221,13 +221,10 @@ var MeetingApp = React.createClass({
 
                 }()}
 
-                {this.state.selection != undefined
-                    ? (
-                        <ItemView
-                            title={this.state.selection.title}
-                            url={this.state.selection.url}
-                            onRequestClose={this._onCloseFullscreenDocument} />)
-                    : ''}
+                <ItemView
+                    open={this.state.selection != undefined}
+                    item={this.state.selection}
+                    onRequestClose={this._onCloseFullscreenDocument} />)
 
                 <div className="content">
                     <ItemGrid

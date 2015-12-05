@@ -65,3 +65,21 @@ body  {
 .video-local > video {
     width: 100px;
 }
+
+.example-enter {
+  opacity: 0.0;
+}
+
+.example-enter.example-enter-active {
+  opacity: 1.0;
+  transition: opacity 150ms ease-in;
+}
+
+.example-leave {
+  opacity: 1.0;
+}
+
+.example-leave.example-leave-active {
+  opacity: 0.0;
+  transition: opacity 150ms ease-in;
+}
