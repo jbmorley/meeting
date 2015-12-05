@@ -47,22 +47,58 @@ var ItemGrid = React.createClass({
                             className="grid-item"
                             style={{boxShadow: "0px 1px 6px rgba(0, 0, 0, 0.06), 0px 1px 4px rgba(0, 0, 0, 0.06)"}}>
 
-                            <CardHeader
-                                title={item.title}
-                                onTouchTap={function(e) {
-                                    self.props.onSelect(item.uuid);
+                            <CardText
+                                style={{
+                                    padding: '8px',
                                 }}
-                                style={{cursor: 'pointer'}}
-                                avatar={<Avatar>{item.title.charAt(0)}</Avatar>}>
-                                <IconMenu iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}>
-                                    <MenuItem primaryText="Remove" onTouchTap={function(e) {
+                            >
+                                <div
+                                    style={{
+                                        fontSize: '18px',
+                                        display: 'inline-block',
+                                    }}
+                                >
+                                    {item.title}
+                                </div>
+                                <IconButton
+                                    onTouchTap={function(event) {
                                         self.props.onRemoveItem(item.uuid);
-                                    }} />
-                                </IconMenu>
-                            </CardHeader>
+                                    }} >
+                                    <CloseIcon />
+                                </IconButton>
+                            </CardText>
 
                             <CardText style={{padding: '0'}}>
-                                <iframe scrolling="no" src={item.url}></iframe>
+                                <div
+                                    style={{
+                                        position: "relative",
+                                        width: "100%",
+                                        height: "400px",
+                                    }} >
+                                    <iframe
+                                        style={{
+                                            position: "absolute",
+                                            top: 0,
+                                            left: 0,
+                                            border: 0,
+                                            width: "100%",
+                                            height: "100%",
+                                        }}
+                                        scrolling="no"
+                                        src={item.url} />
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            top: 0,
+                                            left: 0,
+                                            width: "100%",
+                                            height: "100%",
+                                        }}
+                                        onTouchTap={function(event) {
+                                            self.props.onSelect(item.uuid);
+                                        }} >
+                                    </div>
+                                </div>
                             </CardText>
 
                         </Card>
