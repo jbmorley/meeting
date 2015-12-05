@@ -49,7 +49,6 @@ var ItemGrid = React.createClass({
 
                             <CardHeader
                                 title={item.title}
-                                subtitle={item.url}
                                 onTouchTap={function(e) {
                                     self.props.onSelect(item.uuid);
                                 }}
