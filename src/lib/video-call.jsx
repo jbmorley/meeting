@@ -26,7 +26,7 @@ var VideoCall = React.createClass({
             <Paper zDepth={3} className="video-remote">
                 <video src={this.props.remoteStream} autoPlay />
                 <div className="video-local">
-                    <video src={this.props.localStream} autoPlay />
+                    <video src={this.props.localStream} autoPlay muted />
                 </div>
             </Paper>
         );
