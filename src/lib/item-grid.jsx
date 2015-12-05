@@ -49,18 +49,28 @@ var ItemGrid = React.createClass({
 
                             <CardText
                                 style={{
-                                    padding: '8px',
+                                    padding: 0,
+                                    position: 'relative',
                                 }}
                             >
                                 <div
                                     style={{
+                                        boxSizing: 'border-box',
                                         fontSize: '18px',
-                                        display: 'inline-block',
+                                        display: 'table-cell',
+                                        height: '48px',
+                                        verticalAlign: 'middle',
+                                        padding: '0 12px',
                                     }}
                                 >
                                     {item.title}
                                 </div>
                                 <IconButton
+                                    style={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        right: 0,
+                                    }}
                                     onTouchTap={function(event) {
                                         self.props.onRemoveItem(item.uuid);
                                     }} >
