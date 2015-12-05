@@ -54,6 +54,12 @@ Before you are able to build the project, you will need to create some initial c
    ```
    
     Mozilla and Google host ICE servers but do not provide TURN servers (as these are costly to run). Both the Mozilla and Google STUN servers should be safe to use, but you will need to bring your own TURN server (`relay.inseven.co.uk` does not exist).
+    
+    If you are using [TurnServer](http://turnserver.sourceforge.net), you will need to ensure it is configured with a suitable user in your `turnusers.txt` file (`/etc/turnserver/turnusers.txt` on Ubuntu). For example,
+    
+    ```
+    user:pass:domain.org:authorized
+    ```
 
 ### Building
 
