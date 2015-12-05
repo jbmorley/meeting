@@ -50,6 +50,8 @@ const ItemView = require('./lib/item-view.jsx');
 const VideoCall = require('./lib/video-call.jsx');
 
 const webRTC = require('./lib/webrtc.jsx');
+const values = require('./lib/values');
+const parse_message = require('./lib/parse-message');
 
 const CallState = {
     DISCONNECTED: 0,
@@ -264,39 +266,19 @@ var meeting = ReactDOM.render(
     document.getElementById('app')
 );
 
-function parse_message(callback) {
-  return function(message) {
-    callback(JSON.parse(message));
-  }
-}
-
 var engine = {
 
     connect: function(meeting) {
         var self = this;
         self._meeting = meeting;
         self._socket = io()
-        self._socket.on('server-set-items', parse_message(function(items) {
+        self._socket.on('server-set-state', parse_message(function(state) {
 
-            self._meeting.setState({items: items});
-
-        })).on('server-set-users', parse_message(function(users) {
-
-            self._meeting.setState({users: users});
-
-        })).on('server-clear-selection', function() {
-
-            self._meeting.setState({selection: undefined});
-
-        }).on('server-set-selection', parse_message(function(selection) {
-
-            for (i in self._meeting.state.items) {
-                item = self._meeting.state.items[i];
-                if (item.uuid == selection.uuid) {
-                    console.log("Setting selection to " + selection.uuid);
-                    self._meeting.setState({selection: item});
-                }
-            }
+            self._meeting.setState({
+                items: values(state.items),
+                users: values(state.users),
+                selection: state.selection != undefined ? state.items[state.selection] : undefined,
+            });
 
         })).on('server-call-add-ice-candidate', parse_message(function(candidate) {
 

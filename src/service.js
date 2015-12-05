@@ -17,7 +17,9 @@
  */
 
 var update = require('react-addons-update');
-var guid = require('./lib/guid.js');
+var guid = require('./lib/guid');
+var values = require('./lib/values');
+var parse_message = require('./lib/parse-message');
 
 var Express = require('express'),
     Path = require('path'),
@@ -47,16 +49,6 @@ state = {
   users: {},
 };
 
-function values(object) {
-  var items = [];
-  for (var key in object) {
-    if (object.hasOwnProperty(key)) {
-      items.push(update(object[key], {}));
-    }
-  }
-  return items;
-}
-
 io.emitJSON = function(message, parameters) {
   io.emit(message, JSON.stringify(parameters));
 };
@@ -65,22 +57,8 @@ function resetItems() {
   state.items = update(DEFAULT_ITEMS, {});
 }
 
-function broadcastItems() {
-  io.emitJSON('server-set-items', values(state.items));
-}
-
-function broadcastUsers() {
-  io.emitJSON('server-set-users', values(state.users));
-}
-
-function broadcastSelection() {
-  io.emitJSON('server-set-selection', {uuid: state.selection});
-}
-
-function parse_message(callback) {
-  return function(message) {
-    callback(JSON.parse(message));
-  }
+function broadcastState() {
+  io.emitJSON('server-set-state', state);
 }
 
 resetItems();
@@ -88,47 +66,45 @@ resetItems();
 io.on('connection', function(socket) {
 
   state.users[socket] = {uuid: guid(), name: '', email: ''};
-  broadcastItems();
-  broadcastUsers();
-  broadcastSelection();
+  broadcastState();
 
   socket.on('disconnect', function() {
 
     delete state.users[socket];
-    broadcastUsers();
+    broadcastState();
 
   }).on('client-set-user', parse_message(function(user) {
 
     console.log("User " + user.name + " with email " + user.email + " connected");
     state.users[socket].name = user.name;
     state.users[socket].email = user.email;
-    broadcastUsers();
+    broadcastState();
 
   })).on('client-reset-items', function(message) {
 
     resetItems();
-    broadcastItems();
+    broadcastState();
 
   }).on('client-add-item', parse_message(function(item) {
 
     item.uuid = guid();
     state.items[item.uuid] = item;
-    broadcastItems();
+    broadcastState();
 
   })).on('client-remove-item', parse_message(function(message) {
 
     delete state.items[message.uuid];
-    broadcastItems();
+    broadcastState();
 
   })).on('client-set-selection', parse_message(function(message) {
 
     state.selection = message.uuid;
-    broadcastSelection();
+    broadcastState();
 
   })).on('client-clear-selection', function() {
 
     state.selection = undefined;
-    io.emit('server-clear-selection');
+    broadcastState();
 
   }).on('client-call-add-ice-candidate', function(candidate) {
 
