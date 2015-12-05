@@ -58,7 +58,6 @@
       synchronize: src=../build/ dest="/var/www/{{ domain }}/" delete=yes
       become: no
       notify:
-        - restart apache2
         - restart node
 
     - name: create Node.js service
