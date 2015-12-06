@@ -83,10 +83,12 @@ var webRTC = {
     _createOffer: function(details) {
         console.log("Creating the offer");
         return new Promise(function(resolve, reject) {
-            window.peerConnection.createOffer(function(description) {
-                details.description = description;
-                resolve(details);
-            }, reject /* , constraints */);
+            window.peerConnection.createOffer(function(offer) {
+                window.peerConnection.setLocalDescription(new RTCSessionDescription(offer), function() {
+                    details.description = offer;
+                    resolve(details);
+                }, reject);
+            }, reject);
         });
     },
 
@@ -101,14 +103,6 @@ var webRTC = {
                 resolve(details);
             });
         };
-    },
-
-    _setLocalDescription: function(details) {
-        return new Promise(function(resolve, reject) {
-            window.peerConnection.setLocalDescription(details.description, function() {
-                resolve(details);
-            }, reject);
-        });
     },
 
     _sendDescription: function(details) {
@@ -126,10 +120,12 @@ var webRTC = {
     _createAnswer: function(details) {
         console.log("Creating answer");
         return new Promise(function (resolve, reject) {
-            peerConnection.createAnswer(function(description) {
-                details.description = description;
-                resolve(details);
-            }, reject /* , constraints */);
+            peerConnection.createAnswer(function(answer) {
+                peerConnection.setLocalDescription(new RTCSessionDescription(answer), function() {
+                    details.description = answer;
+                    resolve(details);                    
+                }, reject);
+            }, reject);
         });
     },
 
@@ -150,7 +146,6 @@ var webRTC = {
             .then(self._getUserMedia)
             .then(self._attachLocalStream)
             .then(self._createOffer)
-            .then(self._setLocalDescription)
             .then(self._sendDescription)
             .catch(function(error) {
                 alert("Unable to start call: " + error);
@@ -162,29 +157,23 @@ var webRTC = {
         window.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
     },
 
-    handleSessionDescription: function(description) {
+    setAnswer: function(sdp) {
         var self = this;
+        self._getUserMedia({})
+            .then(self._attachLocalStream)
+            .then(self._setRemoteDescription(sdp))
+            .then(self._setState(webRTC.CONNECTED));
+    },
 
-        if (description.type == "answer") {
-
-            return self._getUserMedia({})
-                .then(self._attachLocalStream)
-                .then(self._setRemoteDescription(description))
-                .then(self._setState(webRTC.CONNECTED))
-
-        } else {
-
-            return self._setState(webRTC.ANSWERING)({})
-                .then(self._getUserMedia)
-                .then(self._attachLocalStream)
-                .then(self._setRemoteDescription(description))
-                .then(self._createAnswer)
-                .then(self._setLocalDescription)
-                .then(self._sendDescription)
-                .then(self._setState(webRTC.CONNECTED));
-
-        }
-
+    setOffer: function(sdp) {
+        var self = this;
+        self._setState(webRTC.ANSWERING)({})
+            .then(self._getUserMedia)
+            .then(self._attachLocalStream)
+            .then(self._setRemoteDescription(sdp))
+            .then(self._createAnswer)
+            .then(self._sendDescription)
+            .then(self._setState(webRTC.CONNECTED));
     },
 
 };

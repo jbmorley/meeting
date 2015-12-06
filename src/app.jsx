@@ -281,7 +281,7 @@ var MeetingApp = React.createClass({
     _handleCallAccept: function() {
         var self = this;
         if (webRTC.state == webRTC.DISCONNECTED) {
-            webRTC.handleSessionDescription(self.state.offer);
+            webRTC.setOffer(self.state.offer);
             engine._sendMessage('client-call-set-offer', undefined);
         } else {
             alert("Received offer in unexpected state (" + webRTC.state + ")");
@@ -312,7 +312,7 @@ var engine = {
             });
 
             if (state.answer != undefined && webRTC.state == webRTC.OFFERING) {
-                webRTC.handleSessionDescription(state.answer);
+                webRTC.setAnswer(state.answer);
                 engine._sendMessage('client-call-set-answer', undefined);
             }
 
