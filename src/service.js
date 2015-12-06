@@ -43,7 +43,7 @@ DEFAULT_ITEMS = [
   {uuid: guid(), title: "Bar chart", url: "charts/bar.html"},
 ];
 
-DEFAULT_ITEMS = [];
+// DEFAULT_ITEMS = [];
 
 state = {
   items: {},
