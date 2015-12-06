@@ -60,6 +60,8 @@ const CallState = {
     CONNECTED: 2,
 };
 
+var useAppRTC = true;
+
 var MeetingApp = React.createClass({
 
     mixins: [LinkedStateMixin],
@@ -203,30 +205,56 @@ var MeetingApp = React.createClass({
                 </Dialog>
 
                 {function() {
-                    return;
 
-                    switch (self.state.callState) {
-                        case webRTC.UNSUPPORTED:
-                            return '';
-                        case webRTC.CONNECTED:
-                            return (
-                                <VideoCall 
-                                    localStream={self.state.localStream}
-                                    remoteStream={self.state.remoteStream} />
-                            );
-                        case webRTC.DISCONNECTED:
-                            return (
-                                <FloatingActionButton
+                    if (useAppRTC && self.state.callState != webRTC.UNSUPPORTED) {
+
+                        return (
+                            <Paper
+                                zDepth={3}
+                                style={{
+                                    position: "fixed",
+                                    width: "400px",
+                                    height: "300px",
+                                    bottom: "20px",
+                                    right: '20px',
+                                    zIndex: 8,
+                                }} >
+                                <iframe
                                     style={{
-                                        position: "fixed",
-                                        bottom: "36px",
-                                        right: "36px",
-                                        zIndex: 8,
+                                        width: "100%",
+                                        height: "100%",
+                                        border: 0,
                                     }}
-                                    onTouchTap={self._startCall}>
-                                    <AVVideocamIcon />
-                                </FloatingActionButton>
-                            );
+                                    src="https://apprtc.webrtc.org/r/047684326" />
+                            </Paper>
+                        );
+
+                    } else {
+
+                        switch (self.state.callState) {
+                            case webRTC.UNSUPPORTED:
+                                return '';
+                            case webRTC.CONNECTED:
+                                return (
+                                    <VideoCall 
+                                        localStream={self.state.localStream}
+                                        remoteStream={self.state.remoteStream} />
+                                );
+                            case webRTC.DISCONNECTED:
+                                return (
+                                    <FloatingActionButton
+                                        style={{
+                                            position: "fixed",
+                                            bottom: "36px",
+                                            right: "36px",
+                                            zIndex: 8,
+                                        }}
+                                        onTouchTap={self._startCall}>
+                                        <AVVideocamIcon />
+                                    </FloatingActionButton>
+                                );
+                        }
+
                     }
 
                 }()}
@@ -242,25 +270,6 @@ var MeetingApp = React.createClass({
                         onRemoveItem={this._onRemoveItem}
                         onSelect={this._onSelectItem} />
                 </div>
-
-                <Paper
-                    zDepth={3}
-                    style={{
-                        position: "fixed",
-                        width: "400px",
-                        height: "300px",
-                        bottom: "20px",
-                        right: '20px',
-                        zIndex: 10,
-                    }} >
-                    <iframe
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            border: 0,
-                        }}
-                        src="https://apprtc.webrtc.org/r/047684326" />
-                </Paper>
 
                 {function() {
                     if (self.state.offer != undefined &&
