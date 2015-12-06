@@ -28,22 +28,28 @@ var webRTC = {
 
     state: (navigator.getUserMedia != undefined) ? 1 : 0,
 
-    onIceCandidate: function(candidate) {
-        console.log("WARNING: webRTC.onIceCandidate not implemented");
-    },
+    // Callbacks.
+    onIceCandidate: function(candidate) { console.log("WARNING: webRTC.onIceCandidate not implemented"); },
+    onAttachLocalStream: function(url) { console.log("WARNING: webRTC.onAttachLocalStream not implemented"); },
+    onAttachRemoteStream: function(url) { console.log("WARNING: webRTC.onAttachRemoteStream not implemented"); },
 
-    onAddRemoteStream: function(event) {
-        if (webRTC.onAttachRemoteStream != null) {
-            webRTC.onAttachRemoteStream(window.URL.createObjectURL(event.stream));
-        } else {
-            console.log("ERROR: onAttachRemoteStream not defined");
+    _setState: function(state) {
+        webRTC.state = state;
+        console.log("Setting WebRTC state to " + state + "...");
+        if (webRTC.onStateChange != undefined) {
+            webRTC.onStateChange(state);
         }
+        return function(details) {
+            return new Promise(function(resolve, reject) {
+                resolve(details);
+            });
+        };
     },
 
     _getUserMedia: function(details) {
         var self = this;
         return new Promise(function(resolve, reject) {
-            navigator.getUserMedia({ video: true, audio: true }, function(localStream) {
+            navigator.getUserMedia({video: true, audio: true}, function(localStream) {
                 window.peerConnection.addStream(localStream);
                 webRTC.onAttachLocalStream(window.URL.createObjectURL(localStream))
                 resolve(details);
@@ -61,19 +67,6 @@ var webRTC = {
                 }, reject);
             }, reject);
         });
-    },
-
-    _setState: function(state) {
-        webRTC.state = state;
-        console.log("Setting WebRTC state to " + state + "...");
-        if (webRTC.onStateChange != undefined) {
-            webRTC.onStateChange(state);
-        }
-        return function(details) {
-            return new Promise(function(resolve, reject) {
-                resolve(details);
-            });
-        };
     },
 
     _createAnswer: function(details) {
@@ -97,6 +90,27 @@ var webRTC = {
                 }, reject);
             });
         }
+    },
+
+    setup: function() {
+        var self = this;
+
+        if (webRTC.state == webRTC.UNSUPPORTED) {
+            return;
+        }
+
+        window.peerConnection = new RTCPeerConnection(peerConnectionConfig);
+
+        window.peerConnection.onicecandidate = function(event) {
+            if (event.candidate != null) {
+                webRTC.onIceCandidate(event.candidate)
+            }
+        };
+
+        window.peerConnection.onaddstream = function(event) {
+            webRTC._setState(webRTC.CONNECTED);
+            webRTC.onAttachRemoteStream(window.URL.createObjectURL(event.stream));
+        };
     },
 
     startCall: function() {
@@ -135,22 +149,6 @@ var webRTC = {
 
 };
 
-if (webRTC.state != webRTC.UNSUPPORTED) {
-
-    window.peerConnection = new RTCPeerConnection(peerConnectionConfig);
-
-    window.peerConnection.onicecandidate = function(event) {
-        if (event.candidate != null) {
-            webRTC.onIceCandidate(event.candidate)
-        }
-    };
-
-    window.peerConnection.onaddstream = function(event) {
-        webRTC._setState(webRTC.CONNECTED);
-        webRTC.onAddRemoteStream(event);
-    };
-
-}
-
+webRTC.setup();
 
 module.exports = webRTC;
