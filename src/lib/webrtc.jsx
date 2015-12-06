@@ -44,23 +44,10 @@ var webRTC = {
         var self = this;
         return new Promise(function(resolve, reject) {
             navigator.getUserMedia({ video: true, audio: true }, function(localStream) {
-                console.log("Successfully got local stream");
                 window.peerConnection.addStream(localStream);
-                details.localStream = localStream;
+                webRTC.onAttachLocalStream(window.URL.createObjectURL(localStream))
                 resolve(details);
             }, reject);
-        });
-    },
-
-    _attachLocalStream: function(details) {
-        var self = this;
-        return new Promise(function(resolve, reject) {
-            if (webRTC.onAttachLocalStream != null) {
-                webRTC.onAttachLocalStream(window.URL.createObjectURL(details.localStream));
-            } else {
-                reject("onAttachLocalStream not defined");
-            }
-            resolve(details);
         });
     },
 
@@ -116,7 +103,6 @@ var webRTC = {
         var self = this;
         self._setState(webRTC.OFFERING)({})
             .then(self._getUserMedia)
-            .then(self._attachLocalStream)
             .then(self._createOffer)
             .catch(function(error) {
                 console.log("ERROR: startCall: " + error);
@@ -140,7 +126,6 @@ var webRTC = {
         var self = this;
         self._setState(webRTC.ANSWERING)({})
             .then(self._getUserMedia)
-            .then(self._attachLocalStream)
             .then(self._setRemoteDescription(sdp))
             .then(self._createAnswer)
             .catch(function(error) {
