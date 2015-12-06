@@ -85,7 +85,7 @@ var webRTC = {
         return new Promise(function(resolve, reject) {
             window.peerConnection.createOffer(function(offer) {
                 window.peerConnection.setLocalDescription(new RTCSessionDescription(offer), function() {
-                    details.description = offer;
+                    webRTC.onSessionDescription(offer);
                     resolve(details);
                 }, reject);
             }, reject);
@@ -105,25 +105,13 @@ var webRTC = {
         };
     },
 
-    _sendDescription: function(details) {
-        console.log("Sending the session description to the server");
-        return new Promise(function(resolve, reject) {
-            if (webRTC.onSessionDescription) {
-                webRTC.onSessionDescription(details.description)
-                resolve(details);
-            } else {
-                reject("onSessionDescription not defined");
-            }
-        });
-    },
-
     _createAnswer: function(details) {
         console.log("Creating answer");
         return new Promise(function (resolve, reject) {
             peerConnection.createAnswer(function(answer) {
                 peerConnection.setLocalDescription(new RTCSessionDescription(answer), function() {
-                    details.description = answer;
-                    resolve(details);                    
+                    webRTC.onSessionDescription(answer);
+                    resolve(details);
                 }, reject);
             }, reject);
         });
@@ -146,7 +134,6 @@ var webRTC = {
             .then(self._getUserMedia)
             .then(self._attachLocalStream)
             .then(self._createOffer)
-            .then(self._sendDescription)
             .catch(function(error) {
                 alert("Unable to start call: " + error);
             });
@@ -161,8 +148,7 @@ var webRTC = {
         var self = this;
         self._getUserMedia({})
             .then(self._attachLocalStream)
-            .then(self._setRemoteDescription(sdp))
-            .then(self._setState(webRTC.CONNECTED));
+            .then(self._setRemoteDescription(sdp));
     },
 
     setOffer: function(sdp) {
@@ -171,9 +157,7 @@ var webRTC = {
             .then(self._getUserMedia)
             .then(self._attachLocalStream)
             .then(self._setRemoteDescription(sdp))
-            .then(self._createAnswer)
-            .then(self._sendDescription)
-            .then(self._setState(webRTC.CONNECTED));
+            .then(self._createAnswer);
     },
 
 };
@@ -181,12 +165,15 @@ var webRTC = {
 if (isSupported()) {
 
     window.peerConnection = new RTCPeerConnection(peerConnectionConfig);
+
     window.peerConnection.onicecandidate = function(event) {
         if (event.candidate != null) {
             webRTC.onIceCandidate(event.candidate)
         }
     };
+    
     window.peerConnection.onaddstream = function(event) {
+        webRTC._setState(webRTC.CONNECTED);
         webRTC.onAddRemoteStream(event);
     };
 
