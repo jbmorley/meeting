@@ -303,9 +303,6 @@ var engine = {
         self._socket = io()
         self._socket.on('server-set-state', parse_message(function(state) {
 
-            console.log("Updating state...");
-            console.log(state);
-
             self._meeting.setState({
                 items: state.items,
                 users: values(state.users),
@@ -322,6 +319,7 @@ var engine = {
         })).on('server-call-add-ice-candidate', parse_message(function(candidate) {
 
             if (webRTC.state != webRTC.UNSUPPORTED) {
+                console.log("Receiving ICE Candidate: " + candidate.candidate);
                 webRTC.addIceCandidate(candidate);
             }
 
@@ -398,13 +396,10 @@ var engine = {
 };
 
 webRTC.onIceCandidate = function (candidate) {
-    console.log(candidate.candidate);
     if (candidate.candidate.indexOf("relay") < 0) {
-        console.log("Dropping non-relay server...");
-        return;
-    } else {
-        console.log("Adding relay server...");
+        // return;
     }
+    console.log("Sending ICE Candidate: " + candidate.candidate);
     engine.addIceCandidate(candidate);
 }
 

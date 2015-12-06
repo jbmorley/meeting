@@ -93,25 +93,9 @@ var webRTC = {
     },
 
     _getPeerConnection: function() {
-
-        if (window.peerConnectionPromise != null) {
-            return window.peerConnectionPromise;
-        }
-
-        console.log("Configuring a new peer connection");
-        window.peerConnectionPromise = new Promise(function(resolve, reject) {
-            console.log("Creating new RTCPeerConnection");
-            peerConnection = new RTCPeerConnection(peerConnectionConfig);
-            peerConnection.onicecandidate = function(event) {
-                if (event.candidate != null) {
-                    webRTC.onIceCandidate(event.candidate)
-                }
-            };
-            peerConnection.onaddstream = function(event) { webRTC.onAddRemoteStream(event); }
+        return new Promise(function(resolve, reject) {
             resolve({peerConnection: peerConnection});
         });
-
-        return window.peerConnectionPromise;
     },
 
     _createOffer: function(details) {
@@ -169,7 +153,6 @@ var webRTC = {
 
     _addIceCandidate: function(candidate) {
         return function(details) {
-            console.log("Add ice candidate");
             return new Promise(function(resolve, reject) {
                 details.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
                 resolve(details);
@@ -243,5 +226,23 @@ var webRTC = {
     },
 
 };
+
+if (isSupported()) {
+
+    console.log("Configuring a new peer connection");
+    window.peerConnection = new RTCPeerConnection(peerConnectionConfig);
+    window.peerConnection.oniceconnectionstatechange = function(event) {
+        console.log("-> oniceconnectionstatechange");
+    };
+    window.peerConnection.onicecandidate = function(event) {
+        if (event.candidate != null) {
+            webRTC.onIceCandidate(event.candidate)
+        }
+    };
+    peerConnection.onaddstream = function(event) {
+        webRTC.onAddRemoteStream(event);
+    };
+}
+
 
 module.exports = webRTC;
