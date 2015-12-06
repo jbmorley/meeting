@@ -87,7 +87,7 @@ io.on('connection', function(socket) {
   }).on('client-add-item', parse_message(function(item) {
 
     item.uuid = guid();
-    state.items[item.uuid] = item;
+    state.items.push(item);
     broadcastState();
 
   })).on('client-remove-item', parse_message(function(message) {
