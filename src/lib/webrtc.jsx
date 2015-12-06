@@ -135,7 +135,7 @@ var webRTC = {
             .then(self._attachLocalStream)
             .then(self._createOffer)
             .catch(function(error) {
-                alert("Unable to start call: " + error);
+                console.log("ERROR: startCall: " + error);
             });
     },
 
@@ -146,9 +146,10 @@ var webRTC = {
 
     setAnswer: function(sdp) {
         var self = this;
-        self._getUserMedia({})
-            .then(self._attachLocalStream)
-            .then(self._setRemoteDescription(sdp));
+        self._setRemoteDescription(sdp)({})
+            .catch(function(error) {
+                console.log("ERROR: setAnswer: " + error);
+            });
     },
 
     setOffer: function(sdp) {
@@ -157,7 +158,10 @@ var webRTC = {
             .then(self._getUserMedia)
             .then(self._attachLocalStream)
             .then(self._setRemoteDescription(sdp))
-            .then(self._createAnswer);
+            .then(self._createAnswer)
+            .catch(function(error) {
+                console.log("ERROR: setOffer: " + error);
+            });
     },
 
 };
@@ -171,7 +175,7 @@ if (isSupported()) {
             webRTC.onIceCandidate(event.candidate)
         }
     };
-    
+
     window.peerConnection.onaddstream = function(event) {
         webRTC._setState(webRTC.CONNECTED);
         webRTC.onAddRemoteStream(event);
