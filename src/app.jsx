@@ -249,7 +249,7 @@ var MeetingApp = React.createClass({
                                 openOnMount={true}
                                 message="Incoming call"
                                 action="Accept"
-                                onActionTouchTap={this._handleCallAccept} />
+                                onActionTouchTap={self._handleCallAccept} />
                         );
                     }
                 }()}
@@ -280,8 +280,12 @@ var MeetingApp = React.createClass({
 
     _handleCallAccept: function() {
         var self = this;
-        alert("HANDLE CALL ACCEPT");
-        webRTC.handleSessionDescription(self.state.offer);
+        if (webRTC.state == webRTC.DISCONNECTED) {
+            webRTC.handleSessionDescription(self.state.offer);
+            engine._sendMessage('client-call-set-offer', undefined);
+        } else {
+            alert("Received offer in unexpected state (" + webRTC.state + ")");
+        }
     },
 
 });
@@ -312,6 +316,7 @@ var engine = {
 
             if (state.answer != undefined && webRTC.state == webRTC.OFFERING) {
                 webRTC.handleSessionDescription(state.answer);
+                engine._sendMessage('client-call-set-answer', undefined);
             }
 
         })).on('server-call-add-ice-candidate', parse_message(function(candidate) {
@@ -319,9 +324,6 @@ var engine = {
             if (webRTC.state != webRTC.UNSUPPORTED) {
                 webRTC.addIceCandidate(candidate);
             }
-
-        })).on('server-call-set-session', parse_message(function(session) {
-
 
         }));
     },
@@ -363,7 +365,7 @@ var engine = {
 
     addIceCandidate: function(candidate) {
         var self = this;
-        self._socket.emit('client-call-add-ice-candidate', candidate);
+        self._sendMessage('client-call-add-ice-candidate', candidate);
     },
 
     setSession: function(session) {
@@ -395,7 +397,17 @@ var engine = {
 
 };
 
-webRTC.onIceCandidate = function (candidate) { engine.addIceCandidate(candidate); }
+webRTC.onIceCandidate = function (candidate) {
+    console.log(candidate.candidate);
+    if (candidate.candidate.indexOf("relay") < 0) {
+        console.log("Dropping non-relay server...");
+        return;
+    } else {
+        console.log("Adding relay server...");
+    }
+    engine.addIceCandidate(candidate);
+}
+
 webRTC.onSessionDescription = function(session) { engine.setSession(session); }
 webRTC.onAttachLocalStream = function(stream) { engine.setLocalStream(stream); }
 webRTC.onAttachRemoteStream = function(stream) { engine.setRemoteStream(stream); }

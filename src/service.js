@@ -51,6 +51,8 @@ state = {
   answer: undefined,
 };
 
+offerSocket = undefined;
+
 io.emitJSON = function(message, parameters) {
   io.emit(message, JSON.stringify(parameters));
 };
@@ -73,6 +75,10 @@ io.on('connection', function(socket) {
   socket.on('disconnect', function() {
 
     delete state.users[socket];
+    if (offerSocket == socket) {
+      state.offer = undefined;
+      state.answer = undefined;
+    }
     broadcastState();
 
   }).on('client-set-user', parse_message(function(user) {
@@ -109,9 +115,10 @@ io.on('connection', function(socket) {
   }).on('client-call-set-offer', parse_message(function(offer) {
 
     state.offer = offer;
+    offerSocket = socket;
     broadcastState();
 
-  })).on('client-call-set-answer', parse_message(function(session) {
+  })).on('client-call-set-answer', parse_message(function(answer) {
 
     state.answer = answer;
     broadcastState();

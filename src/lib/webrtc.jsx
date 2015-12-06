@@ -18,11 +18,6 @@
 
 const peerConnectionConfig = require('../config.jsx');
 
-navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-window.RTCIceCandidate = window.RTCIceCandidate || window.mozRTCIceCandidate || window.webkitRTCIceCandidate;
-window.RTCSessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription;
-
 var constraints = {
     offerToReceiveAudio: true,
     offerToReceiveVideo: true
@@ -40,7 +35,7 @@ var webRTC = {
     ANSWERING: 3,
     CONNECTED: 4,
 
-    state: isSupported() ? this.DISCONNECTED : this.UNSUPPORTED,
+    state: isSupported() ? 1 : 0,
 
     onIceCandidate: function(candidate) {
         console.log("WARNING: webRTC.onIceCandidate not implemented");
@@ -109,7 +104,7 @@ var webRTC = {
             peerConnection = new RTCPeerConnection(peerConnectionConfig);
             peerConnection.onicecandidate = function(event) {
                 if (event.candidate != null) {
-                    webRTC.onIceCandidate(JSON.stringify(event.candidate))
+                    webRTC.onIceCandidate(event.candidate)
                 }
             };
             peerConnection.onaddstream = function(event) { webRTC.onAddRemoteStream(event); }
@@ -125,7 +120,7 @@ var webRTC = {
             details.peerConnection.createOffer(function(description) {
                 details.description = description;
                 resolve(details);
-            }, reject, constraints);
+            }, reject /* , constraints */);
         });
     },
 
@@ -168,7 +163,7 @@ var webRTC = {
             peerConnection.createAnswer(function(description) {
                 details.description = description;
                 resolve(details);
-            }, reject, constraints);
+            }, reject /* , constraints */);
         });
     },
 
