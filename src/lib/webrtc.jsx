@@ -18,15 +18,6 @@
 
 const peerConnectionConfig = require('../config.jsx');
 
-var constraints = {
-    offerToReceiveAudio: true,
-    offerToReceiveVideo: true
-};
-
-function isSupported() {
-    return navigator.getUserMedia != undefined;
-}
-
 var webRTC = {
 
     UNSUPPORTED: 0,
@@ -35,7 +26,7 @@ var webRTC = {
     ANSWERING: 3,
     CONNECTED: 4,
 
-    state: isSupported() ? 1 : 0,
+    state: (navigator.getUserMedia != undefined) ? 1 : 0,
 
     onIceCandidate: function(candidate) {
         console.log("WARNING: webRTC.onIceCandidate not implemented");
@@ -51,12 +42,7 @@ var webRTC = {
 
     _getUserMedia: function(details) {
         var self = this;
-
-        if (window.getUserMediaPromise != null) {
-            return window.getUserMediaPromise;
-        }
-
-        window.getUserMediaPromise = new Promise(function(resolve, reject) {
+        return new Promise(function(resolve, reject) {
             navigator.getUserMedia({ video: true, audio: true }, function(localStream) {
                 console.log("Successfully got local stream");
                 window.peerConnection.addStream(localStream);
@@ -64,8 +50,6 @@ var webRTC = {
                 resolve(details);
             }, reject);
         });
-
-        return window.getUserMediaPromise;
     },
 
     _attachLocalStream: function(details) {
@@ -166,7 +150,7 @@ var webRTC = {
 
 };
 
-if (isSupported()) {
+if (webRTC.state != webRTC.UNSUPPORTED) {
 
     window.peerConnection = new RTCPeerConnection(peerConnectionConfig);
 
