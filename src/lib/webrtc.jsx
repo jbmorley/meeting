@@ -49,18 +49,6 @@ var webRTC = {
         }
     },
 
-    _checkSupport: function() {
-        var self = this;
-        return new Promise(function(resolve, reject) {
-            if (isSupported()) {
-                console.log("WebRTC is available");
-                resolve(true);
-            } else {
-                reject("Your browser does not support WebRTC");
-            }
-        });
-    },
-
     _getUserMedia: function(details) {
         var self = this;
 
@@ -71,7 +59,7 @@ var webRTC = {
         window.getUserMediaPromise = new Promise(function(resolve, reject) {
             navigator.getUserMedia({ video: true, audio: true }, function(localStream) {
                 console.log("Successfully got local stream");
-                details.peerConnection.addStream(localStream);
+                window.peerConnection.addStream(localStream);
                 details.localStream = localStream;
                 resolve(details);
             }, reject);
@@ -92,16 +80,10 @@ var webRTC = {
         });
     },
 
-    _getPeerConnection: function() {
-        return new Promise(function(resolve, reject) {
-            resolve({peerConnection: peerConnection});
-        });
-    },
-
     _createOffer: function(details) {
         console.log("Creating the offer");
         return new Promise(function(resolve, reject) {
-            details.peerConnection.createOffer(function(description) {
+            window.peerConnection.createOffer(function(description) {
                 details.description = description;
                 resolve(details);
             }, reject /* , constraints */);
@@ -123,7 +105,7 @@ var webRTC = {
 
     _setLocalDescription: function(details) {
         return new Promise(function(resolve, reject) {
-            details.peerConnection.setLocalDescription(details.description, function() {
+            window.peerConnection.setLocalDescription(details.description, function() {
                 resolve(details);
             }, reject);
         });
@@ -151,20 +133,11 @@ var webRTC = {
         });
     },
 
-    _addIceCandidate: function(candidate) {
-        return function(details) {
-            return new Promise(function(resolve, reject) {
-                details.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-                resolve(details);
-            });
-        }
-    },
-
     _setRemoteDescription: function(description) {
         return function(details) {
             console.log("Add remote description");
             return new Promise(function(resolve, reject) {
-                details.peerConnection.setRemoteDescription(new RTCSessionDescription(description), function() {
+                window.peerConnection.setRemoteDescription(new RTCSessionDescription(description), function() {
                     resolve(details);
                 }, reject);
             });
@@ -173,9 +146,7 @@ var webRTC = {
 
     startCall: function() {
         var self = this;
-        self._checkSupport()
-            .then(self._setState(webRTC.OFFERING))
-            .then(self._getPeerConnection)
+        self._setState(webRTC.OFFERING)({})
             .then(self._getUserMedia)
             .then(self._attachLocalStream)
             .then(self._createOffer)
@@ -188,12 +159,7 @@ var webRTC = {
 
     addIceCandidate: function(candidate) {
         var self = this;
-        self._checkSupport()
-            .then(self._getPeerConnection)
-            .then(self._addIceCandidate(candidate))
-            .catch(function(error) {
-                alert("Unable to add ice candidiate: " + error);
-            });
+        window.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
     },
 
     handleSessionDescription: function(description) {
@@ -201,18 +167,14 @@ var webRTC = {
 
         if (description.type == "answer") {
 
-            return self._checkSupport()
-                .then(self._getPeerConnection)
-                .then(self._getUserMedia)
+            return self._getUserMedia({})
                 .then(self._attachLocalStream)
                 .then(self._setRemoteDescription(description))
                 .then(self._setState(webRTC.CONNECTED))
 
         } else {
 
-            return self._checkSupport()
-                .then(self._setState(webRTC.ANSWERING))
-                .then(self._getPeerConnection)
+            return self._setState(webRTC.ANSWERING)({})
                 .then(self._getUserMedia)
                 .then(self._attachLocalStream)
                 .then(self._setRemoteDescription(description))
@@ -229,19 +191,16 @@ var webRTC = {
 
 if (isSupported()) {
 
-    console.log("Configuring a new peer connection");
     window.peerConnection = new RTCPeerConnection(peerConnectionConfig);
-    window.peerConnection.oniceconnectionstatechange = function(event) {
-        console.log("-> oniceconnectionstatechange");
-    };
     window.peerConnection.onicecandidate = function(event) {
         if (event.candidate != null) {
             webRTC.onIceCandidate(event.candidate)
         }
     };
-    peerConnection.onaddstream = function(event) {
+    window.peerConnection.onaddstream = function(event) {
         webRTC.onAddRemoteStream(event);
     };
+
 }
 
 
