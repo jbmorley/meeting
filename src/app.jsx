@@ -82,7 +82,7 @@ var MeetingApp = React.createClass({
             newItemURL: '',
             items: [],
             users: [],
-            callState: webRTC.DISCONNECTED,
+            callState: webRTC.UNSUPPORTED,
 
             showUserDetailsDialog: false,
             showAddItemDialog: false,
