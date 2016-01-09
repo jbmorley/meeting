@@ -12,7 +12,7 @@
     "es6ify": "^1.6.0",
     "express": "^4.10.2",
     "history": "^1.17.0",
-    "material-ui": "^0.13.4",
+    "material-ui": "^0.14.2",
     "multipart": "^0.1.5",
     "react": "^0.14.6",
     "react-addons-css-transition-group": "^0.14.6",
