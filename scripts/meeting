@@ -78,6 +78,10 @@ def add_trailing_slash(path):
     return path + "/"
 
 
+def reactify(source, target):
+    command(["browserify", "-t", "reactify", "-o", target, source])
+
+
 def build(options):
     print "Building..."
     static_dir = os.path.join(BUILD_DIR, "static")
@@ -90,9 +94,8 @@ def build(options):
                                    ".htgroup"])
     sync(os.path.join(SRC_DIR, "static"), static_dir)
     with Chdir(ROOT_DIR):
-        command(["browserify", "-t", "reactify",
-                 "-o", os.path.join(static_dir, "app.js"),
-                 os.path.join(SRC_DIR, "app.jsx")])
+        reactify(source=os.path.join(SRC_DIR, "app.jsx"), target=os.path.join(static_dir, "app.js"))
+        reactify(source=os.path.join(SRC_DIR, "viewer.jsx"), target=os.path.join(static_dir, "viewer.js"))
     sync(os.path.join(ROOT_DIR, "node_modules"), os.path.join(BUILD_DIR, "node_modules"))
 
 
