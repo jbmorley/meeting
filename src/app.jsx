@@ -16,43 +16,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-const React = require('react');
-const ReactDOM = require('react-dom');
-const LinkedStateMixin = require('react-addons-linked-state-mixin');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 var injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
 
-const AppBar = require('material-ui/lib/app-bar');
-const AVVideocamIcon = require('material-ui/lib/svg-icons/av/videocam');
-const Checkbox = require('material-ui/lib/checkbox');
-const CommunicationChatIcon = require('material-ui/lib/svg-icons/communication/chat');
-const Dialog = require('material-ui/lib/dialog');
-const FloatingActionButton = require('material-ui/lib/floating-action-button');
-const IconButton = require('material-ui/lib/icon-button');
-const IconMenu = require('material-ui/lib/menus/icon-menu');
-const LeftNav = require('material-ui/lib/left-nav');
-const List = require('material-ui/lib/lists/list');
-const ListDivider = require('material-ui/lib/lists/list');
-const ListItem = require('material-ui/lib/lists/list-item');
-const Menu = require('material-ui/lib/menus/menu');
-const MenuDivider = require('material-ui/lib/menus/menu-divider');
-const MenuItem = require('material-ui/lib/menus/menu-item');
-const MoreVertIcon = require('material-ui/lib/svg-icons/navigation/more-vert');
-const Paper = require('material-ui/lib/paper');
-const RaisedButton = require('material-ui/lib/raised-button');
-const Snackbar = require('material-ui/lib/snackbar');
-const TextField = require('material-ui/lib/text-field');
-const ThemeManager = require('material-ui/lib/styles/theme-manager');
+import AppBar from 'material-ui/lib/app-bar';
+import AVVideocamIcon from 'material-ui/lib/svg-icons/av/videocam';
+import Checkbox from 'material-ui/lib/checkbox';
+import CommunicationChatIcon from 'material-ui/lib/svg-icons/communication/chat';
+import Dialog from 'material-ui/lib/dialog';
+import FloatingActionButton from 'material-ui/lib/floating-action-button';
+import IconButton from 'material-ui/lib/icon-button';
+import IconMenu from 'material-ui/lib/menus/icon-menu';
+import LeftNav from 'material-ui/lib/left-nav';
+import List from 'material-ui/lib/lists/list';
+import ListDivider from 'material-ui/lib/lists/list';
+import ListItem from 'material-ui/lib/lists/list-item';
+import Menu from 'material-ui/lib/menus/menu';
+import MenuDivider from 'material-ui/lib/menus/menu-divider';
+import MenuItem from 'material-ui/lib/menus/menu-item';
+import MoreVertIcon from 'material-ui/lib/svg-icons/navigation/more-vert';
+import Paper from 'material-ui/lib/paper';
+import RaisedButton from 'material-ui/lib/raised-button';
+import Snackbar from 'material-ui/lib/snackbar';
+import TextField from 'material-ui/lib/text-field';
+import ThemeManager from 'material-ui/lib/styles/theme-manager';
 
-const CustomTheme = require('./lib/custom-theme.jsx');
-const ItemGrid = require('./lib/item-grid.jsx');
-const ItemView = require('./lib/item-view.jsx');
-const VideoCall = require('./lib/video-call.jsx');
+import CustomTheme from './lib/custom-theme.jsx';
+import ItemGrid from './lib/item-grid.jsx';
+import ItemView from './lib/item-view.jsx';
+import VideoCall from './lib/video-call.jsx';
 
-const webRTC = require('./lib/webrtc.jsx');
-const values = require('./lib/values');
-const parse_message = require('./lib/parse-message');
+import webRTC from './lib/webrtc.jsx';
+import values from './lib/values';
+import parse_message from './lib/parse-message';
 
 const CallState = {
     DISCONNECTED: 0,

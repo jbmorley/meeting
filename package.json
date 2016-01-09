@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "description": "Suite of applications for performing distributed group video conferences and managing shared meeting boards.",
   "dependencies": {
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
     "babelify": "^7.0.2",
     "body-parser": "^1.14.2",
     "busboy-body-parser": "0.0.9",

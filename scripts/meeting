@@ -95,7 +95,9 @@ def add_trailing_slash(path):
 
 
 def reactify(source, target):
-    command(["browserify", "-t", "reactify", "-o", target, source])
+    command(["browserify", source,
+             "-t", "[", "babelify", "--presets", "[", "es2015", "react", "]", "]",
+             "-o", target])
 
 
 def build(options):
