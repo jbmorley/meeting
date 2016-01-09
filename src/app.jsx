@@ -18,7 +18,6 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 var injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
@@ -65,17 +64,15 @@ var useAppRTC = true;
 
 var MeetingApp = React.createClass({
 
-    mixins: [LinkedStateMixin],
-
     childContextTypes: {
         muiTheme: React.PropTypes.object,
     },
 
-    getChildContext: function () {
+    getChildContext() {
         return {muiTheme: ThemeManager.getMuiTheme(CustomTheme) };
     },
 
-    getInitialState: function() {
+    getInitialState() {
         return {
 
             items: [],
@@ -96,15 +93,6 @@ var MeetingApp = React.createClass({
         };
     },
 
-    onChangeTitle: function(e) {
-        var self = this;
-        self.setState({newItemTitle: e.target.value});
-    },
-
-    onChangeURL(e) {
-        this.setState({newItemURL: e.target.value});
-    },
-
     onAddItem() {
         this.setState({showAddItemDialog: true});
     },
@@ -113,18 +101,12 @@ var MeetingApp = React.createClass({
         engine.resetItems();
     },
 
-    onUserDetailsDialogSubmit() {
-        engine.setUser({name: this.state.name, email: this.state.email});
-        this.setState({showUserDetailsDialog: false});
-    },
-
     onAddItemDialogSubmit(title, url) {
         this.setState({showAddItemDialog: false});
         engine.addItem({title: title, url: url});
     },
 
     onAddItemDialogCancel() {
-        console.log(this);
         this.setState({showAddItemDialog: false});
     },
 
@@ -257,27 +239,25 @@ var MeetingApp = React.createClass({
         );
     },
 
-    _startCall: function() {
+    _startCall() {
         var self = this;
         engine.startCall();
     },
 
-    _callConnected: function() {
-        var self = this;
-        self.setState({state: CallState.CONNECTED});
+    _callConnected() {
+        this.setState({state: CallState.CONNECTED});
     },
 
-    _onRemoveItem: function(index) {
-        var self = this;
+    _onRemoveItem(index) {
         engine.removeItem(index);
     },
 
-    _onSelectItem: function(index) {
+    _onSelectItem(index) {
         var self = this;
         engine.setSelection(index);
     },
 
-    _handleCallAccept: function() {
+    _handleCallAccept() {
         var self = this;
         if (webRTC.state == webRTC.DISCONNECTED) {
             webRTC.setOffer(self.state.offer);
@@ -326,70 +306,58 @@ var engine = {
     },
 
     _sendMessage: function(message, parameters) {
-        var self = this;
-        self._socket.emit(message, JSON.stringify(parameters));
+        this._socket.emit(message, JSON.stringify(parameters));
     },
 
     setUser: function(user) {
-        var self = this;
-        self._sendMessage('client-set-user', user);
+        this._sendMessage('client-set-user', user);
     },
 
     resetItems: function() {
-        var self = this;
-        self._socket.emit('client-reset-items');
+        this._socket.emit('client-reset-items');
     },
 
     addItem: function(item) {
-        var self = this;
-        self._sendMessage('client-add-item', item);
+        this._sendMessage('client-add-item', item);
     },
 
     removeItem: function(index) {
-        var self = this;
-        self._sendMessage('client-remove-item', {index: index});
+        this._sendMessage('client-remove-item', {index: index});
     },
 
     setSelection: function(index) {
-        var self = this;
-        self._sendMessage('client-set-selection', {index: index});
+        this._sendMessage('client-set-selection', {index: index});
     },
 
     startCall: function() {
-        var self = this;
         webRTC.startCall();
     },
 
     addIceCandidate: function(candidate) {
-        var self = this;
-        self._sendMessage('client-call-add-ice-candidate', candidate);
+        this._sendMessage('client-call-add-ice-candidate', candidate);
     },
 
     setSession: function(session) {
-        var self = this;
         console.log(session);
         if (session.type == "offer") {
-            self._sendMessage('client-call-set-offer', session);
+            this._sendMessage('client-call-set-offer', session);
         } else if (session.type == "answer") {
-            self._sendMessage('client-call-set-answer', session)
+            this._sendMessage('client-call-set-answer', session)
         } else {
             alert("Unsupported session type!");
         }
     },
 
     setLocalStream: function(stream) {
-        var self = this;
-        self._meeting.setState({localStream: stream});
+        this._meeting.setState({localStream: stream});
     },
 
     setRemoteStream: function(stream) {
-        var self = this;
-        self._meeting.setState({remoteStream: stream});
+        this._meeting.setState({remoteStream: stream});
     },
 
     setCallState: function(state) {
-        var self = this;
-        self._meeting.setState({callState: state});
+        this._meeting.setState({callState: state});
     },
 
 };

@@ -16,13 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-const React = require('react');
-const ReactCSSTransitionGroup = require('react-addons-css-transition-group');
-
-const AppBar = require('material-ui/lib/app-bar');
-const IconButton = require('material-ui/lib/icon-button');
-const NavigationClose = require('material-ui/lib/svg-icons/navigation/close');
-const Paper = require('material-ui/lib/paper');
+import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import AppBar from 'material-ui/lib/app-bar';
+import IconButton from 'material-ui/lib/icon-button';
+import NavigationClose from 'material-ui/lib/svg-icons/navigation/close';
+import Paper from 'material-ui/lib/paper';
 
 var ItemView = React.createClass({
 
