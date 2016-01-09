@@ -4,9 +4,13 @@
   "description": "Suite of applications for performing distributed group video conferences and managing shared meeting boards.",
   "dependencies": {
     "babelify": "^7.0.2",
+    "body-parser": "^1.14.2",
+    "busboy-body-parser": "0.0.9",
+    "connect-busboy": "0.0.2",
     "express": "^4.10.2",
     "history": "^1.17.0",
     "material-ui": "^0.13.4",
+    "multipart": "^0.1.5",
     "react": "^0.14.1",
     "react-addons-css-transition-group": "^0.14.3",
     "react-addons-linked-state-mixin": "^0.14.3",

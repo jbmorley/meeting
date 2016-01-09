@@ -16,21 +16,52 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-var update = require('react-addons-update');
-var guid = require('./lib/guid');
-var values = require('./lib/values');
-var parse_message = require('./lib/parse-message');
+var update = require('react-addons-update')
+var guid = require('./lib/guid')
+var values = require('./lib/values')
+var parse_message = require('./lib/parse-message')
 
 var Express = require('express'),
     Path = require('path'),
     HTTP = require('http'),
-    SocketIO = require('socket.io');
+    SocketIO = require('socket.io'),
+    fs = require('fs'),
+    busboyBodyParser = require('busboy-body-parser'),
+    busboy = require('connect-busboy')
 
 var app = Express(),
     server = HTTP.Server(app),
-    io = SocketIO(server);
+    io = SocketIO(server)
 
-app.use(Express.static(Path.join(__dirname, 'static')));
+state = {
+  items: {},
+  selection: undefined,
+  users: {},
+  offer: undefined,
+  answer: undefined,
+}
+
+// Support parsing multipart/form-data.
+app.use(busboy())
+
+// Render static pages.
+app.use(Express.static(Path.join(__dirname, 'static')))
+
+// Accept file uploads.
+app.post('/upload', function(req, res) {
+    var fstream
+    req.pipe(req.busboy)
+    req.busboy.on('file', function (fieldname, file, filename) {
+        console.log("Uploading: " + filename)
+        fstream = fs.createWriteStream(__dirname + '/static/uploads/' + filename)
+        file.pipe(fstream)
+        fstream.on('close', function () {
+            state.items.push({uuid: guid(), title: "Upload", url: "/viewer.html#/" + filename})
+            broadcastState()
+            res.redirect('back')
+        })
+    })
+})
 
 DEFAULT_ITEMS = [
   {uuid: guid(), title: "UWO Activity - Sessions/Users", url: "/viewer.html#/activity.jpg"},
@@ -41,35 +72,27 @@ DEFAULT_ITEMS = [
   {uuid: guid(), title: "% Clicked a link (CM)", url: "/viewer.html#/clicked.jpg"},
   {uuid: guid(), title: "Continuous improvement", url: "charts/table.html"},
   {uuid: guid(), title: "Bar chart", url: "charts/bar.html"},
-];
+]
 
-state = {
-  items: {},
-  selection: undefined,
-  users: {},
-  offer: undefined,
-  answer: undefined,
-};
-
-offerSocket = undefined;
+offerSocket = undefined
 
 io.emitJSON = function(message, parameters) {
-  io.emit(message, JSON.stringify(parameters));
-};
+  io.emit(message, JSON.stringify(parameters))
+}
 
 function resetItems() {
-  state.items = update(DEFAULT_ITEMS, {});
+  state.items = update(DEFAULT_ITEMS, {})
 }
 
 function broadcastState() {
-  io.emitJSON('server-set-state', state);
+  io.emitJSON('server-set-state', state)
 }
 
-resetItems();
+resetItems()
 
 io.on('connection', function(socket) {
 
-  state.users[socket] = {uuid: guid(), name: '', email: ''};
+  state.users[socket] = {uuid: guid(), name: '', email: ''}
   broadcastState();
 
   socket.on('disconnect', function() {
