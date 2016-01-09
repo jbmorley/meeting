@@ -62,7 +62,7 @@ var ItemView = React.createClass({
                                     left: 0,
                                     width: '100%',
                                     height: '100%',
-                                    zIndex: 10,
+                                    zIndex: 2000,
                                     backgroundColor: 'rgba(0, 0, 0, 0.6)',
                                 }}
                             >
