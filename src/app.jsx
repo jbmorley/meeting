@@ -23,32 +23,32 @@ import LinkedStateMixin from 'react-addons-linked-state-mixin';
 var injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
 
-import AppBar from 'material-ui/lib/app-bar';
-import AVVideocamIcon from 'material-ui/lib/svg-icons/av/videocam';
-import Checkbox from 'material-ui/lib/checkbox';
-import CommunicationChatIcon from 'material-ui/lib/svg-icons/communication/chat';
-import Dialog from 'material-ui/lib/dialog';
-import FloatingActionButton from 'material-ui/lib/floating-action-button';
-import IconButton from 'material-ui/lib/icon-button';
-import IconMenu from 'material-ui/lib/menus/icon-menu';
-import LeftNav from 'material-ui/lib/left-nav';
-import List from 'material-ui/lib/lists/list';
-import ListDivider from 'material-ui/lib/lists/list';
-import ListItem from 'material-ui/lib/lists/list-item';
-import Menu from 'material-ui/lib/menus/menu';
-import MenuDivider from 'material-ui/lib/menus/menu-divider';
-import MenuItem from 'material-ui/lib/menus/menu-item';
-import MoreVertIcon from 'material-ui/lib/svg-icons/navigation/more-vert';
-import Paper from 'material-ui/lib/paper';
-import RaisedButton from 'material-ui/lib/raised-button';
-import Snackbar from 'material-ui/lib/snackbar';
-import TextField from 'material-ui/lib/text-field';
-import ThemeManager from 'material-ui/lib/styles/theme-manager';
+import AppBar from 'material-ui/lib/app-bar'
+import AVVideocamIcon from 'material-ui/lib/svg-icons/av/videocam'
+import Checkbox from 'material-ui/lib/checkbox'
+import CommunicationChatIcon from 'material-ui/lib/svg-icons/communication/chat'
+import Dialog from 'material-ui/lib/dialog'
+import FloatingActionButton from 'material-ui/lib/floating-action-button'
+import IconButton from 'material-ui/lib/icon-button'
+import IconMenu from 'material-ui/lib/menus/icon-menu'
+import List from 'material-ui/lib/lists/list'
+import ListDivider from 'material-ui/lib/lists/list'
+import ListItem from 'material-ui/lib/lists/list-item'
+import Menu from 'material-ui/lib/menus/menu'
+import MenuDivider from 'material-ui/lib/menus/menu-divider'
+import MenuItem from 'material-ui/lib/menus/menu-item'
+import MoreVertIcon from 'material-ui/lib/svg-icons/navigation/more-vert'
+import Paper from 'material-ui/lib/paper'
+import RaisedButton from 'material-ui/lib/raised-button'
+import Snackbar from 'material-ui/lib/snackbar'
+import TextField from 'material-ui/lib/text-field'
+import ThemeManager from 'material-ui/lib/styles/theme-manager'
 
-import CustomTheme from './lib/custom-theme.jsx';
-import ItemGrid from './lib/item-grid.jsx';
-import ItemView from './lib/item-view.jsx';
-import VideoCall from './lib/video-call.jsx';
+import CustomTheme from './lib/custom-theme.jsx'
+import ItemGrid from './lib/item-grid.jsx'
+import ItemView from './lib/item-view.jsx'
+import VideoCall from './lib/video-call.jsx'
+import Navigation from './lib/navigation.js'
 
 import webRTC from './lib/webrtc.jsx';
 import values from './lib/values';
@@ -84,6 +84,8 @@ var MeetingApp = React.createClass({
             users: [],
             callState: webRTC.UNSUPPORTED,
 
+            navigationOpen: false,
+
             showUserDetailsDialog: false,
             showAddItemDialog: false,
             selection: undefined,
@@ -107,52 +109,51 @@ var MeetingApp = React.createClass({
         self.setState({newItemURL: e.target.value});
     },
 
-    _addItem: function(e) {
-        var self = this;
-        self.setState({showAddItemDialog: true});
+    onAddItem() {
+        this.setState({showAddItemDialog: true});
     },
 
-    _resetItems: function(e) {
-        var self = this;
+    onResetItems() {
         engine.resetItems();
     },
 
-    _onUserDetailsDialogSubmit: function() {
-        var self = this;
-        engine.setUser({name: self.state.name, email: self.state.email});
-        self.setState({showUserDetailsDialog: false});
+    onUserDetailsDialogSubmit() {
+        engine.setUser({name: this.state.name, email: this.state.email});
+        this.setState({showUserDetailsDialog: false});
     },
 
-    _onAddItemDialogSubmit: function() {
+    onAddItemDialogSubmit() {
         var self = this;
         self.setState({showAddItemDialog: false});
         engine.addItem({title: self.state.newItemTitle, url: self.state.newItemURL});
         self.setState({newItemTitle: '', newItemURL: ''});
     },
 
-    _onAddItemDialogClose: function() {
-        var self = this;
-        self.setState({showAddItemDialog: false});
-        self.setState({text: ''});
+    onAddItemDialogClose() {
+        this.setState({showAddItemDialog: false});
+        this.setState({text: ''});
     },
 
-    _onCloseFullscreenDocument: function() {
-        var self = this;
+    onCloseFullscreenDocument() {
         engine.setSelection(undefined);
     },
 
-    render: function() {
+    onAppBarLeftIconButtonTouchTap() {
+        this.refs.navigation.toggle();
+    },
+
+    render() {
         var self = this;
         return (
             <div>
                 <AppBar 
                     title="Meeting" 
                     className="app-bar"
-                    iconElementLeft={<IconButton />}
                     style={{
                         position: "fixed",
                         top: "0"
                     }}
+                    onLeftIconButtonTouchTap={this.onAppBarLeftIconButtonTouchTap}
                     iconElementRight={
                         <IconMenu iconButtonElement={
                             <IconButton>
@@ -161,17 +162,19 @@ var MeetingApp = React.createClass({
                         }>
                             <MenuItem
                                 primaryText="Add item"
-                                onTouchTap={this._addItem} />
+                                onTouchTap={this.onAddItem} />
                             <MenuItem
                                 primaryText="Reset items"
-                                onTouchTap={this._resetItems} />
+                                onTouchTap={this.onResetItems} />
                         </IconMenu>
                     } />
+
+                <Navigation ref="navigation" open={this.state.navigationOpen} />
 
                 <Dialog
                     title="Set user details"
                     actions={[
-                        { text: "OK", onTouchTap: this._onUserDetailsDialogSubmit, ref: "OK" }
+                        { text: "OK", onTouchTap: this.onUserDetailsDialogSubmit, ref: "OK" }
                     ]}
                     actionFocus="submit"
                     open={this.state.showUserDetailsDialog}>
@@ -189,11 +192,11 @@ var MeetingApp = React.createClass({
                     title="Add item"
                     actions={[
                         { text: "Cancel" },
-                        { text: "OK", onTouchTap: this._onAddItemDialogSubmit, ref: "OK" }
+                        { text: "OK", onTouchTap: this.onAddItemDialogSubmit, ref: "OK" }
                     ]}
                     actionFocus="submit"
                     open={this.state.showAddItemDialog}
-                    onRequestClose={this._onAddItemDialogClose}>
+                    onRequestClose={this.onAddItemDialogClose}>
                     <TextField
                         onChange={this.onChangeTitle}
                         value={this.state.newItemTitle}
@@ -262,7 +265,7 @@ var MeetingApp = React.createClass({
                 <ItemView
                     open={this.state.selection != undefined}
                     item={this.state.selection}
-                    onRequestClose={this._onCloseFullscreenDocument} />)
+                    onRequestClose={this.onCloseFullscreenDocument} />)
 
                 <div className="content">
                     <ItemGrid
