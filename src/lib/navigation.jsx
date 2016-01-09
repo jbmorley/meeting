@@ -16,14 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
- import React from 'react';
- import LeftNav from 'material-ui/lib/left-nav';
- import MenuItem from 'material-ui/lib/menus/menu-item';
- import MenuDivider from 'material-ui/lib/menus/menu-divider';
- import RaisedButton from 'material-ui/lib/raised-button';
+import React from 'react';
+import LeftNav from 'material-ui/lib/left-nav';
+import MenuItem from 'material-ui/lib/menus/menu-item';
+import Divider from 'material-ui/lib/divider';
+import RaisedButton from 'material-ui/lib/raised-button';
 
-
- export default class Navigation extends React.Component {
+export default class Navigation extends React.Component {
 
     constructor(props) {
         super(props);
@@ -31,13 +30,20 @@
 
     render() {
         return (
-            <LeftNav open={this.props.open}>
+            <LeftNav
+                open={this.props.open}
+                docked={false}
+                onRequestChange={this.props.onRequestChange}>
+
                 <MenuItem>Menu Item</MenuItem>
                 <MenuItem disabled={true}>Menu Item 2</MenuItem>
                 <MenuItem>Menu Item 2</MenuItem>
-                <MenuDivider />
+
+                <Divider />
+
                 <MenuItem>Menu Item 3</MenuItem>
+
             </LeftNav>
-            );
+        );
     }
 }

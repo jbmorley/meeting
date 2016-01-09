@@ -126,9 +126,7 @@ def deploy(options):
     if not options.skip_build:
         build(options)
     with Chdir(ANSIBLE_DIR):
-        command(["ansible-playbook",
-                 "meeting.yml",
-                 "--ask-become-pass"])
+        command(["ansible-playbook", "meeting.yml", "--ask-become-pass"])
 
 
 def serve(options):

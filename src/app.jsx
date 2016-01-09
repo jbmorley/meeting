@@ -48,7 +48,8 @@ import CustomTheme from './lib/custom-theme.jsx'
 import ItemGrid from './lib/item-grid.jsx'
 import ItemView from './lib/item-view.jsx'
 import VideoCall from './lib/video-call.jsx'
-import Navigation from './lib/navigation.js'
+import Navigation from './lib/navigation.jsx'
+import AddItemDialog from './lib/add-item-dialog.jsx'
 
 import webRTC from './lib/webrtc.jsx';
 import values from './lib/values';
@@ -78,15 +79,11 @@ var MeetingApp = React.createClass({
         return {
 
             items: [],
-            newItemTitle: '',
-            newItemURL: '',
-            items: [],
             users: [],
             callState: webRTC.UNSUPPORTED,
 
             navigationOpen: false,
 
-            showUserDetailsDialog: false,
             showAddItemDialog: false,
             selection: undefined,
 
@@ -121,16 +118,14 @@ var MeetingApp = React.createClass({
         this.setState({showUserDetailsDialog: false});
     },
 
-    onAddItemDialogSubmit() {
-        var self = this;
-        self.setState({showAddItemDialog: false});
-        engine.addItem({title: self.state.newItemTitle, url: self.state.newItemURL});
-        self.setState({newItemTitle: '', newItemURL: ''});
+    onAddItemDialogSubmit(title, url) {
+        this.setState({showAddItemDialog: false});
+        engine.addItem({title: title, url: url});
     },
 
-    onAddItemDialogClose() {
+    onAddItemDialogCancel() {
+        console.log(this);
         this.setState({showAddItemDialog: false});
-        this.setState({text: ''});
     },
 
     onCloseFullscreenDocument() {
@@ -168,43 +163,15 @@ var MeetingApp = React.createClass({
                         </IconMenu>
                     } />
 
-                <Navigation ref="navigation" open={this.state.navigationOpen} />
+                <Navigation
+                    ref="navigation"
+                    open={this.state.navigationOpen}
+                    onRequestChange={open => this.setState({navigationOpen: open})} />
 
-                <Dialog
-                    title="Set user details"
-                    actions={[
-                        { text: "OK", onTouchTap: this.onUserDetailsDialogSubmit, ref: "OK" }
-                    ]}
-                    actionFocus="submit"
-                    open={this.state.showUserDetailsDialog}>
-                    <TextField
-                        style={{width: "100%"}}
-                        valueLink={this.linkState('name')}
-                        hintText="Name" /><br />
-                    <TextField
-                        style={{width: "100%"}}
-                        valueLink={this.linkState('email')}
-                        hintText="E-mail Address" />
-                </Dialog>
-
-                <Dialog
-                    title="Add item"
-                    actions={[
-                        { text: "Cancel" },
-                        { text: "OK", onTouchTap: this.onAddItemDialogSubmit, ref: "OK" }
-                    ]}
-                    actionFocus="submit"
+                <AddItemDialog
                     open={this.state.showAddItemDialog}
-                    onRequestClose={this.onAddItemDialogClose}>
-                    <TextField
-                        onChange={this.onChangeTitle}
-                        value={this.state.newItemTitle}
-                        hintText="Title" /><br />
-                    <TextField
-                        onChange={this.onChangeURL}
-                        value={this.state.newItemURL}
-                        hintText="URL" />
-                </Dialog>
+                    onSubmit={this.onAddItemDialogSubmit} 
+                    onCancel={this.onAddItemDialogCancel} />
 
                 {function() {
 
