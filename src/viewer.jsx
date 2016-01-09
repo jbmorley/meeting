@@ -16,14 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-const React = require('react')
-const ReactDOM = require('react-dom')
-const LinkedStateMixin = require('react-addons-linked-state-mixin')
-const Router = require('react-router').Router
-const Route = require('react-router').Route
-const Link = require('react-router').Link
+import React from 'react'
+import ReactDOM from 'react-dom'
+import LinkedStateMixin from 'react-addons-linked-state-mixin'
+import { Router, Route, Link } from 'react-router'
 
-const injectTapEventPlugin = require('react-tap-event-plugin');
+import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin();
 
 var DocumentViewer = React.createClass({
