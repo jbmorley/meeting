@@ -32,7 +32,7 @@ var DocumentViewer = React.createClass({
 
     getInitialState: function() {
         return {
-            path: "/examples/" + this.props.params.path
+            path: "/uploads/" + this.props.params.path
         };
     },
 
