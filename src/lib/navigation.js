@@ -29,20 +29,9 @@
         super(props);
     }
 
-    /**
-     * Expose the internal LeftNav toggle function.
-     *
-     * Work around for the current implementation of LeftNav which doesn't seem to correctly honour the open property as
-     * described in the documentation. It seems that, for the time being at least, it actually uses a state internally
-     * and not a property.
-     */
-    toggle() {
-        this.refs.leftNav.toggle();
-    }
-
     render() {
         return (
-            <LeftNav ref="leftNav" docked={false}>
+            <LeftNav open={this.props.open}>
                 <MenuItem>Menu Item</MenuItem>
                 <MenuItem disabled={true}>Menu Item 2</MenuItem>
                 <MenuItem>Menu Item 2</MenuItem>

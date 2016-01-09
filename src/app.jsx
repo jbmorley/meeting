@@ -104,9 +104,8 @@ var MeetingApp = React.createClass({
         self.setState({newItemTitle: e.target.value});
     },
 
-    onChangeURL: function(e) {
-        var self = this;
-        self.setState({newItemURL: e.target.value});
+    onChangeURL(e) {
+        this.setState({newItemURL: e.target.value});
     },
 
     onAddItem() {
@@ -139,7 +138,7 @@ var MeetingApp = React.createClass({
     },
 
     onAppBarLeftIconButtonTouchTap() {
-        this.refs.navigation.toggle();
+        this.setState({navigationOpen: !this.state.navigationOpen});
     },
 
     render() {
