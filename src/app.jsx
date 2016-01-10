@@ -89,10 +89,6 @@ class MeetingApp extends React.Component {
         engine.setSelection(undefined);
     }
 
-    onAppBarLeftIconButtonTouchTap() {
-        this.setState({navigationOpen: !this.state.navigationOpen});
-    }
-
     render() {
         var self = this;
 
@@ -112,7 +108,7 @@ class MeetingApp extends React.Component {
 
                 <MeetingAppBar
                     title={this.state.title}
-                    onLeftIconButtonTouchTap={() => self.onAppBarLeftIconButtonTouchTap()}
+                    onLeftIconButtonTouchTap={() => this.setState({navigationOpen: true})}
                     menuItems={menuItems} />
 
                 <Navigation
