@@ -85,11 +85,15 @@ class MeetingApp extends React.Component {
         ];
 
         const navigationItems = [
-            <MenuItem>Menu Item</MenuItem>,
-            <MenuItem disabled={true}>Menu Item 2</MenuItem>,
-            <MenuItem>Menu Item 2</MenuItem>,
-            <Divider />,
-            <MenuItem>Menu Item 3</MenuItem>,
+            <MenuItem
+                key="menu-item-navigation-item"
+                primaryText="Menu Item" />,
+            <MenuItem
+                key="menu-item-disabled-navigation-item"
+                disabled={true}
+                primaryText="Menu Item 2" />,
+            <Divider
+                key="divider-navigation-item" />
         ];
 
         return (
