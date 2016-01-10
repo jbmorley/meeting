@@ -80,14 +80,6 @@ class MeetingApp extends React.Component {
         };
     }
 
-    onAddItem() {
-        this.setState({showAddItemDialog: true});
-    }
-
-    onResetItems() {
-        engine.resetItems();
-    }
-
     onAddItemDialogSubmit(title, url) {
         this.setState({showAddItemDialog: false});
         engine.addItem({title: title, url: url});
@@ -112,11 +104,11 @@ class MeetingApp extends React.Component {
             <MenuItem
                 key="add-menu-item"
                 primaryText="Add item"
-                onTouchTap={() => self.onAddItem()} />,
+                onTouchTap={() => self.setState({showAddItemDialog: true})} />,
             <MenuItem
                 key="reset-menu-item"
                 primaryText="Reset items"
-                onTouchTap={() => self.onResetItems()} />
+                onTouchTap={() => engine.resetItems()} />
         ];
 
         return (
@@ -136,6 +128,18 @@ class MeetingApp extends React.Component {
                     open={this.state.showAddItemDialog}
                     onSubmit={(title, url) => this.onAddItemDialogSubmit(title, url)} 
                     onCancel={() => this.onAddItemDialogCancel()} />
+
+                <ItemView
+                    open={this.state.selection != undefined}
+                    item={this.state.selection}
+                    onRequestClose={this.onCloseFullscreenDocument} />)
+
+                <div className="content">
+                    <ItemGrid
+                        items={this.state.items}
+                        onRemoveItem={this._onRemoveItem}
+                        onSelect={this._onSelectItem} />
+                </div>
 
                 {(() => {
 
@@ -191,18 +195,6 @@ class MeetingApp extends React.Component {
                     }
 
                 })()}
-
-                <ItemView
-                    open={this.state.selection != undefined}
-                    item={this.state.selection}
-                    onRequestClose={this.onCloseFullscreenDocument} />)
-
-                <div className="content">
-                    <ItemGrid
-                        items={this.state.items}
-                        onRemoveItem={this._onRemoveItem}
-                        onSelect={this._onSelectItem} />
-                </div>
 
                 {(() => {
                     if (self.state.offer != undefined &&
