@@ -33,7 +33,6 @@ import AddItemDialog from './lib/add-item-dialog.jsx';
 import CustomTheme from './lib/custom-theme.jsx';
 import ItemGrid from './lib/item-grid.jsx';
 import ItemView from './lib/item-view.jsx';
-import MeetingAppRTC from './lib/meeting-app-rtc.jsx';
 import MeetingWebRTC from './lib/meeting-web-rtc.jsx';
 import MeetingAppScreen from './lib/meeting-app-screen.jsx';
 import Navigation from './lib/navigation.jsx';
@@ -47,8 +46,6 @@ const CallState = {
     CONNECTING: 1,
     CONNECTED: 2,
 };
-
-var useAppRTC = false;
 
 class MeetingApp extends React.Component {
 
@@ -125,32 +122,23 @@ class MeetingApp extends React.Component {
                     item={this.state.selection}
                     onRequestClose={() => engine.setSelection(undefined)} />)
 
-                {(() => {
-                    if (useAppRTC) {
-                        return (
-                            <MeetingAppRTC />
-                        );
-                    } else {
-                        return (
-                            <MeetingWebRTC
-                                callState={self.state.callState}
-                                offer={self.state.offer}
-                                localStream={self.state.localStream}
-                                remoteStream={self.state.remoteStream}
-                                onStartCall={() => engine.startCall()}
-                                onAcceptCall={() => {
+                <MeetingWebRTC
+                    useAppRTC={true}
+                    callState={self.state.callState}
+                    offer={self.state.offer}
+                    localStream={self.state.localStream}
+                    remoteStream={self.state.remoteStream}
+                    onStartCall={() => engine.startCall()}
+                    onAcceptCall={() => {
 
-                                    if (webRTC.state == webRTC.DISCONNECTED) {
-                                        webRTC.setOffer(self.state.offer);
-                                        engine._sendMessage('client-call-set-offer', undefined);
-                                    } else {
-                                        alert("Received offer in unexpected state (" + webRTC.state + ")");
-                                    }
-                                    
-                                }} />
-                        );
-                    }
-                })()}
+                        if (webRTC.state == webRTC.DISCONNECTED) {
+                            webRTC.setOffer(self.state.offer);
+                            engine._sendMessage('client-call-set-offer', undefined);
+                        } else {
+                            alert("Received offer in unexpected state (" + webRTC.state + ")");
+                        }
+
+                    }} />
 
             </div>
         );

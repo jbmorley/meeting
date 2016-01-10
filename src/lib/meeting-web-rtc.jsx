@@ -22,6 +22,7 @@ import AVVideocamIcon from 'material-ui/lib/svg-icons/av/videocam';
 import FloatingActionButton from 'material-ui/lib/floating-action-button';
 import Snackbar from 'material-ui/lib/snackbar';
 
+import MeetingAppRTC from './meeting-app-rtc.jsx';
 import VideoCall from './video-call.jsx';
 
 import webRTC from './webrtc.jsx';
@@ -41,34 +42,44 @@ export default class MeetingAppScreen extends React.Component {
             <div>
                 {(() => {
 
-                    switch (self.props.callState) {
-                        case webRTC.UNSUPPORTED:
-                            return '';
-                        case webRTC.CONNECTED:
-                            return (
-                                <VideoCall 
-                                    localStream={self.props.localStream}
-                                    remoteStream={self.props.remoteStream} />
-                            );
-                        case webRTC.DISCONNECTED:
-                            return (
-                                <FloatingActionButton
-                                    style={{
-                                        position: "fixed",
-                                        bottom: "36px",
-                                        right: "36px",
-                                        zIndex: 8,
-                                    }}
-                                    onTouchTap={() => self.props.onStartCall()}>
-                                    <AVVideocamIcon />
-                                </FloatingActionButton>
-                            );
+                    if (self.props.useAppRTC) {
+
+                        return (
+                            <MeetingAppRTC />
+                        );
+
+                    } else {
+
+                        switch (self.props.callState) {
+                            case webRTC.UNSUPPORTED:
+                                return '';
+                            case webRTC.CONNECTED:
+                                return (
+                                    <VideoCall 
+                                        localStream={self.props.localStream}
+                                        remoteStream={self.props.remoteStream} />
+                                );
+                            case webRTC.DISCONNECTED:
+                                return (
+                                    <FloatingActionButton
+                                        style={{
+                                            position: "fixed",
+                                            bottom: "36px",
+                                            right: "36px",
+                                            zIndex: 8,
+                                        }}
+                                        onTouchTap={() => self.props.onStartCall()}>
+                                        <AVVideocamIcon />
+                                    </FloatingActionButton>
+                                );
+                        }
+
                     }
 
                 })()}
 
                 <Snackbar
-                    open={self.props.offer != undefined && self.props.callState == webRTC.DISCONNECTED}
+                    open={!self.useAppRTC && self.props.offer != undefined && self.props.callState == webRTC.DISCONNECTED}
                     message="Incoming call"
                     action="Accept"
                     onActionTouchTap={() => self.props.onAcceptCall()} />
