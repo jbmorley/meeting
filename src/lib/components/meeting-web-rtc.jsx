@@ -25,7 +25,7 @@ import Snackbar from 'material-ui/lib/snackbar';
 import MeetingAppRTC from './meeting-app-rtc.jsx';
 import VideoCall from './video-call.jsx';
 
-import webRTC from './webrtc.jsx';
+import webRTC from '../webrtc.jsx';
 
 export default class MeetingAppScreen extends React.Component {
 

@@ -27,12 +27,12 @@ import Divider from 'material-ui/lib/divider';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 
-import AddItemDialog from './lib/add-item-dialog.jsx';
-import CustomTheme from './lib/custom-theme.jsx';
-import ItemGrid from './lib/item-grid.jsx';
-import ItemView from './lib/item-view.jsx';
-import MeetingWebRTC from './lib/meeting-web-rtc.jsx';
-import MeetingAppScreen from './lib/meeting-app-screen.jsx';
+import AddItemDialog from './lib/components/add-item-dialog.jsx';
+import CustomTheme from './lib/components/custom-theme.jsx';
+import ItemGrid from './lib/components/item-grid.jsx';
+import ItemView from './lib/components/item-view.jsx';
+import MeetingWebRTC from './lib/components/meeting-web-rtc.jsx';
+import MeetingAppScreen from './lib/components/meeting-app-screen.jsx';
 
 import Engine from './lib/engine.jsx';
 import webRTC from './lib/webrtc.jsx';
