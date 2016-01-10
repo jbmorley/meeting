@@ -25,6 +25,7 @@ injectTapEventPlugin();
 
 import Divider from 'material-ui/lib/divider';
 import MenuItem from 'material-ui/lib/menus/menu-item';
+import RaisedButton from 'material-ui/lib/raised-button';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 
 import AddItemDialog from './lib/components/add-item-dialog.jsx';
@@ -212,23 +213,28 @@ class Camera extends React.Component {
         super(props);
     }
 
+    onUploadFile() {
+        alert("UPLOAD FILE!");
+        console.log(this.state.file)
+    }
+
     render() {
         return (
-            <form
-                action="/upload"
-                enctype="multipart/form-data"
-                method="post">
+            <div>
 
                 <input
                     type="file"
-                    capture="camera"
                     accept="image/*"
                     id="file"
-                    name="file" />
+                    name="file"
+                    onChange={(event) => this.setState({file: event.target.value})} />
 
-                <input type="submit" value="Upload" />
+                <RaisedButton
+                    label="Primary"
+                    primary={true}
+                    onTouchTap={() => this.onUploadFile()} />
 
-            </form>
+            </div>
         );
     }
 

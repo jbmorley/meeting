@@ -22,10 +22,6 @@ body  {
     background-color: #eee;
 }
 
-.content {
-    margin-top: 64px;
-}
-
 .grid {
     padding: 12px 24px;
     display: flex;

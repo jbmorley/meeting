@@ -45,7 +45,11 @@ export default class MeetingAppScreen extends React.Component {
                     onLeftIconButtonTouchTap={() => this.props.onShowNavigation(true)}
                     menuItems={this.props.menuItems} />
 
-                <div className="content">
+                <div
+                    style={{
+                        marginTop: "64px",
+                        padding: "8px"
+                    }}>
                     {this.props.children}
                 </div>
                 
