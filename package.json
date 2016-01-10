@@ -8,6 +8,7 @@
     "babel-preset-react": "^6.3.13",
     "babelify": "^7.0.2",
     "body-parser": "^1.14.2",
+    "bufferutil": "^1.2.1",
     "busboy-body-parser": "0.0.9",
     "connect-busboy": "0.0.2",
     "es6ify": "^1.6.0",
@@ -24,6 +25,8 @@
     "react-router": "^1.0.3",
     "react-tap-event-plugin": "^0.2.1",
     "reactify": "^1.1.1",
-    "socket.io": "^1.4.3"
+    "socket.io": "^1.4.3",
+    "socket.io-client": "^1.4.3",
+    "utf-8-validate": "^1.2.1"
   }
 }

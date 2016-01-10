@@ -51,8 +51,7 @@ var ItemGrid = React.createClass({
                                 style={{
                                     padding: 0,
                                     position: 'relative',
-                                }}
-                            >
+                                }} >
                                 <div
                                     style={{
                                         boxSizing: 'border-box',
@@ -61,8 +60,7 @@ var ItemGrid = React.createClass({
                                         height: '48px',
                                         verticalAlign: 'middle',
                                         padding: '0 12px',
-                                    }}
-                                >
+                                    }} >
                                     {item.title}
                                 </div>
                                 <IconButton

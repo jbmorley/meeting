@@ -18,6 +18,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Router, Route, IndexRoute, Link, browserHistory } from 'react-router'
 
 var injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
@@ -33,15 +34,16 @@ import ItemView from './lib/item-view.jsx';
 import MeetingWebRTC from './lib/meeting-web-rtc.jsx';
 import MeetingAppScreen from './lib/meeting-app-screen.jsx';
 
+import Engine from './lib/engine.jsx';
 import webRTC from './lib/webrtc.jsx';
-import values from './lib/values';
-import parse_message from './lib/parse-message';
 
 const CallState = {
     DISCONNECTED: 0,
     CONNECTING: 1,
     CONNECTED: 2,
 };
+
+var engine = new Engine();
 
 class MeetingApp extends React.Component {
 
@@ -54,6 +56,7 @@ class MeetingApp extends React.Component {
             users: [],
             selection: undefined,
 
+            showNavigation: false,
             showAddItemDialog: false,
 
             callState: webRTC.UNSUPPORTED,
@@ -70,6 +73,19 @@ class MeetingApp extends React.Component {
         };
     }
 
+    engineStateObserver = {
+
+    }
+
+    componentDidMount() {
+        engine.addStateObserver((state) => {
+            this.setState(state);
+        });
+    }
+
+    componentWillUnmount() {
+    }
+
     render() {
         var self = this;
 
@@ -77,7 +93,7 @@ class MeetingApp extends React.Component {
             <MenuItem
                 key="add-menu-item"
                 primaryText="Add item"
-                onTouchTap={() => self.setState({showAddItemDialog: true})} />,
+                onTouchTap={() => this.setState({showAddItemDialog: true})} />,
             <MenuItem
                 key="reset-menu-item"
                 primaryText="Reset items"
@@ -87,11 +103,18 @@ class MeetingApp extends React.Component {
         const navigationItems = [
             <MenuItem
                 key="menu-item-navigation-item"
-                primaryText="Menu Item" />,
+                primaryText="Live"
+                onTouchTap={() => {
+                    this.context.history.push('/');
+                    this.setState({showNavigation: false});
+                }} />,
             <MenuItem
                 key="menu-item-disabled-navigation-item"
-                disabled={true}
-                primaryText="Menu Item 2" />,
+                primaryText="Camera"
+                onTouchTap={() => {
+                    this.context.history.push('/camera');
+                    this.setState({showNavigation: false});
+                }} />,
             <Divider
                 key="divider-navigation-item" />
         ];
@@ -102,17 +125,16 @@ class MeetingApp extends React.Component {
                 <MeetingAppScreen
                     title={this.state.title}
                     navigationItems={navigationItems}
-                    menuItems={menuItems}>
+                    menuItems={menuItems}
+                    showNavigation={this.state.showNavigation}
+                    onShowNavigation={(show) => this.setState({showNavigation: show})}>
 
-                    <ItemGrid
-                        items={this.state.items}
-                        onRemoveItem={(index) => engine.removeItem(index)}
-                        onSelect={(index) => engine.setSelection(index)} />
+                    {this.props.children}
 
                     <ItemView
                         open={this.state.selection != undefined}
                         item={this.state.selection}
-                        onRequestClose={() => engine.setSelection(undefined)} />)
+                        onRequestClose={() => engine.setSelection(undefined)} />
 
                 </MeetingAppScreen>
 
@@ -147,99 +169,61 @@ class MeetingApp extends React.Component {
     }
 }
 
+MeetingApp.contextTypes = {
+    history: React.PropTypes.object.isRequired,
+};
+
 MeetingApp.childContextTypes = {
     muiTheme: React.PropTypes.object,
 };
 
-var meeting = ReactDOM.render(<MeetingApp />, document.getElementById('app'));
+class Live extends React.Component {
 
-var engine = {
+    constructor(props) {
+        super(props);
+        this.state = {items: []};
+    }
 
-    connect: function(meeting) {
-        var self = this;
-        self._meeting = meeting;
-        self._socket = io()
-        self._socket.on('server-set-state', parse_message(function(state) {
+    componentDidMount() {
+        engine.addStateObserver((state) => {
+            this.setState(state);
+        });
+    }
 
-            self._meeting.setState({
-                items: state.items,
-                users: values(state.users),
-                selection: state.selection != undefined ? state.items[state.selection] : undefined,
-                offer: state.offer,
-                answer: state.answer,
-            });
+    render() {
+        return (
+            <ItemGrid
+                items={this.state.items}
+                onRemoveItem={(index) => engine.removeItem(index)}
+                onSelect={(index) => engine.setSelection(index)} />
+        );
+    }
 
-            if (state.answer != undefined && webRTC.state == webRTC.OFFERING) {
-                webRTC.setAnswer(state.answer);
-                engine._sendMessage('client-call-set-answer', undefined);
-            }
+}
 
-        })).on('server-call-add-ice-candidate', parse_message(function(candidate) {
+class Camera extends React.Component {
 
-            if (webRTC.state != webRTC.UNSUPPORTED) {
-                console.log("Receiving ICE Candidate: " + candidate.candidate);
-                webRTC.addIceCandidate(candidate);
-            }
+    constructor(props) {
+        super(props);
+    }
 
-        }));
-    },
+    render() {
+        return (
+            <div
+                style={{height: '100px', width: '100px', backgroundColor: 'blue'}} />
+        );
+    }
 
-    _sendMessage: function(message, parameters) {
-        this._socket.emit(message, JSON.stringify(parameters));
-    },
+}
 
-    setUser: function(user) {
-        this._sendMessage('client-set-user', user);
-    },
-
-    resetItems: function() {
-        this._socket.emit('client-reset-items');
-    },
-
-    addItem: function(item) {
-        this._sendMessage('client-add-item', item);
-    },
-
-    removeItem: function(index) {
-        this._sendMessage('client-remove-item', {index: index});
-    },
-
-    setSelection: function(index) {
-        this._sendMessage('client-set-selection', {index: index});
-    },
-
-    startCall: function() {
-        webRTC.startCall();
-    },
-
-    addIceCandidate: function(candidate) {
-        this._sendMessage('client-call-add-ice-candidate', candidate);
-    },
-
-    setSession: function(session) {
-        console.log(session);
-        if (session.type == "offer") {
-            this._sendMessage('client-call-set-offer', session);
-        } else if (session.type == "answer") {
-            this._sendMessage('client-call-set-answer', session)
-        } else {
-            alert("Unsupported session type!");
-        }
-    },
-
-    setLocalStream: function(stream) {
-        this._meeting.setState({localStream: stream});
-    },
-
-    setRemoteStream: function(stream) {
-        this._meeting.setState({remoteStream: stream});
-    },
-
-    setCallState: function(state) {
-        this._meeting.setState({callState: state});
-    },
-
-};
+ReactDOM.render((
+    <Router history={browserHistory}>
+        <Route path="/" component={MeetingApp}>
+            <IndexRoute component={Live} />
+            <Route path="camera" component={Camera} />
+        </Route>
+    </Router>
+), document.getElementById('app'));
 
 webRTC.onIceCandidate = function (candidate) {
     if (candidate.candidate.indexOf("relay") < 0) {
@@ -253,7 +237,7 @@ webRTC.onSessionDescription = function(session) { engine.setSession(session); }
 webRTC.onAttachLocalStream = function(stream) { engine.setLocalStream(stream); }
 webRTC.onAttachRemoteStream = function(stream) { engine.setRemoteStream(stream); }
 webRTC.onStateChange = function(state) { engine.setCallState(state); }
-
-engine.connect(meeting);
-
 webRTC.setup();
+
+engine.connect();
+

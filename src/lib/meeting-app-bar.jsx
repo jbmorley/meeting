@@ -31,11 +31,14 @@ export default class MeetingAppBar extends React.Component {
     render() {
 
         var iconElementRight = this.props.menuItems ? (
-            <IconMenu iconButtonElement={
-                <IconButton>
-                    <MoreVertIcon />
-                </IconButton>
-            }>
+            <IconMenu
+                iconButtonElement={
+                    <IconButton>
+                        <MoreVertIcon />
+                    </IconButton>
+                }
+                targetOrigin={{horizontal: 'right', vertical: 'top'}}
+                anchorOrigin={{horizontal: 'right', vertical: 'top'}}>
                 {this.props.menuItems}
             </IconMenu>
         ) : undefined;
@@ -51,6 +54,6 @@ export default class MeetingAppBar extends React.Component {
                 onLeftIconButtonTouchTap={this.props.onLeftIconButtonTouchTap}
                 iconElementRight={iconElementRight} />
         );
-        
+
     }
 }
