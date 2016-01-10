@@ -241,7 +241,7 @@ class Camera extends React.Component {
                     }} />
 
                 <RaisedButton
-                    label="Primary"
+                    label="Upload"
                     primary={true}
                     onTouchTap={() => this.onUploadFile()} />
 
