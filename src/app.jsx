@@ -24,24 +24,17 @@ injectTapEventPlugin();
 
 import AppBar from 'material-ui/lib/app-bar'
 import AVVideocamIcon from 'material-ui/lib/svg-icons/av/videocam'
-import Checkbox from 'material-ui/lib/checkbox'
-import CommunicationChatIcon from 'material-ui/lib/svg-icons/communication/chat'
-import Dialog from 'material-ui/lib/dialog'
 import FloatingActionButton from 'material-ui/lib/floating-action-button'
 import IconButton from 'material-ui/lib/icon-button'
 import IconMenu from 'material-ui/lib/menus/icon-menu'
-import List from 'material-ui/lib/lists/list'
-import ListDivider from 'material-ui/lib/lists/list'
-import ListItem from 'material-ui/lib/lists/list-item'
 import Menu from 'material-ui/lib/menus/menu'
 import MenuDivider from 'material-ui/lib/menus/menu-divider'
 import MenuItem from 'material-ui/lib/menus/menu-item'
 import MoreVertIcon from 'material-ui/lib/svg-icons/navigation/more-vert'
 import Paper from 'material-ui/lib/paper'
-import RaisedButton from 'material-ui/lib/raised-button'
 import Snackbar from 'material-ui/lib/snackbar'
-import TextField from 'material-ui/lib/text-field'
 import ThemeManager from 'material-ui/lib/styles/theme-manager'
+import ThemeDecorator from 'material-ui/lib/styles/theme-decorator';
 
 import CustomTheme from './lib/custom-theme.jsx'
 import ItemGrid from './lib/item-grid.jsx'
@@ -62,18 +55,13 @@ const CallState = {
 
 var useAppRTC = true;
 
-var MeetingApp = React.createClass({
+// @ThemeDecorator(ThemeManager.getMuiTheme(CustomTheme))
+class MeetingApp extends React.Component {
 
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
+    constructor(props) {
+        super(props);
 
-    getChildContext() {
-        return {muiTheme: ThemeManager.getMuiTheme(CustomTheme) };
-    },
-
-    getInitialState() {
-        return {
+        this.state = {
 
             items: [],
             users: [],
@@ -91,32 +79,35 @@ var MeetingApp = React.createClass({
             answer: undefined,
 
         };
-    },
+
+        this.childContextTypes = {muiTheme: React.PropTypes.object}
+        this.childContext = {muiTheme: ThemeManager.getMuiTheme(CustomTheme) };
+    }
 
     onAddItem() {
         this.setState({showAddItemDialog: true});
-    },
+    }
 
     onResetItems() {
         engine.resetItems();
-    },
+    }
 
     onAddItemDialogSubmit(title, url) {
         this.setState({showAddItemDialog: false});
         engine.addItem({title: title, url: url});
-    },
+    }
 
     onAddItemDialogCancel() {
         this.setState({showAddItemDialog: false});
-    },
+    }
 
     onCloseFullscreenDocument() {
         engine.setSelection(undefined);
-    },
+    }
 
     onAppBarLeftIconButtonTouchTap() {
         this.setState({navigationOpen: !this.state.navigationOpen});
-    },
+    }
 
     render() {
         var self = this;
@@ -237,25 +228,23 @@ var MeetingApp = React.createClass({
 
             </div>
         );
-    },
+    }
 
     _startCall() {
-        var self = this;
         engine.startCall();
-    },
+    }
 
     _callConnected() {
         this.setState({state: CallState.CONNECTED});
-    },
+    }
 
     _onRemoveItem(index) {
         engine.removeItem(index);
-    },
+    }
 
     _onSelectItem(index) {
-        var self = this;
         engine.setSelection(index);
-    },
+    }
 
     _handleCallAccept() {
         var self = this;
@@ -265,14 +254,11 @@ var MeetingApp = React.createClass({
         } else {
             alert("Received offer in unexpected state (" + webRTC.state + ")");
         }
-    },
+    }
 
-});
+}
 
-var meeting = ReactDOM.render(
-    <MeetingApp />,
-    document.getElementById('app')
-);
+var meeting = ReactDOM.render(<MeetingApp />, document.getElementById('app'));
 
 var engine = {
 
