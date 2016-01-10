@@ -85,10 +85,6 @@ class MeetingApp extends React.Component {
         engine.addItem({title: title, url: url});
     }
 
-    onAddItemDialogCancel() {
-        this.setState({showAddItemDialog: false});
-    }
-
     onCloseFullscreenDocument() {
         engine.setSelection(undefined);
     }
@@ -127,7 +123,7 @@ class MeetingApp extends React.Component {
                 <AddItemDialog
                     open={this.state.showAddItemDialog}
                     onSubmit={(title, url) => this.onAddItemDialogSubmit(title, url)} 
-                    onCancel={() => this.onAddItemDialogCancel()} />
+                    onCancel={() => this.setState({showAddItemDialog: false})} />
 
                 <ItemView
                     open={this.state.selection != undefined}
