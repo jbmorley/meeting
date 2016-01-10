@@ -130,7 +130,7 @@ class MeetingApp extends React.Component {
                     <ItemGrid
                         items={this.state.items}
                         onRemoveItem={this._onRemoveItem}
-                        onSelect={this._onSelectItem} />
+                        onSelect={(index) => engine.setSelection(index)} />
                 </div>
 
                 {(() => {
@@ -215,10 +215,6 @@ class MeetingApp extends React.Component {
 
     _onRemoveItem(index) {
         engine.removeItem(index);
-    }
-
-    _onSelectItem(index) {
-        engine.setSelection(index);
     }
 
     _handleCallAccept() {
