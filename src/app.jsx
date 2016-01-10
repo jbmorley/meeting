@@ -60,7 +60,6 @@ class MeetingApp extends React.Component {
 
     constructor(props) {
         super(props);
-
         this.state = {
 
             items: [],
@@ -79,9 +78,6 @@ class MeetingApp extends React.Component {
             answer: undefined,
 
         };
-
-        this.childContextTypes = {muiTheme: React.PropTypes.object}
-        this.childContext = {muiTheme: ThemeManager.getMuiTheme(CustomTheme) };
     }
 
     onAddItem() {
@@ -120,7 +116,7 @@ class MeetingApp extends React.Component {
                         position: "fixed",
                         top: "0"
                     }}
-                    onLeftIconButtonTouchTap={this.onAppBarLeftIconButtonTouchTap}
+                    onLeftIconButtonTouchTap={function() { self.onAppBarLeftIconButtonTouchTap(); }}
                     iconElementRight={
                         <IconMenu iconButtonElement={
                             <IconButton>
@@ -213,7 +209,7 @@ class MeetingApp extends React.Component {
                         onSelect={this._onSelectItem} />
                 </div>
 
-                {function() {
+                {(() => {
                     if (self.state.offer != undefined &&
                         self.state.callState == webRTC.DISCONNECTED) {
                         return (
@@ -224,7 +220,7 @@ class MeetingApp extends React.Component {
                                 onActionTouchTap={self._handleCallAccept} />
                         );
                     }
-                }()}
+                })()}
 
             </div>
         );
