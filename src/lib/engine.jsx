@@ -34,7 +34,7 @@ export default class Engine {
     }
 
     removeStateObserver(observer) {
-        this.stateObservers.remove(observer);
+        delete this.stateObservers[this.stateObservers.indexOf(observer)];
     }
 
     setState(state) {

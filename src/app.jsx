@@ -28,7 +28,7 @@ import MenuItem from 'material-ui/lib/menus/menu-item';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 
 import AddItemDialog from './lib/components/add-item-dialog.jsx';
-import CustomTheme from './lib/components/custom-theme.jsx';
+import MeetingTheme from './lib/components/meeting-theme.jsx';
 import ItemGrid from './lib/components/item-grid.jsx';
 import ItemView from './lib/components/item-view.jsx';
 import MeetingWebRTC from './lib/components/meeting-web-rtc.jsx';
@@ -69,7 +69,7 @@ class MeetingApp extends React.Component {
 
     getChildContext() {
         return {
-            muiTheme: ThemeManager.getMuiTheme(CustomTheme),
+            muiTheme: ThemeManager.getMuiTheme(MeetingTheme),
         };
     }
 
