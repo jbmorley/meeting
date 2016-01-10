@@ -22,26 +22,23 @@ import ReactDOM from 'react-dom';
 var injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
 
-import AppBar from 'material-ui/lib/app-bar'
 import AVVideocamIcon from 'material-ui/lib/svg-icons/av/videocam'
 import FloatingActionButton from 'material-ui/lib/floating-action-button'
-import IconButton from 'material-ui/lib/icon-button'
-import IconMenu from 'material-ui/lib/menus/icon-menu'
 import Menu from 'material-ui/lib/menus/menu'
 import MenuDivider from 'material-ui/lib/menus/menu-divider'
 import MenuItem from 'material-ui/lib/menus/menu-item'
-import MoreVertIcon from 'material-ui/lib/svg-icons/navigation/more-vert'
 import Paper from 'material-ui/lib/paper'
 import Snackbar from 'material-ui/lib/snackbar'
-import ThemeManager from 'material-ui/lib/styles/theme-manager'
 import ThemeDecorator from 'material-ui/lib/styles/theme-decorator';
+import ThemeManager from 'material-ui/lib/styles/theme-manager'
 
+import AddItemDialog from './lib/add-item-dialog.jsx'
 import CustomTheme from './lib/custom-theme.jsx'
 import ItemGrid from './lib/item-grid.jsx'
 import ItemView from './lib/item-view.jsx'
-import VideoCall from './lib/video-call.jsx'
+import MeetingAppBar from './lib/meeting-app-bar.jsx'
 import Navigation from './lib/navigation.jsx'
-import AddItemDialog from './lib/add-item-dialog.jsx'
+import VideoCall from './lib/video-call.jsx'
 
 import webRTC from './lib/webrtc.jsx';
 import values from './lib/values';
@@ -61,18 +58,15 @@ class MeetingApp extends React.Component {
         super(props);
         this.state = {
 
+            title: "Cheese",
             items: [],
             users: [],
-            callState: webRTC.UNSUPPORTED,
-
-            navigationOpen: false,
-
-            showAddItemDialog: false,
             selection: undefined,
 
-            user: 'Jason Barrie Morley',
-            email: 'jason.morley@inseven.co.uk',
+            navigationOpen: false,
+            showAddItemDialog: false,
 
+            callState: webRTC.UNSUPPORTED,
             offer: undefined,
             answer: undefined,
 
@@ -113,40 +107,35 @@ class MeetingApp extends React.Component {
 
     render() {
         var self = this;
+
+        const menuItems = [
+            <MenuItem
+                key="add-menu-item"
+                primaryText="Add item"
+                onTouchTap={() => self.onAddItem()} />,
+            <MenuItem
+                key="reset-menu-item"
+                primaryText="Reset items"
+                onTouchTap={() => self.onResetItems()} />
+        ];
+
         return (
             <div>
-                <AppBar 
-                    title="Meeting" 
-                    className="app-bar"
-                    style={{
-                        position: "fixed",
-                        top: "0"
-                    }}
-                    onLeftIconButtonTouchTap={() => { self.onAppBarLeftIconButtonTouchTap(); }}
-                    iconElementRight={
-                        <IconMenu iconButtonElement={
-                            <IconButton>
-                                <MoreVertIcon />
-                            </IconButton>
-                        }>
-                            <MenuItem
-                                primaryText="Add item"
-                                onTouchTap={this.onAddItem} />
-                            <MenuItem
-                                primaryText="Reset items"
-                                onTouchTap={this.onResetItems} />
-                        </IconMenu>
-                    } />
+
+                <MeetingAppBar
+                    title={this.state.title}
+                    onLeftIconButtonTouchTap={() => self.onAppBarLeftIconButtonTouchTap()}
+                    menuItems={menuItems} />
 
                 <Navigation
                     ref="navigation"
                     open={this.state.navigationOpen}
-                    onRequestChange={open => this.setState({navigationOpen: open})} />
+                    onRequestChange={(open) => self.setState({navigationOpen: open})} />
 
                 <AddItemDialog
                     open={this.state.showAddItemDialog}
-                    onSubmit={this.onAddItemDialogSubmit} 
-                    onCancel={this.onAddItemDialogCancel} />
+                    onSubmit={(title, url) => this.onAddItemDialogSubmit(title, url)} 
+                    onCancel={() => this.onAddItemDialogCancel()} />
 
                 {(() => {
 
