@@ -73,17 +73,16 @@ class MeetingApp extends React.Component {
         };
     }
 
-    engineStateObserver = {
-
+    engineStateObserver = (state) => {
+        this.setState(state);
     }
 
     componentDidMount() {
-        engine.addStateObserver((state) => {
-            this.setState(state);
-        });
+        engine.addStateObserver(this.engineStateObserver);
     }
 
     componentWillUnmount() {
+        engine.removeStateObserver(this.engineStateObserver);
     }
 
     render() {
@@ -184,10 +183,16 @@ class Live extends React.Component {
         this.state = {items: []};
     }
 
+    engineStateObserver = (state) => {
+        this.setState(state);
+    }
+
     componentDidMount() {
-        engine.addStateObserver((state) => {
-            this.setState(state);
-        });
+        engine.addStateObserver(this.engineStateObserver);
+    }
+
+    componentWillUnmount() {
+        engine.removeStateObserver(this.engineStateObserver);
     }
 
     render() {
@@ -209,8 +214,21 @@ class Camera extends React.Component {
 
     render() {
         return (
-            <div
-                style={{height: '100px', width: '100px', backgroundColor: 'blue'}} />
+            <form
+                action="/upload"
+                enctype="multipart/form-data"
+                method="post">
+
+                <input
+                    type="file"
+                    capture="camera"
+                    accept="image/*"
+                    id="file"
+                    name="file" />
+
+                <input type="submit" value="Upload" />
+
+            </form>
         );
     }
 

@@ -34,7 +34,7 @@ var app = Express(),
     io = SocketIO(server)
 
 state = {
-  items: {},
+  items: [],
   selection: undefined,
   users: {},
   offer: undefined,
@@ -63,32 +63,15 @@ app.post('/upload', function(req, res) {
     })
 })
 
-DEFAULT_ITEMS = [
-  {uuid: guid(), title: "UWO Activity - Sessions/Users", url: "/viewer.html#/activity.jpg"},
-  {uuid: guid(), title: "UWO Engagement - Pages/Session", url: "/viewer.html#/engagement_pages_session.jpg"},
-  {uuid: guid(), title: "UWO Engagement - Av Session Duration", url: "/viewer.html#/engagement_session_duration.jpg"},
-  {uuid: guid(), title: "Unique opens of UWO campaign (CM)", url: "/viewer.html#/unique_opens.jpg"},
-  {uuid: guid(), title: "% Unsubscribed (CM)", url: "/viewer.html#/unsubscribed.jpg"},
-  {uuid: guid(), title: "% Clicked a link (CM)", url: "/viewer.html#/clicked.jpg"},
-  {uuid: guid(), title: "Continuous improvement", url: "charts/table.html"},
-  {uuid: guid(), title: "Bar chart", url: "charts/bar.html"},
-]
-
-offerSocket = undefined
+offerSocket = undefined;
 
 io.emitJSON = function(message, parameters) {
   io.emit(message, JSON.stringify(parameters))
 }
 
-function resetItems() {
-  state.items = update(DEFAULT_ITEMS, {})
-}
-
 function broadcastState() {
   io.emitJSON('server-set-state', state)
 }
-
-resetItems()
 
 io.on('connection', function(socket) {
 
@@ -110,12 +93,7 @@ io.on('connection', function(socket) {
     state.users[socket].email = user.email;
     broadcastState();
 
-  })).on('client-reset-items', function(message) {
-
-    resetItems();
-    broadcastState();
-
-  }).on('client-add-item', parse_message(function(item) {
+  })).on('client-add-item', parse_message(function(item) {
 
     item.uuid = guid();
     state.items.push(item);
