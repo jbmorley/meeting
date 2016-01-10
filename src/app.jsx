@@ -22,23 +22,24 @@ import ReactDOM from 'react-dom';
 var injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
 
-import AVVideocamIcon from 'material-ui/lib/svg-icons/av/videocam'
-import FloatingActionButton from 'material-ui/lib/floating-action-button'
-import Menu from 'material-ui/lib/menus/menu'
-import MenuDivider from 'material-ui/lib/menus/menu-divider'
-import MenuItem from 'material-ui/lib/menus/menu-item'
-import Paper from 'material-ui/lib/paper'
-import Snackbar from 'material-ui/lib/snackbar'
+import AVVideocamIcon from 'material-ui/lib/svg-icons/av/videocam';
+import FloatingActionButton from 'material-ui/lib/floating-action-button';
+import Menu from 'material-ui/lib/menus/menu';
+import MenuDivider from 'material-ui/lib/menus/menu-divider';
+import MenuItem from 'material-ui/lib/menus/menu-item';
+import Paper from 'material-ui/lib/paper';
+import Snackbar from 'material-ui/lib/snackbar';
 import ThemeDecorator from 'material-ui/lib/styles/theme-decorator';
-import ThemeManager from 'material-ui/lib/styles/theme-manager'
+import ThemeManager from 'material-ui/lib/styles/theme-manager';
 
-import AddItemDialog from './lib/add-item-dialog.jsx'
-import CustomTheme from './lib/custom-theme.jsx'
-import ItemGrid from './lib/item-grid.jsx'
-import ItemView from './lib/item-view.jsx'
-import MeetingAppBar from './lib/meeting-app-bar.jsx'
-import Navigation from './lib/navigation.jsx'
-import VideoCall from './lib/video-call.jsx'
+import AddItemDialog from './lib/add-item-dialog.jsx';
+import CustomTheme from './lib/custom-theme.jsx';
+import ItemGrid from './lib/item-grid.jsx';
+import ItemView from './lib/item-view.jsx';
+import MeetingAppBar from './lib/meeting-app-bar.jsx';
+import MeetingAppRTC from './lib/meeting-app-rtc.jsx';
+import Navigation from './lib/navigation.jsx';
+import VideoCall from './lib/video-call.jsx';
 
 import webRTC from './lib/webrtc.jsx';
 import values from './lib/values';
@@ -135,27 +136,10 @@ class MeetingApp extends React.Component {
 
                 {(() => {
 
-                    if (useAppRTC && self.state.callState != webRTC.UNSUPPORTED) {
+                    if (useAppRTC) {
 
                         return (
-                            <Paper
-                                zDepth={3}
-                                style={{
-                                    position: "fixed",
-                                    width: "400px",
-                                    height: "300px",
-                                    bottom: "20px",
-                                    right: '20px',
-                                    zIndex: 8,
-                                }} >
-                                <iframe
-                                    style={{
-                                        width: "100%",
-                                        height: "100%",
-                                        border: 0,
-                                    }}
-                                    src="https://apprtc.webrtc.org/r/047684326" />
-                            </Paper>
+                            <MeetingAppRTC />
                         );
 
                     } else {

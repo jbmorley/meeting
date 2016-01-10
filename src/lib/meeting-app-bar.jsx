@@ -51,5 +51,6 @@ export default class MeetingAppBar extends React.Component {
                 onLeftIconButtonTouchTap={this.props.onLeftIconButtonTouchTap}
                 iconElementRight={iconElementRight} />
         );
+        
     }
 }
