@@ -34,6 +34,7 @@ var app = Express(),
     io = SocketIO(server)
 
 state = {
+  title: "Example Meeting",
   items: [],
   selection: undefined,
   users: {},
@@ -49,6 +50,8 @@ app.use(Express.static(Path.join(__dirname, 'static')))
 
 // Accept file uploads.
 app.post('/upload', function(req, res) {
+    console.log("Received upload...");
+    console.log(req);
     var fstream
     req.pipe(req.busboy)
     req.busboy.on('file', function (fieldname, file, filename) {

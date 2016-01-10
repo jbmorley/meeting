@@ -52,6 +52,7 @@ export default class Engine {
         self._socket.on('server-set-state', parse_message(function(state) {
 
             self.setState({
+                title: state.title,
                 items: state.items,
                 users: values(state.users),
                 selection: state.selection != undefined ? state.items[state.selection] : undefined,

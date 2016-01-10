@@ -52,7 +52,7 @@ class MeetingApp extends React.Component {
         super(props);
         this.state = {
 
-            title: "Cheese",
+            title: "",
             items: [],
             users: [],
             selection: undefined,
@@ -214,8 +214,15 @@ class Camera extends React.Component {
     }
 
     onUploadFile() {
-        alert("UPLOAD FILE!");
-        console.log(this.state.file)
+        var xhr = new XMLHttpRequest();
+        var formData = new FormData();
+        formData.append("file", this.file);
+        function reqListener () {
+            console.log(this.responseText);
+        }
+        xhr.addEventListener("load", reqListener);
+        xhr.open("POST", "/upload");
+        xhr.send(formData);
     }
 
     render() {
@@ -227,7 +234,11 @@ class Camera extends React.Component {
                     accept="image/*"
                     id="file"
                     name="file"
-                    onChange={(event) => this.setState({file: event.target.value})} />
+                    onChange={(event) => {
+                        this.setState({file: event.target.value});
+                        console.log(event.target.files[0]);
+                        this.file = event.target.files[0];
+                    }} />
 
                 <RaisedButton
                     label="Primary"
