@@ -107,6 +107,11 @@ class MeetingApp extends React.Component {
                         onRemoveItem={(index) => engine.removeItem(index)}
                         onSelect={(index) => engine.setSelection(index)} />
 
+                    <ItemView
+                        open={this.state.selection != undefined}
+                        item={this.state.selection}
+                        onRequestClose={() => engine.setSelection(undefined)} />)
+
                 </MeetingAppScreen>
 
                 <AddItemDialog
@@ -116,11 +121,6 @@ class MeetingApp extends React.Component {
                         engine.addItem({title: title, url: url});
                     }}
                     onCancel={() => this.setState({showAddItemDialog: false})} />
-
-                <ItemView
-                    open={this.state.selection != undefined}
-                    item={this.state.selection}
-                    onRequestClose={() => engine.setSelection(undefined)} />)
 
                 <MeetingWebRTC
                     useAppRTC={true}
