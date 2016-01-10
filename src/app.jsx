@@ -55,7 +55,6 @@ const CallState = {
 
 var useAppRTC = true;
 
-// @ThemeDecorator(ThemeManager.getMuiTheme(CustomTheme))
 class MeetingApp extends React.Component {
 
     constructor(props) {
