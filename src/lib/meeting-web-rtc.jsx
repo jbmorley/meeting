@@ -82,7 +82,8 @@ export default class MeetingAppScreen extends React.Component {
                     open={!self.useAppRTC && self.props.offer != undefined && self.props.callState == webRTC.DISCONNECTED}
                     message="Incoming call"
                     action="Accept"
-                    onActionTouchTap={() => self.props.onAcceptCall()} />
+                    onActionTouchTap={() => self.props.onAcceptCall()}
+                    onRequestClose={() => {}} />
 
             </div>
         );
