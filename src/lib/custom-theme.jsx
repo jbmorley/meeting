@@ -2,7 +2,7 @@ const Colors = require('material-ui/lib/styles/colors');
 const ColorManipulator = require('material-ui/lib/utils/color-manipulator');
 const Spacing = require('material-ui/lib/styles/spacing');
 
-module.exports = {
+export default {
   spacing: Spacing,
   fontFamily: 'Roboto, sans-serif',
   palette: {

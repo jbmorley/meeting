@@ -55,12 +55,12 @@ export default class AddItemDialog extends React.Component {
             <FlatButton
                 label="Cancel"
                 secondary={true}
-                onTouchTap={function() { self.handleCancel(); }} />,
+                onTouchTap={() => { self.handleCancel(); }} />,
             <FlatButton
                 label="Submit"
                 primary={true}
                 keyboardFocused={true}
-                onTouchTap={function() { self.handleSubmit(); }} />,
+                onTouchTap={() => { self.handleSubmit(); }} />,
         ];
 
         return (
@@ -73,7 +73,7 @@ export default class AddItemDialog extends React.Component {
                 <TextField
                     ref="title"
                     value={this.state.title}
-                    onChange={function() { self.onTitleChange(self.refs.title.getValue()); }}
+                    onChange={() => { self.onTitleChange(self.refs.title.getValue()); }}
                     hintText="Title" />
 
                 <br />
@@ -81,7 +81,7 @@ export default class AddItemDialog extends React.Component {
                 <TextField
                     ref="url"
                     value={this.state.url}
-                    onChange={function() { self.onURLChange(self.refs.url.getValue()); }}
+                    onChange={() => { self.onURLChange(self.refs.url.getValue()); }}
                     hintText="URL" />
 
             </Dialog>

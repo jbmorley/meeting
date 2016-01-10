@@ -78,6 +78,13 @@ class MeetingApp extends React.Component {
             answer: undefined,
 
         };
+
+    }
+
+    getChildContext() {
+        return {
+            muiTheme: ThemeManager.getMuiTheme(CustomTheme),
+        };
     }
 
     onAddItem() {
@@ -116,7 +123,7 @@ class MeetingApp extends React.Component {
                         position: "fixed",
                         top: "0"
                     }}
-                    onLeftIconButtonTouchTap={function() { self.onAppBarLeftIconButtonTouchTap(); }}
+                    onLeftIconButtonTouchTap={() => { self.onAppBarLeftIconButtonTouchTap(); }}
                     iconElementRight={
                         <IconMenu iconButtonElement={
                             <IconButton>
@@ -142,7 +149,7 @@ class MeetingApp extends React.Component {
                     onSubmit={this.onAddItemDialogSubmit} 
                     onCancel={this.onAddItemDialogCancel} />
 
-                {function() {
+                {(() => {
 
                     if (useAppRTC && self.state.callState != webRTC.UNSUPPORTED) {
 
@@ -195,7 +202,7 @@ class MeetingApp extends React.Component {
 
                     }
 
-                }()}
+                })()}
 
                 <ItemView
                     open={this.state.selection != undefined}
@@ -253,6 +260,10 @@ class MeetingApp extends React.Component {
     }
 
 }
+
+MeetingApp.childContextTypes = {
+    muiTheme: React.PropTypes.object,
+};
 
 var meeting = ReactDOM.render(<MeetingApp />, document.getElementById('app'));
 
