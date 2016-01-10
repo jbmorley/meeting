@@ -99,6 +99,8 @@ var webRTC = {
             return;
         }
 
+        webRTC._setState(webRTC.state);
+
         window.peerConnection = new RTCPeerConnection(peerConnectionConfig);
 
         window.peerConnection.onicecandidate = function(event) {
@@ -148,7 +150,5 @@ var webRTC = {
     },
 
 };
-
-webRTC.setup();
 
 module.exports = webRTC;

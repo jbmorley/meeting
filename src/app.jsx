@@ -22,13 +22,10 @@ import ReactDOM from 'react-dom';
 var injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
 
-import AVVideocamIcon from 'material-ui/lib/svg-icons/av/videocam';
-import FloatingActionButton from 'material-ui/lib/floating-action-button';
 import Menu from 'material-ui/lib/menus/menu';
 import MenuDivider from 'material-ui/lib/menus/menu-divider';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 import Paper from 'material-ui/lib/paper';
-import Snackbar from 'material-ui/lib/snackbar';
 import ThemeDecorator from 'material-ui/lib/styles/theme-decorator';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 
@@ -36,10 +33,10 @@ import AddItemDialog from './lib/add-item-dialog.jsx';
 import CustomTheme from './lib/custom-theme.jsx';
 import ItemGrid from './lib/item-grid.jsx';
 import ItemView from './lib/item-view.jsx';
-import MeetingAppBar from './lib/meeting-app-bar.jsx';
 import MeetingAppRTC from './lib/meeting-app-rtc.jsx';
+import MeetingWebRTC from './lib/meeting-web-rtc.jsx';
+import MeetingAppScreen from './lib/meeting-app-screen.jsx';
 import Navigation from './lib/navigation.jsx';
-import VideoCall from './lib/video-call.jsx';
 
 import webRTC from './lib/webrtc.jsx';
 import values from './lib/values';
@@ -51,7 +48,7 @@ const CallState = {
     CONNECTED: 2,
 };
 
-var useAppRTC = true;
+var useAppRTC = false;
 
 class MeetingApp extends React.Component {
 
@@ -81,15 +78,6 @@ class MeetingApp extends React.Component {
         };
     }
 
-    onAddItemDialogSubmit(title, url) {
-        this.setState({showAddItemDialog: false});
-        engine.addItem({title: title, url: url});
-    }
-
-    onCloseFullscreenDocument() {
-        engine.setSelection(undefined);
-    }
-
     render() {
         var self = this;
 
@@ -107,80 +95,59 @@ class MeetingApp extends React.Component {
         return (
             <div>
 
-                <MeetingAppBar
-                    title={this.state.title}
-                    onLeftIconButtonTouchTap={() => this.setState({navigationOpen: true})}
-                    menuItems={menuItems} />
-
                 <Navigation
                     ref="navigation"
                     open={this.state.navigationOpen}
                     onRequestChange={(open) => self.setState({navigationOpen: open})} />
 
+                <MeetingAppScreen
+                    title={this.state.title}
+                    menuItems={menuItems}
+                    onNavigationButtonTouchTap={() => this.setState({navigationOpen: true})}>
+
+                    <ItemGrid
+                        items={this.state.items}
+                        onRemoveItem={(index) => engine.removeItem(index)}
+                        onSelect={(index) => engine.setSelection(index)} />
+
+                </MeetingAppScreen>
+
                 <AddItemDialog
                     open={this.state.showAddItemDialog}
-                    onSubmit={(title, url) => this.onAddItemDialogSubmit(title, url)} 
+                    onSubmit={(title, url) => {
+                        this.setState({showAddItemDialog: false});
+                        engine.addItem({title: title, url: url});
+                    }}
                     onCancel={() => this.setState({showAddItemDialog: false})} />
 
                 <ItemView
                     open={this.state.selection != undefined}
                     item={this.state.selection}
-                    onRequestClose={this.onCloseFullscreenDocument} />)
-
-                <div className="content">
-                    <ItemGrid
-                        items={this.state.items}
-                        onRemoveItem={this._onRemoveItem}
-                        onSelect={(index) => engine.setSelection(index)} />
-                </div>
+                    onRequestClose={() => engine.setSelection(undefined)} />)
 
                 {(() => {
-
                     if (useAppRTC) {
-
                         return (
                             <MeetingAppRTC />
                         );
-
                     } else {
-
-                        switch (self.state.callState) {
-                            case webRTC.UNSUPPORTED:
-                                return '';
-                            case webRTC.CONNECTED:
-                                return (
-                                    <VideoCall 
-                                        localStream={self.state.localStream}
-                                        remoteStream={self.state.remoteStream} />
-                                );
-                            case webRTC.DISCONNECTED:
-                                return (
-                                    <FloatingActionButton
-                                        style={{
-                                            position: "fixed",
-                                            bottom: "36px",
-                                            right: "36px",
-                                            zIndex: 8,
-                                        }}
-                                        onTouchTap={self._startCall}>
-                                        <AVVideocamIcon />
-                                    </FloatingActionButton>
-                                );
-                        }
-
-                    }
-
-                })()}
-
-                {(() => {
-                    if (self.state.offer != undefined &&
-                        self.state.callState == webRTC.DISCONNECTED) {
                         return (
-                            <Snackbar
-                                openOnMount={true}
-                                message="Incoming call"
-                                action="Accept"
-                                onActionTouchTap={self._handleCallAccept} />
+                            <MeetingWebRTC
+                                callState={self.state.callState}
+                                offer={self.state.offer}
+                                localStream={self.state.localStream}
+                                remoteStream={self.state.remoteStream}
+                                onStartCall={() => engine.startCall()}
+                                onAcceptCall={() => {
+
+                                    if (webRTC.state == webRTC.DISCONNECTED) {
+                                        webRTC.setOffer(self.state.offer);
+                                        engine._sendMessage('client-call-set-offer', undefined);
+                                    } else {
+                                        alert("Received offer in unexpected state (" + webRTC.state + ")");
+                                    }
+                                    
+                                }} />
                         );
                     }
                 })()}
@@ -188,29 +155,6 @@ class MeetingApp extends React.Component {
             </div>
         );
     }
-
-    _startCall() {
-        engine.startCall();
-    }
-
-    _callConnected() {
-        this.setState({state: CallState.CONNECTED});
-    }
-
-    _onRemoveItem(index) {
-        engine.removeItem(index);
-    }
-
-    _handleCallAccept() {
-        var self = this;
-        if (webRTC.state == webRTC.DISCONNECTED) {
-            webRTC.setOffer(self.state.offer);
-            engine._sendMessage('client-call-set-offer', undefined);
-        } else {
-            alert("Received offer in unexpected state (" + webRTC.state + ")");
-        }
-    }
-
 }
 
 MeetingApp.childContextTypes = {
@@ -321,3 +265,5 @@ webRTC.onAttachRemoteStream = function(stream) { engine.setRemoteStream(stream);
 webRTC.onStateChange = function(state) { engine.setCallState(state); }
 
 engine.connect(meeting);
+
+webRTC.setup();
