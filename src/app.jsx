@@ -22,6 +22,7 @@ import ReactDOM from 'react-dom';
 var injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
 
+import Divider from 'material-ui/lib/divider';
 import Menu from 'material-ui/lib/menus/menu';
 import MenuDivider from 'material-ui/lib/menus/menu-divider';
 import MenuItem from 'material-ui/lib/menus/menu-item';
@@ -35,7 +36,6 @@ import ItemGrid from './lib/item-grid.jsx';
 import ItemView from './lib/item-view.jsx';
 import MeetingWebRTC from './lib/meeting-web-rtc.jsx';
 import MeetingAppScreen from './lib/meeting-app-screen.jsx';
-import Navigation from './lib/navigation.jsx';
 
 import webRTC from './lib/webrtc.jsx';
 import values from './lib/values';
@@ -58,7 +58,6 @@ class MeetingApp extends React.Component {
             users: [],
             selection: undefined,
 
-            navigationOpen: false,
             showAddItemDialog: false,
 
             callState: webRTC.UNSUPPORTED,
@@ -89,18 +88,21 @@ class MeetingApp extends React.Component {
                 onTouchTap={() => engine.resetItems()} />
         ];
 
+        const navigationItems = [
+            <MenuItem>Menu Item</MenuItem>,
+            <MenuItem disabled={true}>Menu Item 2</MenuItem>,
+            <MenuItem>Menu Item 2</MenuItem>,
+            <Divider />,
+            <MenuItem>Menu Item 3</MenuItem>,
+        ];
+
         return (
             <div>
 
-                <Navigation
-                    ref="navigation"
-                    open={this.state.navigationOpen}
-                    onRequestChange={(open) => self.setState({navigationOpen: open})} />
-
                 <MeetingAppScreen
                     title={this.state.title}
-                    menuItems={menuItems}
-                    onNavigationButtonTouchTap={() => this.setState({navigationOpen: true})}>
+                    navigationItems={navigationItems}
+                    menuItems={menuItems}>
 
                     <ItemGrid
                         items={this.state.items}

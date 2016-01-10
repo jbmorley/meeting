@@ -19,6 +19,7 @@
 import React from 'react';
 
 import MeetingAppBar from './meeting-app-bar.jsx';
+import Navigation from './navigation.jsx';
 
 export default class MeetingAppScreen extends React.Component {
 
@@ -33,9 +34,15 @@ export default class MeetingAppScreen extends React.Component {
         return (
             <div>
 
+                <Navigation
+                    ref="navigation"
+                    open={this.state.navigationOpen}
+                    onRequestChange={(open) => this.setState({navigationOpen: open})}
+                    items={this.props.navigationItems} />
+
                 <MeetingAppBar
                     title={this.props.title}
-                    onLeftIconButtonTouchTap={() => this.props.onNavigationButtonTouchTap()}
+                    onLeftIconButtonTouchTap={() => this.setState({navigationOpen: true})}
                     menuItems={this.props.menuItems} />
 
                 <div className="content">
