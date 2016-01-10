@@ -18,8 +18,9 @@
 
 import React from 'react';
 
+import LeftNav from 'material-ui/lib/left-nav';
+
 import MeetingAppBar from './meeting-app-bar.jsx';
-import Navigation from './navigation.jsx';
 
 export default class MeetingAppScreen extends React.Component {
 
@@ -34,11 +35,12 @@ export default class MeetingAppScreen extends React.Component {
         return (
             <div>
 
-                <Navigation
-                    ref="navigation"
+                <LeftNav
                     open={this.state.navigationOpen}
-                    onRequestChange={(open) => this.setState({navigationOpen: open})}
-                    items={this.props.navigationItems} />
+                    docked={false}
+                    onRequestChange={(open) => this.setState({navigationOpen: open})}>
+                    {this.props.navigationItems}
+                </LeftNav>
 
                 <MeetingAppBar
                     title={this.props.title}
