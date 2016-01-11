@@ -96,7 +96,7 @@ class MeetingApp extends React.Component {
                 onTouchTap={() => this.setState({showAddItemDialog: true})} />,
             <MenuItem
                 key="reset-menu-item"
-                primaryText="Reset items"
+                primaryText="Add default items"
                 onTouchTap={() => engine.resetItems()} />
         ];
 
