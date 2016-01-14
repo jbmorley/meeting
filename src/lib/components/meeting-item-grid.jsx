@@ -70,7 +70,7 @@ export default class MeetingItemGrid extends React.Component {
                         var rows = Math.ceil(self.props.items.length / columns);
                         width = ((self.state.width / columns) - (margin * 2));
                         height = width / ratio;
-                        if ((height * rows) < self.state.height) {
+                        if (((height + titleHeight) * rows) < self.state.height) {
                             break;
                         }
                         columns = columns + 1;

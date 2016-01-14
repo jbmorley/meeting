@@ -89,6 +89,7 @@ app.post('/upload', function(req, res) {
                     completion(path.basename(filename, extension), uploadPath, () => {
                         fs.unlink(uploadPath);
                     });
+                    res.sendStatus(200);
                 });
 
             } else if (extension == '.pdf') {
@@ -111,6 +112,8 @@ app.post('/upload', function(req, res) {
                         fs.unlink(uploadPath);
                         fs.unlink(thumbnailPath);
                     });
+
+                    res.sendStatus(200);
 
                 });
 
