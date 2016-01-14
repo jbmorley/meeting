@@ -94,7 +94,7 @@ app.post('/upload', function(req, res) {
 
             } else if (extension == '.pdf') {
 
-                thumbnailPath = uploadWithExtension('.jpg');
+                var thumbnailPath = uploadWithExtension('.jpg');
                 command = util.format(
                     'gs -dBATCH -dNOPAUSE -sDEVICE=jpeg -r200 -sOutputFile=%s %s',
                     thumbnailPath, uploadPath);
@@ -106,14 +106,12 @@ app.post('/upload', function(req, res) {
                         return;
                     }
 
-                    var filea = uploadPath;
-                    var fileb = thumbnailPath;
-                    completion(path.basename(filename, extension), thumbnailPath, () => {
-                        fs.unlink(filea);
-                        fs.unlink(fileb);
-                    });
+                    console.log(util.format("Generated thumbnail '%s'.", thumbnailPath));
 
-                    console.log("Success generating thumbnail");
+                    completion(path.basename(filename, extension), thumbnailPath, () => {
+                        fs.unlink(uploadPath);
+                        fs.unlink(thumbnailPath);
+                    });
 
                 });
 

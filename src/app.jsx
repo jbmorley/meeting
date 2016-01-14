@@ -92,17 +92,21 @@ class MeetingApp extends React.Component {
 
         const menuItems = [
             <MenuItem
-                key="add-menu-item"
-                primaryText="Add item"
+                key="add-url-menu-item"
+                primaryText="Add URL"
                 onTouchTap={() => this.setState({showAddItemDialog: true})} />,
             <MenuItem
-                key="reset-menu-item"
-                primaryText="Add default items"
-                onTouchTap={() => engine.resetItems()} />,
+                key="add-file-menu-item"
+                primaryText="Add file"
+                onTouchTap={() => this.refs.input.click()} />,
+            <Divider />,
             <MenuItem
-                key="upload-menu-item"
-                primaryText="Upload files"
-                onTouchTap={() => this.refs.input.click()} />
+                key="add-continuous-improvement-menu-item"
+                primaryText="Add continuous improvement"
+                onTouchTap={() => engine.addItem({
+                    title: "Continuous Improvement",
+                    url: "uploads/table.html"
+                })} />
         ];
 
         const navigationItems = [

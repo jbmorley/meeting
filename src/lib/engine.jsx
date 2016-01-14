@@ -83,10 +83,6 @@ export default class Engine {
         this._sendMessage('client-set-user', user);
     }
 
-    resetItems() {
-        this.addItem({title: "Continuous Improvement", url: "uploads/table.html"});
-    }
-
     addItem(item) {
         this._sendMessage('client-add-item', item);
     }
