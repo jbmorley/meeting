@@ -106,9 +106,11 @@ app.post('/upload', function(req, res) {
                         return;
                     }
 
+                    var filea = uploadPath;
+                    var fileb = thumbnailPath;
                     completion(path.basename(filename, extension), thumbnailPath, () => {
-                        fs.unlink(uploadPath);
-                        fs.unlink(thumbnailPath);
+                        fs.unlink(filea);
+                        fs.unlink(fileb);
                     });
 
                     console.log("Success generating thumbnail");

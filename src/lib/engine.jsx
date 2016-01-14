@@ -84,12 +84,6 @@ export default class Engine {
     }
 
     resetItems() {
-        this.addItem({title: "UWO Activity - Sessions/Users", url: "/viewer.html#/activity.jpg"});
-        this.addItem({title: "UWO Engagement - Pages/Session", url: "/viewer.html#/engagement_pages_session.jpg"});
-        this.addItem({title: "UWO Engagement - Av Session Duration", url: "/viewer.html#/engagement_session_duration.jpg"});
-        this.addItem({title: "Unique opens of UWO campaign (CM)", url: "/viewer.html#/unique_opens.jpg"});
-        this.addItem({title: "% Unsubscribed (CM)", url: "/viewer.html#/unsubscribed.jpg"});
-        this.addItem({title: "% Clicked a Link (CM)", url: "/viewer.html#/clicked.jpg"});
         this.addItem({title: "Continuous Improvement", url: "uploads/table.html"});
     }
 
