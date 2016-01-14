@@ -19,6 +19,7 @@
     "material-ui": "^0.14.2",
     "multipart": "^0.1.5",
     "node-uuid": "^1.4.7",
+    "nodejs-gravatar": "^1.0.2",
     "react": "^0.14.6",
     "react-addons-css-transition-group": "^0.14.6",
     "react-addons-linked-state-mixin": "^0.14.6",

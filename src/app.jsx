@@ -23,16 +23,18 @@ import { Router, Route, IndexRoute, Link, browserHistory } from 'react-router'
 var injectTapEventPlugin = require('react-tap-event-plugin');
 injectTapEventPlugin();
 
+import Avatar from 'material-ui/lib/avatar';
 import Divider from 'material-ui/lib/divider';
-import MenuItem from 'material-ui/lib/menus/menu-item';
-import RaisedButton from 'material-ui/lib/raised-button';
-import ThemeManager from 'material-ui/lib/styles/theme-manager';
 import ExitToApp from 'material-ui/lib/svg-icons/action/exit-to-app';
-import Photo from 'material-ui/lib/svg-icons/image/photo';
-import InsertLink from 'material-ui/lib/svg-icons/editor/insert-link';
 import FileUpload from 'material-ui/lib/svg-icons/file/file-upload';
+import InsertLink from 'material-ui/lib/svg-icons/editor/insert-link';
+import ListItem from 'material-ui/lib/lists/list-item';
+import MenuItem from 'material-ui/lib/menus/menu-item';
+import Photo from 'material-ui/lib/svg-icons/image/photo';
+import RaisedButton from 'material-ui/lib/raised-button';
+import RemoveRedEye from 'material-ui/lib/svg-icons/image/remove-red-eye';
 import Star from 'material-ui/lib/svg-icons/toggle/star';
-import Test from 'material-ui/lib/svg-icons/image/remove-red-eye';
+import ThemeManager from 'material-ui/lib/styles/theme-manager';
 
 import AddItemDialog from './lib/components/add-item-dialog.jsx';
 import ItemGrid from './lib/components/item-grid.jsx';
@@ -130,16 +132,29 @@ class MeetingApp extends React.Component {
                 onTouchTap={() => this.context.history.push('/')} />
         ];
 
-        const navigationItems = [
+        const defaultNavigationItems = [
             <MenuItem
                 key="menu-item-navigation-item"
                 primaryText="Live"
-                leftIcon={<Test />}
+                leftIcon={<RemoveRedEye />}
                 onTouchTap={() => {
                     this.context.history.push(`/meeting/${this.props.uuid}`);
                     this.setState({showNavigation: false});
-                }} />
+                }} />,
+            <Divider />,
         ];
+
+        console.log(this.state);
+
+        var navigationItems = defaultNavigationItems.concat(
+            this.state.users.map(function(item, index) {
+                return (
+                    <ListItem
+                        primaryText={item.name}
+                        leftAvatar={<Avatar src={item.avatar} />} />
+                );
+            }
+        ));
 
         return (
             <div>

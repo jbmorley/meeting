@@ -30,7 +30,8 @@ var Express = require('express'),
     gm = require('gm'),
     uuid = require('node-uuid'),
     exec = require('child_process').exec,
-    util = require('util');
+    util = require('util'),
+    gravatar = require('nodejs-gravatar');
 
 var app = Express(),
     server = HTTP.Server(app),
@@ -135,8 +136,12 @@ function broadcastState() {
 
 io.on('connection', function(socket) {
 
-  state.users[socket] = {uuid: uuid.v4(), name: '', email: ''}
-  broadcastState();
+    state.users[socket] = {
+        name: 'Jason Morley',
+        email: 'jason.morley@inseven.co.uk',
+        avatar: gravatar.imageUrl('jason.morley@inseven.co.uk', { "size": "128" })
+    }
+    broadcastState();
 
   socket.on('disconnect', function() {
 
