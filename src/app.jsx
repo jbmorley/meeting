@@ -27,6 +27,12 @@ import Divider from 'material-ui/lib/divider';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 import RaisedButton from 'material-ui/lib/raised-button';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
+import ExitToApp from 'material-ui/lib/svg-icons/action/exit-to-app';
+import Photo from 'material-ui/lib/svg-icons/image/photo';
+import InsertLink from 'material-ui/lib/svg-icons/editor/insert-link';
+import FileUpload from 'material-ui/lib/svg-icons/file/file-upload';
+import Star from 'material-ui/lib/svg-icons/toggle/star';
+import Test from 'material-ui/lib/svg-icons/image/remove-red-eye';
 
 import AddItemDialog from './lib/components/add-item-dialog.jsx';
 import ItemGrid from './lib/components/item-grid.jsx';
@@ -95,27 +101,42 @@ class MeetingApp extends React.Component {
             <MenuItem
                 key="add-url-menu-item"
                 primaryText="Add URL"
+                leftIcon={<InsertLink />}
                 onTouchTap={() => this.setState({showAddItemDialog: true})} />,
             <MenuItem
                 key="add-file-menu-item"
                 primaryText="Add file"
+                leftIcon={<FileUpload />}
+                onTouchTap={() => this.refs.input.click()} />,
+            <MenuItem
+                key="add-photo-menu-item"
+                primaryText="Add photo"
+                leftIcon={<Photo />}
                 onTouchTap={() => this.refs.input.click()} />,
             <Divider />,
             <MenuItem
                 key="add-continuous-improvement-menu-item"
                 primaryText="Add continuous improvement"
+                leftIcon={<Star />}
                 onTouchTap={() => engine.addItem({
                     title: "Continuous Improvement",
                     url: "uploads/table.html"
-                })} />
+                })} />,
+            <Divider />,
+            <MenuItem
+                key="leave-meeting-menu-item"
+                primaryText="Leave meeting"
+                leftIcon={<ExitToApp />}
+                onTouchTap={() => this.context.history.push('/')} />
         ];
 
         const navigationItems = [
             <MenuItem
                 key="menu-item-navigation-item"
                 primaryText="Live"
+                leftIcon={<Test />}
                 onTouchTap={() => {
-                    this.context.history.push('/');
+                    this.context.history.push(`/meeting/${this.props.uuid}`);
                     this.setState({showNavigation: false});
                 }} />
         ];
