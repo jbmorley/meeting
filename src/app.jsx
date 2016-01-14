@@ -115,9 +115,7 @@ class MeetingApp extends React.Component {
                 onTouchTap={() => {
                     this.context.history.push('/camera');
                     this.setState({showNavigation: false});
-                }} />,
-            <Divider
-                key="divider-navigation-item" />
+                }} />
         ];
 
         return (
