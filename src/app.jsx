@@ -125,7 +125,9 @@ class MeetingApp extends React.Component {
                     name="file"
                     ref="input"
                     onChange={(event) => {
-                        engine.upload(event.target.files[0]);
+                        for (var i = 0, f; f = event.target.files[i]; i++) {
+                            engine.upload(f);
+                        }
                     }}
                     hidden />
 
