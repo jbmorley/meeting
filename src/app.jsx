@@ -32,6 +32,7 @@ import AddItemDialog from './lib/components/add-item-dialog.jsx';
 import ItemGrid from './lib/components/item-grid.jsx';
 import ItemView from './lib/components/item-view.jsx';
 import MeetingAppScreen from './lib/components/meeting-app-screen.jsx';
+import MeetingDocumentViewer from './lib/components/meeting-document-viewer.jsx';
 import MeetingDragTarget from './lib/components/meeting-drag-target.jsx';
 import MeetingTheme from './lib/components/meeting-theme.jsx';
 import MeetingWebRTC from './lib/components/meeting-web-rtc.jsx';
@@ -233,11 +234,36 @@ class Live extends React.Component {
 
 }
 
+class MeetingList extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            meetings: [{title: 'Default Meeting', uuid: '39872239'}]
+        };
+    }
+
+    render() {
+        return (
+            <ul>
+                {this.state.meetings.map(function(item, index) {
+                    return (
+                        <li key={item.uuid}><Link to={`/meeting/${item.uuid}`}>{item.title}</Link></li>
+                    );
+                })}
+            </ul>
+        );
+    }
+
+}
+
 ReactDOM.render((
     <Router history={browserHistory}>
-        <Route path="/" component={MeetingApp}>
+        <Route path="/" component={MeetingList} />
+        <Route path="/meeting/:uuid" component={MeetingApp}>
             <IndexRoute component={Live} />
         </Route>
+        <Route path="/viewer/:path" component={MeetingDocumentViewer} />
     </Router>
 ), document.getElementById('app'));
 

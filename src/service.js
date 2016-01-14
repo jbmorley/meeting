@@ -75,7 +75,7 @@ app.post('/upload', function(req, res) {
                 state.items.push({
                     uuid: uuid.v4(),
                     title: title,
-                    url: "/viewer.html#/" + path.basename(filename),
+                    url: "/#/viewer/" + path.basename(filename),
                     cleanup: cleanup
                 });
                 state.selection = state.items.length - 1;
@@ -85,8 +85,7 @@ app.post('/upload', function(req, res) {
 
             if (extension == '.jpg' || extension == '.jpeg') {
 
-                image = gm(uploadPath);
-                image.autoOrient().write(uploadPath, function() {
+                gm(uploadPath).autoOrient().write(uploadPath, function() {
                     completion(path.basename(filename, extension), uploadPath, () => {
                         fs.unlink(uploadPath);
                     });
@@ -95,7 +94,7 @@ app.post('/upload', function(req, res) {
             } else if (extension == '.pdf') {
 
                 var thumbnailPath = uploadWithExtension('.jpg');
-                command = util.format(
+                var command = util.format(
                     'gs -dBATCH -dNOPAUSE -sDEVICE=jpeg -r200 -sOutputFile=%s %s',
                     thumbnailPath, uploadPath);
                 exec(command, (error) => {

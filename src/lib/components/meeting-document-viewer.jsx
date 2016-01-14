@@ -20,7 +20,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Router, Route, Link } from 'react-router'
 
-class MeetingDocumentViewer extends React.Component {
+export default class MeetingDocumentViewer extends React.Component {
 
     constructor(props) {
         super(props);
@@ -124,9 +124,3 @@ class MeetingDocumentViewer extends React.Component {
     }
 
 }
-
-ReactDOM.render((
-    <Router>
-        <Route path="/:path" component={MeetingDocumentViewer} />
-    </Router>
-), document.getElementById('app'))
