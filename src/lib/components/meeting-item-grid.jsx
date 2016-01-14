@@ -59,9 +59,22 @@ export default class MeetingItemGrid extends React.Component {
 
                 {(() => {
                     var titleHeight = 48;
+                    var margin = 8
                     var ratio = 4 / 3;
-                    var width = ((self.state.width / self.props.items.length) - 16);
-                    var height = width / ratio; // TODO Add some constant for the title bar.
+                    var width = 0;
+                    var height = 0;
+
+                    var columns = 1;
+                    while (self.props.items.length) {
+                        console.log("Trying " + columns + " columns");
+                        var rows = Math.ceil(self.props.items.length / columns);
+                        width = ((self.state.width / columns) - (margin * 2));
+                        height = width / ratio;
+                        if ((height * rows) < self.state.height) {
+                            break;
+                        }
+                        columns = columns + 1;
+                    }
 
                     return this.props.items.map(function(item, index) {
                         return (

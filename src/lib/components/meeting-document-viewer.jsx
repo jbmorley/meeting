@@ -46,7 +46,6 @@ export default class MeetingDocumentViewer extends React.Component {
     componentWillMount() {
         this.updateDimensions();
         document.body.style.backgroundColor = "#fff";
-        document.body.style.backgroundColor = "magenta";
     }
 
     onImageLoad(event) {
