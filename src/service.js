@@ -60,6 +60,7 @@ app.post('/upload', function(req, res) {
         file.pipe(fstream)
         fstream.on('close', function () {
             state.items.push({uuid: guid(), title: "Upload", url: "/viewer.html#/" + filename})
+            state.selection = state.items.length - 1;
             broadcastState()
             res.redirect('back')
         })
