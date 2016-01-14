@@ -139,11 +139,6 @@ class MeetingApp extends React.Component {
 
                     </MeetingDragTarget>
 
-                    <ItemView
-                        open={this.state.selection != undefined}
-                        item={this.state.selection}
-                        onRequestClose={() => engine.setSelection(undefined)} />
-
                 </MeetingAppScreen>
 
                 <AddItemDialog
@@ -206,10 +201,19 @@ class Live extends React.Component {
 
     render() {
         return (
-            <ItemGrid
-                items={this.state.items}
-                onRemoveItem={(index) => engine.removeItem(index)}
-                onSelect={(index) => engine.setSelection(index)} />
+            <div>
+            
+                <ItemGrid
+                    items={this.state.items}
+                    onRemoveItem={(index) => engine.removeItem(index)}
+                    onSelect={(index) => engine.setSelection(index)} />
+
+                <ItemView
+                    open={this.state.selection != undefined}
+                    item={this.state.selection}
+                    onRequestClose={() => engine.setSelection(undefined)} />
+
+            </div>
         );
     }
 
@@ -222,7 +226,12 @@ class Camera extends React.Component {
     }
 
     onUploadFile() {
-        engine.upload(this.file);
+        this.refs.input.click();
+    }
+
+    onInputChange(event) {
+        var file = event.target.files[0];
+        engine.upload(file);
     }
 
     render() {
@@ -234,11 +243,9 @@ class Camera extends React.Component {
                     accept="image/*"
                     id="file"
                     name="file"
-                    onChange={(event) => {
-                        this.setState({file: event.target.value});
-                        console.log(event.target.files[0]);
-                        this.file = event.target.files[0];
-                    }} />
+                    ref="input"
+                    onChange={(event) => this.onInputChange(event)}
+                    hidden />
 
                 <RaisedButton
                     label="Upload"
