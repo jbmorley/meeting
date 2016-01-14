@@ -98,7 +98,11 @@ class MeetingApp extends React.Component {
             <MenuItem
                 key="reset-menu-item"
                 primaryText="Add default items"
-                onTouchTap={() => engine.resetItems()} />
+                onTouchTap={() => engine.resetItems()} />,
+            <MenuItem
+                key="upload-menu-item"
+                primaryText="Upload files"
+                onTouchTap={() => this.refs.input.click()} />
         ];
 
         const navigationItems = [
@@ -108,18 +112,22 @@ class MeetingApp extends React.Component {
                 onTouchTap={() => {
                     this.context.history.push('/');
                     this.setState({showNavigation: false});
-                }} />,
-            <MenuItem
-                key="menu-item-disabled-navigation-item"
-                primaryText="Camera"
-                onTouchTap={() => {
-                    this.context.history.push('/camera');
-                    this.setState({showNavigation: false});
                 }} />
         ];
 
         return (
             <div>
+
+                <input
+                    type="file"
+                    accept="image/*"
+                    id="file"
+                    name="file"
+                    ref="input"
+                    onChange={(event) => {
+                        engine.upload(event.target.files[0]);
+                    }}
+                    hidden />
 
                 <MeetingAppScreen
                     title={this.state.title}
@@ -219,50 +227,10 @@ class Live extends React.Component {
 
 }
 
-class Camera extends React.Component {
-
-    constructor(props) {
-        super(props);
-    }
-
-    onUploadFile() {
-        this.refs.input.click();
-    }
-
-    onInputChange(event) {
-        var file = event.target.files[0];
-        engine.upload(file);
-    }
-
-    render() {
-        return (
-            <div>
-
-                <input
-                    type="file"
-                    accept="image/*"
-                    id="file"
-                    name="file"
-                    ref="input"
-                    onChange={(event) => this.onInputChange(event)}
-                    hidden />
-
-                <RaisedButton
-                    label="Upload"
-                    primary={true}
-                    onTouchTap={() => this.onUploadFile()} />
-
-            </div>
-        );
-    }
-
-}
-
 ReactDOM.render((
     <Router history={browserHistory}>
         <Route path="/" component={MeetingApp}>
             <IndexRoute component={Live} />
-            <Route path="camera" component={Camera} />
         </Route>
     </Router>
 ), document.getElementById('app'));
