@@ -137,6 +137,7 @@ function broadcastState() {
 io.on('connection', function(socket) {
 
     state.users[socket] = {
+        uuid: uuid.v4(),
         name: 'Jason Morley',
         email: 'jason.morley@inseven.co.uk',
         avatar: gravatar.imageUrl('jason.morley@inseven.co.uk', { "size": "128" })

@@ -28,6 +28,7 @@ import Divider from 'material-ui/lib/divider';
 import ExitToApp from 'material-ui/lib/svg-icons/action/exit-to-app';
 import FileUpload from 'material-ui/lib/svg-icons/file/file-upload';
 import InsertLink from 'material-ui/lib/svg-icons/editor/insert-link';
+import List from 'material-ui/lib/lists/list';
 import ListItem from 'material-ui/lib/lists/list-item';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 import Photo from 'material-ui/lib/svg-icons/image/photo';
@@ -146,15 +147,18 @@ class MeetingApp extends React.Component {
 
         console.log(this.state);
 
-        var navigationItems = defaultNavigationItems.concat(
-            this.state.users.map(function(item, index) {
-                return (
-                    <ListItem
-                        primaryText={item.name}
-                        leftAvatar={<Avatar src={item.avatar} />} />
-                );
-            }
-        ));
+        var navigationItems = defaultNavigationItems.concat([
+            <List subheader="Connected users">
+                {this.state.users.map(function(item, index) {
+                    return (
+                        <ListItem
+                            key={item.uuid}
+                            primaryText={item.name}
+                            leftAvatar={<Avatar src={item.avatar} />} />
+                    );
+                })}
+            </List>
+        ]);
 
         return (
             <div>
