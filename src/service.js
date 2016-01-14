@@ -28,11 +28,13 @@ var Express = require('express'),
     busboyBodyParser = require('busboy-body-parser'),
     busboy = require('connect-busboy'),
     gm = require('gm'),
-    uuid = require('node-uuid')
+    uuid = require('node-uuid'),
+    exec = require('child_process').exec,
+    util = require('util');
 
 var app = Express(),
     server = HTTP.Server(app),
-    io = SocketIO(server)
+    io = SocketIO(server);
 
 state = {
   title: "Example Meeting",
@@ -57,22 +59,67 @@ app.post('/upload', function(req, res) {
     req.pipe(req.busboy)
     req.busboy.on('file', function(fieldname, file, filename) {
 
-        var uploadFilename = uuid.v4() + path.extname(filename);
-        var uploadPath = uploadDir + uploadFilename;
+        var uploadWithExtension = (extension) => {
+            return __dirname + '/static/uploads/' + uuid.v4() + extension;
+        };
+
+        var extension = path.extname(filename);
+        var uploadPath = uploadWithExtension(extension);
 
         var fstream = fs.createWriteStream(uploadPath);
-        file.pipe(fstream)
+        file.pipe(fstream);
         fstream.on('close', function() {
-            image = gm(uploadPath);
-            image.autoOrient().write(uploadPath, function() {
+
+            var completion = (title, filename, cleanup) => {
+
                 state.items.push({
                     uuid: uuid.v4(),
-                    title: path.basename(filename, path.extname(filename)),
-                    url: "/viewer.html#/" + uploadFilename
-                })
+                    title: title,
+                    url: "/viewer.html#/" + path.basename(filename),
+                    cleanup: cleanup
+                });
                 state.selection = state.items.length - 1;
                 broadcastState();
-            });
+
+            };
+
+            if (extension == '.jpg' || extension == '.jpeg') {
+
+                image = gm(uploadPath);
+                image.autoOrient().write(uploadPath, function() {
+                    completion(path.basename(filename, extension), uploadPath, () => {
+                        fs.unlink(uploadPath);
+                    });
+                });
+
+            } else if (extension == '.pdf') {
+
+                thumbnailPath = uploadWithExtension('.jpg');
+                command = util.format(
+                    'gs -dBATCH -dNOPAUSE -sDEVICE=jpeg -r200 -sOutputFile=%s %s',
+                    thumbnailPath, uploadPath);
+                exec(command, (error) => {
+
+                    if (error) {
+                        console.log("Encountered an error generating PDF preview.");
+                        console.log(error);
+                        return;
+                    }
+
+                    completion(path.basename(filename, extension), thumbnailPath, () => {
+                        fs.unlink(uploadPath);
+                        fs.unlink(thumbnailPath);
+                    });
+
+                    console.log("Success generating thumbnail");
+
+                });
+
+            } else {
+                console.log(util.format("Unsupported file with extension '%s'", extension));
+                fs.unlink(uploadPath);
+            }
+
         })
     })
 })
@@ -115,6 +162,10 @@ io.on('connection', function(socket) {
 
   })).on('client-remove-item', parse_message(function(message) {
 
+    var item = state.items[0];
+    if (item.cleanup) {
+        item.cleanup();
+    }
     state.items.splice(message.index, 1);
     broadcastState();
 
