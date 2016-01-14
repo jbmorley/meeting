@@ -18,34 +18,104 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import LinkedStateMixin from 'react-addons-linked-state-mixin'
 import { Router, Route, Link } from 'react-router'
 
-import injectTapEventPlugin from 'react-tap-event-plugin'
-injectTapEventPlugin();
+class MeetingDocumentViewer extends React.Component {
 
-var DocumentViewer = React.createClass({
-
-    mixins: [LinkedStateMixin],
-
-    getInitialState: function() {
-        return {
-            path: "/uploads/" + this.props.params.path
+    constructor(props) {
+        super(props);
+        this.state = {
+            path: '/uploads/' + this.props.params.path,
+            width: '100%',
+            height: '100%'
         };
-    },
+    }
 
-    render: function() {
+    updateDimensions = () => {
+        var w = window,
+            d = document,
+            documentElement = d.documentElement,
+            body = d.getElementsByTagName('body')[0],
+            width = w.innerWidth || documentElement.clientWidth || body.clientWidth,
+            height = w.innerHeight || documentElement.clientHeight|| body.clientHeight;
+
+        this.setState({
+            width: width,
+            height: height
+        });
+    }
+
+    componentWillMount() {
+        this.updateDimensions();
+    }
+
+    onImageLoad(event) {
+        this.setState({
+            contentWidth: event.target.naturalWidth,
+            contentHeight: event.target.naturalHeight
+        });
+    }
+
+    componentDidMount() {
+        window.addEventListener("resize", this.updateDimensions);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.updateDimensions);
+    }
+
+    render() {
+
+        var width = '100%';
+        var height = '100%';
+
+        if (this.state.contentWidth && this.state.contentHeight) {
+
+            if (this.state.contentWidth <= this.state.width &&
+                this.state.contentHeight <= this.state.width) {
+
+                width = this.state.contentWidth;
+                height = this.state.contentHeight;
+
+            } else {
+
+                var windowRatio = this.state.width / this.state.height;
+                var contentRatio = this.state.contentWidth / this.state.contentHeight;
+
+                if (contentRatio > windowRatio) {
+
+                    width = Math.min(this.state.width, this.state.contentWidth);
+                    height = width / contentRatio;
+
+                } else {
+
+                    height = Math.min(this.state.height, this.state.contentHeight);
+                    width = height * contentRatio;
+
+                }
+
+            }
+
+        }
+
         return (
-            <div>
-                <img src={this.state.path} width="100%" height="100%" />
+            <div
+                style={{
+                    textAlign: 'center'
+                }} >
+                <img
+                    src={this.state.path}
+                    width={width}
+                    height={height}
+                    onLoad={(event) => this.onImageLoad(event)} />
             </div>
         );
-    },
+    }
 
-});
+}
 
 ReactDOM.render((
     <Router>
-        <Route path="/:path" component={DocumentViewer} />
+        <Route path="/:path" component={MeetingDocumentViewer} />
     </Router>
 ), document.getElementById('app'))
