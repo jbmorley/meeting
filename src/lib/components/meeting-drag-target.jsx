@@ -64,16 +64,39 @@ export default class MeetingDragTarget extends React.Component {
     }
 
     render() {
+
         return (
             <div
                 style={{
-                    width: '100px',
-                    height: '100px',
-                    backgroundColor: this.state.hover ? 'pink' : 'blue',
+                    minWidth: '100px',
+                    minHeight: '400px',
+                    borderRadius: '20px',
+                    position: 'relative',
                 }}
                 onDragOver={(event) => this.onDragOver(event)}
-                onDragLeave={(event) => this.onDragLeave(event)}
                 onDrop={(event) => this.onDrop(event)}>
+
+                {this.props.children}
+
+                {(() => {
+                    if (this.state.hover) {
+                        return (
+                            <div
+                                style={{
+                                    backgroundColor: 'black',
+                                    position: 'absolute',
+                                    width: '100%',
+                                    height: '100%',
+                                    top: '0',
+                                    left: '0',
+                                    opacity: '0.2',
+                                    borderRadius: '2px',
+                                }}
+                                onDragLeave={(event) => this.onDragLeave(event)} />
+                        );
+                    }
+                })()}
+
             </div>
         );
     }
