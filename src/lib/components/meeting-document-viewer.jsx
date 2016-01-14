@@ -17,8 +17,6 @@
  */
 
 import React from 'react'
-import ReactDOM from 'react-dom'
-import { Router, Route, Link } from 'react-router'
 
 export default class MeetingDocumentViewer extends React.Component {
 
@@ -48,6 +46,7 @@ export default class MeetingDocumentViewer extends React.Component {
     componentWillMount() {
         this.updateDimensions();
         document.body.style.backgroundColor = "#fff";
+        document.body.style.backgroundColor = "magenta";
     }
 
     onImageLoad(event) {
@@ -108,7 +107,7 @@ export default class MeetingDocumentViewer extends React.Component {
             <div
                 style={{
                     textAlign: 'center',
-                    position: 'relative'
+                    position: 'relative',
                 }} >
                 <img
                     src={this.state.path}

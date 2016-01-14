@@ -38,9 +38,10 @@ import Star from 'material-ui/lib/svg-icons/toggle/star';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 
 import AddItemDialog from './lib/components/add-item-dialog.jsx';
-import ItemGrid from './lib/components/item-grid.jsx';
+import MeetingItemGrid from './lib/components/meeting-item-grid.jsx';
 import ItemView from './lib/components/item-view.jsx';
 import MeetingAppScreen from './lib/components/meeting-app-screen.jsx';
+import MeetingContentResizer from './lib/components/meeting-content-resizer.jsx';
 import MeetingDocumentViewer from './lib/components/meeting-document-viewer.jsx';
 import MeetingDragTarget from './lib/components/meeting-drag-target.jsx';
 import MeetingTheme from './lib/components/meeting-theme.jsx';
@@ -116,7 +117,8 @@ class MeetingApp extends React.Component {
                 primaryText="Add photo"
                 leftIcon={<Photo />}
                 onTouchTap={() => this.refs.input.click()} />,
-            <Divider />,
+            <Divider
+                key="divider-1" />,
             <MenuItem
                 key="add-continuous-improvement-menu-item"
                 primaryText="Add continuous improvement"
@@ -125,7 +127,8 @@ class MeetingApp extends React.Component {
                     title: "Continuous Improvement",
                     url: "uploads/table.html"
                 })} />,
-            <Divider />,
+            <Divider
+                key="divider-2" />,
             <MenuItem
                 key="leave-meeting-menu-item"
                 primaryText="Leave meeting"
@@ -142,10 +145,9 @@ class MeetingApp extends React.Component {
                     this.context.history.push(`/meeting/${this.props.uuid}`);
                     this.setState({showNavigation: false});
                 }} />,
-            <Divider />,
+            <Divider
+                key="divider-3" />,
         ];
-
-        console.log(this.state);
 
         var navigationItems = defaultNavigationItems.concat([
             <List subheader="Connected users">
@@ -257,8 +259,13 @@ class Live extends React.Component {
     render() {
         return (
             <div>
+
+                <MeetingContentResizer
+                    onWindowResize={(size) => {
+                        console.log(size);
+                    }} />
             
-                <ItemGrid
+                <MeetingItemGrid
                     items={this.state.items}
                     onRemoveItem={(index) => engine.removeItem(index)}
                     onSelect={(index) => engine.setSelection(index)} />

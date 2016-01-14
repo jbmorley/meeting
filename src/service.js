@@ -79,7 +79,6 @@ app.post('/upload', function(req, res) {
                     url: "/#/viewer/" + path.basename(filename),
                     cleanup: cleanup
                 });
-                state.selection = state.items.length - 1;
                 broadcastState();
 
             };
