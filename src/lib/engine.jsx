@@ -137,4 +137,16 @@ export default class Engine {
         // this._meeting.setState({callState: state});
     }
 
+    upload(file) {
+        var xhr = new XMLHttpRequest();
+        var formData = new FormData();
+        formData.append("file", file);
+        function reqListener () {
+            console.log(this.responseText);
+        }
+        xhr.addEventListener("load", reqListener);
+        xhr.open("POST", "/upload");
+        xhr.send(formData);
+    }
+
 }

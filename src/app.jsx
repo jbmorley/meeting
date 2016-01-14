@@ -29,11 +29,12 @@ import RaisedButton from 'material-ui/lib/raised-button';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 
 import AddItemDialog from './lib/components/add-item-dialog.jsx';
-import MeetingTheme from './lib/components/meeting-theme.jsx';
 import ItemGrid from './lib/components/item-grid.jsx';
 import ItemView from './lib/components/item-view.jsx';
-import MeetingWebRTC from './lib/components/meeting-web-rtc.jsx';
 import MeetingAppScreen from './lib/components/meeting-app-screen.jsx';
+import MeetingDragTarget from './lib/components/meeting-drag-target.jsx';
+import MeetingTheme from './lib/components/meeting-theme.jsx';
+import MeetingWebRTC from './lib/components/meeting-web-rtc.jsx';
 
 import Engine from './lib/engine.jsx';
 import webRTC from './lib/webrtc.jsx';
@@ -129,6 +130,13 @@ class MeetingApp extends React.Component {
                     showNavigation={this.state.showNavigation}
                     onShowNavigation={(show) => this.setState({showNavigation: show})}>
 
+                    <MeetingDragTarget 
+                        onDropFile={(files) => {
+                            for (var i = 0, f; f = files[i]; i++) {
+                                engine.upload(f);
+                            }
+                        }} />
+
                     {this.props.children}
 
                     <ItemView
@@ -214,15 +222,7 @@ class Camera extends React.Component {
     }
 
     onUploadFile() {
-        var xhr = new XMLHttpRequest();
-        var formData = new FormData();
-        formData.append("file", this.file);
-        function reqListener () {
-            console.log(this.responseText);
-        }
-        xhr.addEventListener("load", reqListener);
-        xhr.open("POST", "/upload");
-        xhr.send(formData);
+        engine.upload(this.file);
     }
 
     render() {
