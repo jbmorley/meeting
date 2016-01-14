@@ -65,7 +65,11 @@ app.post('/upload', function(req, res) {
         fstream.on('close', function() {
             image = gm(uploadPath);
             image.autoOrient().write(uploadPath, function() {
-                state.items.push({uuid: uuid.v4(), title: filename, url: "/viewer.html#/" + uploadFilename})
+                state.items.push({
+                    uuid: uuid.v4(),
+                    title: path.basename(filename, path.extname(filename)),
+                    url: "/viewer.html#/" + uploadFilename
+                })
                 state.selection = state.items.length - 1;
                 broadcastState();
             });
