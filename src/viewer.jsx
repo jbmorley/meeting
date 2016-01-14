@@ -68,6 +68,8 @@ class MeetingDocumentViewer extends React.Component {
 
         var width = '100%';
         var height = '100%';
+        var left = 0;
+        var top = 0;
 
         if (this.state.contentWidth && this.state.contentHeight) {
 
@@ -96,17 +98,26 @@ class MeetingDocumentViewer extends React.Component {
 
             }
 
+            left = (this.state.width - width) / 2;
+            top = (this.state.height - height) / 2;
+
         }
 
         return (
             <div
                 style={{
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    position: 'relative'
                 }} >
                 <img
                     src={this.state.path}
                     width={width}
                     height={height}
+                    style={{
+                        position: 'absolute',
+                        left: left + 'px',
+                        top: top + 'px'
+                    }}
                     onLoad={(event) => this.onImageLoad(event)} />
             </div>
         );

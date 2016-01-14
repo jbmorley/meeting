@@ -17,17 +17,18 @@
  */
 
 var update = require('react-addons-update')
-var guid = require('./lib/guid')
 var values = require('./lib/values')
 var parse_message = require('./lib/parse-message')
 
 var Express = require('express'),
-    Path = require('path'),
+    path = require('path'),
     HTTP = require('http'),
     SocketIO = require('socket.io'),
     fs = require('fs'),
     busboyBodyParser = require('busboy-body-parser'),
-    busboy = require('connect-busboy')
+    busboy = require('connect-busboy'),
+    gm = require('gm'),
+    uuid = require('node-uuid')
 
 var app = Express(),
     server = HTTP.Server(app),
@@ -42,27 +43,32 @@ state = {
   answer: undefined,
 }
 
+const uploadDir = __dirname + '/static/uploads/';
+
 // Support parsing multipart/form-data.
 app.use(busboy())
 
 // Render static pages.
-app.use(Express.static(Path.join(__dirname, 'static')))
+app.use(Express.static(path.join(__dirname, 'static')))
 
 // Accept file uploads.
 app.post('/upload', function(req, res) {
-    console.log("Received upload...");
-    console.log(req);
     var fstream
     req.pipe(req.busboy)
-    req.busboy.on('file', function (fieldname, file, filename) {
-        console.log("Uploading: " + filename)
-        fstream = fs.createWriteStream(__dirname + '/static/uploads/' + filename)
+    req.busboy.on('file', function(fieldname, file, filename) {
+
+        var uploadFilename = uuid.v4() + path.extname(filename);
+        var uploadPath = uploadDir + uploadFilename;
+
+        var fstream = fs.createWriteStream(uploadPath);
         file.pipe(fstream)
-        fstream.on('close', function () {
-            state.items.push({uuid: guid(), title: "Upload", url: "/viewer.html#/" + filename})
-            state.selection = state.items.length - 1;
-            broadcastState()
-            res.redirect('back')
+        fstream.on('close', function() {
+            image = gm(uploadPath);
+            image.autoOrient().write(uploadPath, function() {
+                state.items.push({uuid: uuid.v4(), title: "Upload", url: "/viewer.html#/" + uploadFilename})
+                state.selection = state.items.length - 1;
+                broadcastState();
+            });
         })
     })
 })
@@ -79,7 +85,7 @@ function broadcastState() {
 
 io.on('connection', function(socket) {
 
-  state.users[socket] = {uuid: guid(), name: '', email: ''}
+  state.users[socket] = {uuid: uuid.v4(), name: '', email: ''}
   broadcastState();
 
   socket.on('disconnect', function() {
@@ -99,7 +105,7 @@ io.on('connection', function(socket) {
 
   })).on('client-add-item', parse_message(function(item) {
 
-    item.uuid = guid();
+    item.uuid = uuid.v4();
     state.items.push(item);
     broadcastState();
 
@@ -132,5 +138,5 @@ io.on('connection', function(socket) {
 });
 
 server.listen(3000, function(){
-  console.log('listening on *:3000');
+    console.log('listening on *:3000');
 });

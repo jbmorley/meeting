@@ -103,7 +103,6 @@ def build(options):
     static_dir = os.path.join(BUILD_DIR, "static")
     makedirs(BUILD_DIR)
     copyfiles(SRC_DIR, BUILD_DIR, ["service.js",
-                                   "lib/guid.js",
                                    "lib/values.js",
                                    "lib/parse-message.js",
                                    ".htpasswd",
