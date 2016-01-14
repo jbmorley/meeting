@@ -89,9 +89,8 @@ export default class Engine {
         this.addItem({title: "UWO Engagement - Av Session Duration", url: "/viewer.html#/engagement_session_duration.jpg"});
         this.addItem({title: "Unique opens of UWO campaign (CM)", url: "/viewer.html#/unique_opens.jpg"});
         this.addItem({title: "% Unsubscribed (CM)", url: "/viewer.html#/unsubscribed.jpg"});
-        this.addItem({title: "% Clicked a link (CM)", url: "/viewer.html#/clicked.jpg"});
-        this.addItem({title: "Continuous improvement", url: "charts/table.html"});
-        this.addItem({title: "Bar chart", url: "charts/bar.html"});
+        this.addItem({title: "% Clicked a Link (CM)", url: "/viewer.html#/clicked.jpg"});
+        this.addItem({title: "Continuous Improvement", url: "uploads/table.html"});
     }
 
     addItem(item) {
