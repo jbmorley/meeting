@@ -60,7 +60,7 @@ app.post('/upload', function(req, res) {
     req.pipe(req.busboy)
     req.busboy.on('file', function(fieldname, file, filename) {
 
-        var uploadWithExtension = (extension) => {
+        var uploadWithExtension = function(extension) {
             return __dirname + '/static/uploads/' + uuid.v4() + extension;
         };
 
@@ -71,7 +71,7 @@ app.post('/upload', function(req, res) {
         file.pipe(fstream);
         fstream.on('close', function() {
 
-            var completion = (title, filename, cleanup) => {
+            var completion = function(title, filename, cleanup) {
 
                 state.items.push({
                     uuid: uuid.v4(),
@@ -87,7 +87,7 @@ app.post('/upload', function(req, res) {
 
                 var imagePath = uploadPath;
                 gm(uploadPath).autoOrient().write(uploadPath, function() {
-                    completion(path.basename(filename, extension), uploadPath, () => {
+                    completion(path.basename(filename, extension), uploadPath, function() {
                         fs.unlink(imagePath, function(error) {
                             if (error) {
                                 console.log(error);
@@ -103,7 +103,7 @@ app.post('/upload', function(req, res) {
                 var command = util.format(
                     'gs -dBATCH -dNOPAUSE -sDEVICE=jpeg -r200 -sOutputFile=%s %s',
                     thumbnailPath, uploadPath);
-                exec(command, (error) => {
+                exec(command, function(error) {
 
                     if (error) {
                         console.log("Encountered an error generating PDF preview.");
@@ -113,7 +113,7 @@ app.post('/upload', function(req, res) {
 
                     console.log(util.format("Generated thumbnail '%s'.", thumbnailPath));
 
-                    completion(path.basename(filename, extension), thumbnailPath, () => {
+                    completion(path.basename(filename, extension), thumbnailPath, function() {
                         fs.unlink(uploadPath, function(error) {
                             if (error) {
                                 console.log(error);
