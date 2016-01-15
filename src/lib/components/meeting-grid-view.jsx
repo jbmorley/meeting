@@ -32,6 +32,43 @@ export default class MeetingGridView extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this._originalBodyOverflow = document.getElementsByTagName('body')[0].style.overflow;
+        if (this.props.selection) {
+            this._applyAutoLockScrolling(this.props);
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.selection !== nextProps.selection) {
+            this._applyAutoLockScrolling(nextProps);
+        }
+    }
+
+    componentWillUnmount() {
+        this._allowScrolling();
+    }
+
+    _originalBodyOverflow = '';
+
+    _applyAutoLockScrolling(props) {
+        if (props.selection) {
+            this._preventScrolling();
+        } else {
+            this._allowScrolling();
+        }
+    }
+
+    _preventScrolling() {
+        const body = document.getElementsByTagName('body')[0];
+        body.style.overflow = 'hidden';
+    }
+
+    _allowScrolling() {
+        const body = document.getElementsByTagName('body')[0];
+        body.style.overflow = this._originalBodyOverflow || '';
+    }
+
     render() {
         var self = this;
         return (
