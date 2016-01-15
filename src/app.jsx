@@ -262,12 +262,9 @@ class Live extends React.Component {
                 <MeetingGridView
                     items={this.state.items}
                     onRemoveItem={(index) => engine.removeItem(index)}
-                    onSelect={(index) => engine.setSelection(index)} />
-
-                <ItemView
-                    open={this.state.selection != undefined}
-                    item={this.state.selection}
-                    onRequestClose={() => engine.setSelection(undefined)} />
+                    selection={this.state.selection ? this.state.selection.uuid : undefined}
+                    onSelect={(index) => engine.setSelection(index)}
+                    onDeselect={() => engine.setSelection(undefined)}/>
 
             </div>
         );

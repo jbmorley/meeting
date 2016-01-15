@@ -35,24 +35,39 @@ export default class MeetingGridViewItem extends React.Component {
     }
 
     render() {
-
         const titleHeight = 48;
         const margin = 8;
+
+        var width = this.props.size.width;
+        var height = this.props.size.height;
+        if (this.props.selected) {
+            width = 600;
+            height = 400;
+        }
+
+        var style = {
+            position: 'absolute',
+            top: this.props.top + 'px',
+            left: this.props.left + 'px',
+            boxSizing: 'border-box',
+            display: 'inline-block',
+            boxShadow: "0px 1px 6px rgba(0, 0, 0, 0.06), 0px 1px 4px rgba(0, 0, 0, 0.06)",
+            width: width + 'px',
+            height: (height + titleHeight) + 'px',
+            margin: margin + 'px',
+        };
+
+        if (this.props.selected) {
+            style.zIndex = 20;
+            style.left = ((this.props.bounds.width - width - margin - margin) / 2) + 'px';
+            style.top = ((this.props.bounds.height - height - titleHeight - margin - margin) / 2) + 'px';
+            style.boxShadow = "0px 1px 10px rgba(0, 0, 0, 0.3), 0px 1px 10px rgba(0, 0, 0, 0.3)";
+        }
 
         return (
 
             <Card
-                style={{
-                    position: 'absolute',
-                    top: this.props.top + 'px',
-                    left: this.props.left + 'px',
-                    boxSizing: 'border-box',
-                    display: 'inline-block',
-                    boxShadow: "0px 1px 6px rgba(0, 0, 0, 0.06), 0px 1px 4px rgba(0, 0, 0, 0.06)",
-                    width: this.props.width + 'px',
-                    height: (this.props.height + titleHeight) + 'px',
-                    margin: margin + 'px'
-                }}>
+                style={style}>
 
                 <CardText
                     style={{
@@ -71,7 +86,7 @@ export default class MeetingGridViewItem extends React.Component {
                             overflow: 'auto',
                             whiteSpace: 'nowrap',
                             marginRight: '48px',
-                            width: (this.props.width - 48) + 'px'
+                            width: (width - 48) + 'px'
                         }} >
                         {this.props.title}
                     </div>
@@ -90,8 +105,8 @@ export default class MeetingGridViewItem extends React.Component {
                     <div
                         style={{
                             position: "relative",
-                            width: this.props.width + 'px',
-                            height: this.props.height + 'px',
+                            width: width + 'px',
+                            height: height + 'px',
                         }} >
 
                         <iframe
@@ -100,8 +115,8 @@ export default class MeetingGridViewItem extends React.Component {
                                 top: 0,
                                 left: 0,
                                 border: 0,
-                                width: this.props.width + 'px',
-                                height: this.props.height + 'px',
+                                width: width + 'px',
+                                height: height + 'px',
                             }}
                             scrolling="no"
                             src={this.props.url}
@@ -114,8 +129,8 @@ export default class MeetingGridViewItem extends React.Component {
                                 position: 'absolute',
                                 top: 0,
                                 left: 0,
-                                width: this.props.width + 'px',
-                                height: this.props.height + 'px'
+                                width: width + 'px',
+                                height: height + 'px'
                             }}
                             open={this.state.loading} />
                         <div
@@ -123,8 +138,8 @@ export default class MeetingGridViewItem extends React.Component {
                                 position: "absolute",
                                 top: 0,
                                 left: 0,
-                                width: this.props.width + 'px',
-                                height: this.props.height + 'px',
+                                width: width + 'px',
+                                height: height + 'px',
                                 cursor: 'zoom-in',
                             }}
                             onTouchTap={() => this.props.onSelect()} >

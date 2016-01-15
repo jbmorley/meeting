@@ -17,6 +17,7 @@
  */
 
 const React = require('react');
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import MeetingContentResizer from './meeting-content-resizer.jsx';
 import MeetingGridViewItem from './meeting-grid-view-item.jsx';
@@ -44,6 +45,31 @@ export default class MeetingGridView extends React.Component {
                         height: dimensions.window.height - dimensions.content.top
                     });
                 }}>
+
+                <ReactCSSTransitionGroup
+                    transitionName="fade"
+                    transitionEnterTimeout={300}
+                    transitionLeaveTimeout={300}
+                >
+                    {(() => {
+                        if (this.props.selection) {
+                            return (
+                                <div
+                                    key="meeting-grid-view-overlay"
+                                    style={{
+                                        position: 'fixed',
+                                        width: '100%',
+                                        height: '100%',
+                                        top: 0,
+                                        left: 0,
+                                        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                                        zIndex: 10,
+                                    }}
+                                    onTouchTap={() => this.props.onDeselect()}/>
+                            )
+                        }
+                    })()}
+                </ReactCSSTransitionGroup>
 
                 {(() => {
                     var titleHeight = 48;
@@ -81,10 +107,12 @@ export default class MeetingGridView extends React.Component {
                                 url={item.url}
                                 left={left}
                                 top={top}
-                                width={width}
-                                height={height}
+                                size={{width: width, height: height}}
+                                bounds={{width: this.state.width, height: this.state.height}}
+                                selected={this.props.selection == item.uuid}
                                 onSelect={() => this.props.onSelect(index)}
-                                onRemove={() => this.props.onRemoveItem(index)} />
+                                onRemove={() => this.props.onRemoveItem(index)}
+                                onDeselect={() => this.props.onDeselect()} />
                         );
                     });
                 })()}
