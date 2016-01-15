@@ -83,7 +83,7 @@ app.post('/upload', function(req, res) {
 
             };
 
-            if (extension == '.jpg' || extension == '.jpeg') {
+            if (extension == '.jpg' || extension == '.jpeg' || extension == '.png') {
 
                 gm(uploadPath).autoOrient().write(uploadPath, function() {
                     completion(path.basename(filename, extension), uploadPath, () => {
