@@ -41,7 +41,6 @@ import AddItemDialog from './lib/components/add-item-dialog.jsx';
 import MeetingItemGrid from './lib/components/meeting-item-grid.jsx';
 import ItemView from './lib/components/item-view.jsx';
 import MeetingAppScreen from './lib/components/meeting-app-screen.jsx';
-import MeetingContentResizer from './lib/components/meeting-content-resizer.jsx';
 import MeetingDocumentViewer from './lib/components/meeting-document-viewer.jsx';
 import MeetingDragTarget from './lib/components/meeting-drag-target.jsx';
 import MeetingTheme from './lib/components/meeting-theme.jsx';
@@ -150,7 +149,9 @@ class MeetingApp extends React.Component {
         ];
 
         var navigationItems = defaultNavigationItems.concat([
-            <List subheader="Connected users">
+            <List
+                key="connected-users-list"
+                subheader="Connected users">
                 {this.state.users.map(function(item, index) {
                     return (
                         <ListItem
@@ -259,11 +260,6 @@ class Live extends React.Component {
     render() {
         return (
             <div>
-
-                <MeetingContentResizer
-                    onWindowResize={(size) => {
-                        console.log(size);
-                    }} />
             
                 <MeetingItemGrid
                     items={this.state.items}

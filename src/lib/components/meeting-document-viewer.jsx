@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import React from 'react'
+import React from 'react';
 
 export default class MeetingDocumentViewer extends React.Component {
 
@@ -108,6 +108,7 @@ export default class MeetingDocumentViewer extends React.Component {
                     textAlign: 'center',
                     position: 'relative',
                 }} >
+
                 <img
                     src={this.state.path}
                     width={width}
@@ -115,9 +116,10 @@ export default class MeetingDocumentViewer extends React.Component {
                     style={{
                         position: 'absolute',
                         left: left + 'px',
-                        top: top + 'px'
+                        top: top + 'px',
                     }}
                     onLoad={(event) => this.onImageLoad(event)} />
+
             </div>
         );
     }
