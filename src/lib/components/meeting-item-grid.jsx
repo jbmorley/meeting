@@ -48,13 +48,16 @@ export default class MeetingItemGrid extends React.Component {
                     var ratio = 4 / 3;
                     var width = 0;
                     var height = 0;
+                    var minWidth = 300;
+                    var maxColumns = self.state.width / minWidth;
 
                     var columns = 1;
                     while (self.props.items.length) {
                         var rows = Math.ceil(self.props.items.length / columns);
                         width = ((self.state.width / columns) - (margin * 2));
                         height = width / ratio;
-                        if (((height + titleHeight) * rows) < self.state.height) {
+                        if (((height + titleHeight) * rows) < self.state.height ||
+                            columns >= maxColumns) {
                             break;
                         }
                         columns = columns + 1;
