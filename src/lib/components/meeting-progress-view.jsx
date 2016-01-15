@@ -16,7 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-const React = require('react');
+import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import CircularProgress from 'material-ui/lib/circular-progress';
 
@@ -28,24 +29,38 @@ export default class MeetingProgressView extends React.Component {
 
     render() {
         return (
-            <div
-                style={{
-                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                    width: '100%',
-                    height: '100%',
-                    position: 'relative',
-                    textAlign: 'center',
-                }}>
-                <CircularProgress
-                    mode="indeterminate"
-                    style={{
-                        margin: 0,
-                        padding: 0,
-                        // position: 'absolute',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                    }} />
-            </div>
+
+            <ReactCSSTransitionGroup
+                transitionName="fade"
+                transitionEnterTimeout={300}
+                transitionLeaveTimeout={310}
+            >
+                {(() => {
+                    if (this.props.open) {
+                        return (
+                            <div
+                                key='progress-overlay'
+                                style={{
+                                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                                    width: '100%',
+                                    height: '100%',
+                                    position: 'relative',
+                                    textAlign: 'center',
+                                }}>
+                                <CircularProgress
+                                    mode="indeterminate"
+                                    style={{
+                                        margin: 0,
+                                        padding: 0,
+                                        // position: 'absolute',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                    }} />
+                            </div>
+                        );
+                    }
+                })()}
+            </ReactCSSTransitionGroup>
         );
     }
 

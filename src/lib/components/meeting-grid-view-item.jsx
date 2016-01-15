@@ -113,7 +113,8 @@ export default class MeetingGridViewItem extends React.Component {
                                 left: 0,
                                 width: this.props.width + 'px',
                                 height: this.props.height + 'px'
-                            }} />
+                            }}
+                            open={this.state.loading} />
                         <div
                             style={{
                                 position: "absolute",
