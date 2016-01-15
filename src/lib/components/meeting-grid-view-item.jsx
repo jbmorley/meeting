@@ -20,9 +20,10 @@ import React from 'react';
 
 import Card from 'material-ui/lib/card/card';
 import CardText from 'material-ui/lib/card/card-text';
-import CircularProgress from 'material-ui/lib/circular-progress';
 import CloseIcon from 'material-ui/lib/svg-icons/navigation/close';
 import IconButton from 'material-ui/lib/icon-button';
+
+import MeetingProgressView from './meeting-progress-view.jsx';
 
 export default class MeetingGridViewItem extends React.Component {
 
@@ -89,6 +90,7 @@ export default class MeetingGridViewItem extends React.Component {
                             width: this.props.width + 'px',
                             height: this.props.height + 'px',
                         }} >
+
                         <iframe
                             style={{
                                 position: "absolute",
@@ -104,13 +106,13 @@ export default class MeetingGridViewItem extends React.Component {
                                 this.setState({loading: false});
                             }} />
 
-                        <CircularProgress
-                            mode="indeterminate"
+                        <MeetingProgressView
                             style={{
                                 position: 'absolute',
                                 top: 0,
                                 left: 0,
-                                display: this.state.loading ? 'block' : 'none'
+                                width: this.props.width + 'px',
+                                height: this.props.height + 'px'
                             }} />
                         <div
                             style={{
