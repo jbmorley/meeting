@@ -54,15 +54,20 @@ export default class MeetingGridViewItem extends React.Component {
                     style={{
                         padding: 0,
                         position: 'relative',
+                        height: '48px',
+                        lineHeight: '48px',
                     }} >
                     <div
                         style={{
                             boxSizing: 'border-box',
                             fontSize: '18px',
-                            display: 'table-cell',
-                            height: '48px',
                             verticalAlign: 'middle',
-                            padding: '0 12px',
+                            padding: '0 0 0 12px',
+                            textOverflow: 'ellipsis',
+                            overflow: 'auto',
+                            whiteSpace: 'nowrap',
+                            marginRight: '48px',
+                            width: (this.props.width - 48) + 'px'
                         }} >
                         {this.props.title}
                     </div>
