@@ -21,7 +21,7 @@ const React = require('react');
 import MeetingContentResizer from './meeting-content-resizer.jsx';
 import MeetingGridViewItem from './meeting-grid-view-item.jsx';
 
-export default class MeetingItemGrid extends React.Component {
+export default class MeetingGridView extends React.Component {
 
     constructor(props) {
         super(props);

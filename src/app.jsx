@@ -38,11 +38,11 @@ import Star from 'material-ui/lib/svg-icons/toggle/star';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 
 import AddItemDialog from './lib/components/add-item-dialog.jsx';
-import MeetingItemGrid from './lib/components/meeting-item-grid.jsx';
 import ItemView from './lib/components/item-view.jsx';
 import MeetingAppScreen from './lib/components/meeting-app-screen.jsx';
 import MeetingDocumentViewer from './lib/components/meeting-document-viewer.jsx';
 import MeetingDragTarget from './lib/components/meeting-drag-target.jsx';
+import MeetingGridView from './lib/components/meeting-grid-view.jsx';
 import MeetingTheme from './lib/components/meeting-theme.jsx';
 import MeetingWebRTC from './lib/components/meeting-web-rtc.jsx';
 
@@ -261,7 +261,7 @@ class Live extends React.Component {
         return (
             <div>
             
-                <MeetingItemGrid
+                <MeetingGridView
                     items={this.state.items}
                     onRemoveItem={(index) => engine.removeItem(index)}
                     onSelect={(index) => engine.setSelection(index)} />
