@@ -87,7 +87,11 @@ app.post('/upload', function(req, res) {
 
                 gm(uploadPath).autoOrient().write(uploadPath, function() {
                     completion(path.basename(filename, extension), uploadPath, () => {
-                        fs.unlink(uploadPath);
+                        fs.unlink(uploadPath, function(error) {
+                            if (error) {
+                                console.log(error);
+                            }
+                        });
                     });
                     res.sendStatus(200);
                 });
@@ -109,8 +113,16 @@ app.post('/upload', function(req, res) {
                     console.log(util.format("Generated thumbnail '%s'.", thumbnailPath));
 
                     completion(path.basename(filename, extension), thumbnailPath, () => {
-                        fs.unlink(uploadPath);
-                        fs.unlink(thumbnailPath);
+                        fs.unlink(uploadPath, function(error) {
+                            if (error) {
+                                console.log(error);
+                            }
+                        });
+                        fs.unlink(thumbnailPath, function(error) {
+                            if (error) {
+                                console.log(error);
+                            }
+                        });
                     });
 
                     res.sendStatus(200);
@@ -119,7 +131,11 @@ app.post('/upload', function(req, res) {
 
             } else {
                 console.log(util.format("Unsupported file with extension '%s'", extension));
-                fs.unlink(uploadPath);
+                fs.unlink(uploadPath, function(error) {
+                    if (error) {
+                        console.log(error);
+                    }
+                });
             }
 
         })
