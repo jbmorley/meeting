@@ -17,6 +17,7 @@
  */
 
 import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 export default class MeetingDragTarget extends React.Component {
 
@@ -25,6 +26,30 @@ export default class MeetingDragTarget extends React.Component {
         this.state = {
             hover: false
         }
+    }
+
+    dragOverListener = (event) => {
+        this.onDragOver(event);
+    }
+
+    dragLeaveListener = (event) => {
+        this.onDragLeave(event);
+    }
+
+    dropListener = (event) => {
+        this.onDrop(event);
+    }
+
+    componentDidMount() {
+        window.addEventListener("dragover", this.dragOverListener);
+        window.addEventListener("dragover", this.dragLeaveListener);
+        window.addEventListener("drop", this.dropListener);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("dragover", this.dragOverListener);
+        window.removeEventListener("dragover", this.dragLeaveListener);
+        window.removeEventListener("drop", this.dropListener);
     }
 
     onDragOver(event) {
@@ -68,34 +93,35 @@ export default class MeetingDragTarget extends React.Component {
         return (
             <div
                 style={{
-                    minWidth: '100px',
-                    minHeight: '400px',
+                    height: '50px',
                     borderRadius: '20px',
                     position: 'relative',
-                }}
-                onDragOver={(event) => this.onDragOver(event)}
-                onDrop={(event) => this.onDrop(event)}>
+                }}>
 
-                {this.props.children}
-
-                {(() => {
-                    if (this.state.hover) {
-                        return (
-                            <div
-                                style={{
-                                    backgroundColor: 'black',
-                                    position: 'absolute',
-                                    width: '100%',
-                                    height: '100%',
-                                    top: '0',
-                                    left: '0',
-                                    opacity: '0.2',
-                                    borderRadius: '2px',
-                                }}
-                                onDragLeave={(event) => this.onDragLeave(event)} />
-                        );
-                    }
-                })()}
+                <ReactCSSTransitionGroup
+                    transitionName="fade"
+                    transitionEnterTimeout={300}
+                    transitionLeaveTimeout={310}
+                >
+                    {(() => {
+                        if (this.state.hover) {
+                            return (
+                                <div
+                                    key='meeting-drag-target-root'
+                                    style={{
+                                        backgroundColor: 'black',
+                                        position: 'absolute',
+                                        width: '100%',
+                                        height: '100%',
+                                        top: '0',
+                                        left: '0',
+                                        opacity: '0.2',
+                                        borderRadius: '2px',
+                                    }}/>
+                            );
+                        }
+                    })()}
+                </ReactCSSTransitionGroup>
 
             </div>
         );

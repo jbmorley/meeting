@@ -191,11 +191,9 @@ class MeetingApp extends React.Component {
                             for (var i = 0, f; f = files[i]; i++) {
                                 engine.upload(f);
                             }
-                        }}>
+                        }}/>
 
-                        {this.props.children}
-
-                    </MeetingDragTarget>
+                    {this.props.children}                    
 
                 </MeetingAppScreen>
 
