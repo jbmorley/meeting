@@ -23,7 +23,7 @@ import FloatingActionButton from 'material-ui/lib/floating-action-button';
 import Snackbar from 'material-ui/lib/snackbar';
 
 import MeetingAppRTC from './meeting-app-rtc.jsx';
-import VideoCall from './video-call.jsx';
+import MeetingVideoCall from './meeting-video-call.jsx';
 
 import webRTC from '../webrtc.jsx';
 
@@ -55,7 +55,7 @@ export default class MeetingAppScreen extends React.Component {
                                 return '';
                             case webRTC.CONNECTED:
                                 return (
-                                    <VideoCall 
+                                    <MeetingVideoCall 
                                         localStream={self.props.localStream}
                                         remoteStream={self.props.remoteStream} />
                                 );

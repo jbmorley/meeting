@@ -16,12 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-const React = require('react');
-const Paper = require('material-ui/lib/paper');
+import React from 'react';
+import Paper from 'material-ui/lib/paper';
 
-var VideoCall = React.createClass({
+export default class MeetingVideoCall extends React.Component {
 
-    render: function() {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
         return (
             <Paper zDepth={3} className="video-remote">
                 <video src={this.props.remoteStream} autoPlay />
@@ -30,8 +34,6 @@ var VideoCall = React.createClass({
                 </div>
             </Paper>
         );
-    },
+    }
 
-});
-
-module.exports = VideoCall;
+}
