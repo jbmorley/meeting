@@ -37,7 +37,7 @@ import RemoveRedEye from 'material-ui/lib/svg-icons/image/remove-red-eye';
 import Star from 'material-ui/lib/svg-icons/toggle/star';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 
-import AddItemDialog from './lib/components/add-item-dialog.jsx';
+import MeetingAddItemDialog from './lib/components/meeting-add-item-dialog.jsx';
 import MeetingAppScreen from './lib/components/meeting-app-screen.jsx';
 import MeetingDocumentViewer from './lib/components/meeting-document-viewer.jsx';
 import MeetingDragTarget from './lib/components/meeting-drag-target.jsx';
@@ -192,7 +192,7 @@ class MeetingApp extends React.Component {
 
                 </MeetingAppScreen>
 
-                <AddItemDialog
+                <MeetingAddItemDialog
                     open={this.state.showAddItemDialog}
                     onSubmit={(title, url) => {
                         this.setState({showAddItemDialog: false});

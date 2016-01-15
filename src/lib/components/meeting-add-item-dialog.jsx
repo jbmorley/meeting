@@ -21,7 +21,7 @@ import Dialog from 'material-ui/lib/dialog';
 import TextField from 'material-ui/lib/text-field';
 import FlatButton from 'material-ui/lib/flat-button';
 
-export default class AddItemDialog extends React.Component {
+export default class MeetingAddItemDialog extends React.Component {
 
     constructor(props) {
         super(props);
@@ -42,12 +42,6 @@ export default class AddItemDialog extends React.Component {
         }
     }
 
-    handleCancel() {
-        if (this.props.onCancel) {
-            this.props.onCancel();
-        }
-    }
-
     render() {
         var self = this;
 
@@ -55,12 +49,12 @@ export default class AddItemDialog extends React.Component {
             <FlatButton
                 label="Cancel"
                 secondary={true}
-                onTouchTap={() => { self.handleCancel(); }} />,
+                onTouchTap={() => this.props.onCancel()} />,
             <FlatButton
                 label="Submit"
                 primary={true}
                 keyboardFocused={true}
-                onTouchTap={() => { self.handleSubmit(); }} />,
+                onTouchTap={() => this.handleSubmit()} />,
         ];
 
         return (
@@ -68,7 +62,7 @@ export default class AddItemDialog extends React.Component {
                 title="Add item"
                 actions={actions}
                 open={this.props.open}
-                onRequestClose={this.onAddItemDialogClose}>
+                onRequestClose={() => this.props.onCancel()}>
 
                 <TextField
                     ref="title"
