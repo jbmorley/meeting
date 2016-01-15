@@ -38,7 +38,6 @@ import Star from 'material-ui/lib/svg-icons/toggle/star';
 import ThemeManager from 'material-ui/lib/styles/theme-manager';
 
 import AddItemDialog from './lib/components/add-item-dialog.jsx';
-import ItemView from './lib/components/item-view.jsx';
 import MeetingAppScreen from './lib/components/meeting-app-screen.jsx';
 import MeetingDocumentViewer from './lib/components/meeting-document-viewer.jsx';
 import MeetingDragTarget from './lib/components/meeting-drag-target.jsx';
@@ -172,11 +171,9 @@ class MeetingApp extends React.Component {
                     id="file"
                     name="file"
                     ref="input"
-                    onChange={(event) => {
-                        for (var i = 0, f; f = event.target.files[i]; i++) {
-                            engine.upload(f);
-                        }
-                    }}
+                    onChange={(event) => engine.uploadFiles(event.target.files, () => {
+                        console.log("Finished uploading files!");
+                    })}
                     hidden />
 
                 <MeetingAppScreen
@@ -187,11 +184,9 @@ class MeetingApp extends React.Component {
                     onShowNavigation={(show) => this.setState({showNavigation: show})}>
 
                     <MeetingDragTarget 
-                        onDropFile={(files) => {
-                            for (var i = 0, f; f = files[i]; i++) {
-                                engine.upload(f);
-                            }
-                        }}/>
+                        onDropFile={(files) => engine.uploadFiles(files, () => {
+                            console.log("Finished uploading files...");
+                        })}/>
 
                     {this.props.children}                    
 
@@ -257,16 +252,12 @@ class Live extends React.Component {
 
     render() {
         return (
-            <div>
-            
-                <MeetingGridView
-                    items={this.state.items}
-                    onRemoveItem={(index) => engine.removeItem(index)}
-                    selection={this.state.selection ? this.state.selection.uuid : undefined}
-                    onSelect={(index) => engine.setSelection(index)}
-                    onDeselect={() => engine.setSelection(undefined)}/>
-
-            </div>
+            <MeetingGridView
+                items={this.state.items}
+                onRemoveItem={(index) => engine.removeItem(index)}
+                selection={this.state.selection ? this.state.selection.uuid : undefined}
+                onSelect={(index) => engine.setSelection(index)}
+                onDeselect={() => engine.setSelection(undefined)}/>
         );
     }
 

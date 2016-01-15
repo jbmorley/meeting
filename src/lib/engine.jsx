@@ -126,14 +126,37 @@ export default class Engine {
         // this._meeting.setState({callState: state});
     }
 
-    upload(file) {
+    uploadFiles(files, callback) {
+
+        var fileArray = [];
+        for (var i = 0, f; f = files[i]; i++) {
+            fileArray.unshift(f);
+        }
+
+        var continuation = () => {
+            var file = fileArray.pop();
+            if (file) {
+                this.uploadFile(file, continuation);
+            } else {
+                if (callback) {
+                    callback();
+                }
+            }
+        }
+        continuation();
+
+    }
+
+    uploadFile(file, callback) {
+        console.log(`Uploading file '${file.name}'...`);
         var xhr = new XMLHttpRequest();
         var formData = new FormData();
         formData.append("file", file);
-        function reqListener () {
-            console.log(this.responseText);
-        }
-        xhr.addEventListener("load", reqListener);
+        xhr.addEventListener("load", () => {
+            if (callback) {
+                callback(xhr);
+            }
+        });
         xhr.open("POST", "/upload");
         xhr.send(formData);
     }
