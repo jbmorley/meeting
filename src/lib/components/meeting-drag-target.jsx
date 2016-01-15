@@ -42,13 +42,13 @@ export default class MeetingDragTarget extends React.Component {
 
     componentDidMount() {
         window.addEventListener("dragover", this.dragOverListener);
-        window.addEventListener("dragover", this.dragLeaveListener);
+        window.addEventListener("dragleave", this.dragLeaveListener);
         window.addEventListener("drop", this.dropListener);
     }
 
     componentWillUnmount() {
         window.removeEventListener("dragover", this.dragOverListener);
-        window.removeEventListener("dragover", this.dragLeaveListener);
+        window.removeEventListener("dragleave", this.dragLeaveListener);
         window.removeEventListener("drop", this.dropListener);
     }
 
@@ -91,39 +91,31 @@ export default class MeetingDragTarget extends React.Component {
     render() {
 
         return (
-            <div
-                style={{
-                    height: '50px',
-                    borderRadius: '20px',
-                    position: 'relative',
-                }}>
-
-                <ReactCSSTransitionGroup
-                    transitionName="fade"
-                    transitionEnterTimeout={300}
-                    transitionLeaveTimeout={310}
-                >
-                    {(() => {
-                        if (this.state.hover) {
-                            return (
-                                <div
-                                    key='meeting-drag-target-root'
-                                    style={{
-                                        backgroundColor: 'black',
-                                        position: 'absolute',
-                                        width: '100%',
-                                        height: '100%',
-                                        top: '0',
-                                        left: '0',
-                                        opacity: '0.2',
-                                        borderRadius: '2px',
-                                    }}/>
-                            );
-                        }
-                    })()}
-                </ReactCSSTransitionGroup>
-
-            </div>
+            <ReactCSSTransitionGroup
+                transitionName="fade"
+                transitionEnterTimeout={300}
+                transitionLeaveTimeout={310}
+            >
+                {(() => {
+                    if (this.state.hover) {
+                        return (
+                            <div
+                                key='meeting-drag-target-root'
+                                style={{
+                                    backgroundColor: 'black',
+                                    position: 'fixed',
+                                    top: '0',
+                                    left: '0',
+                                    width: '100%',
+                                    height: '100%',
+                                    opacity: '0.2',
+                                    borderRadius: '2px',
+                                    zIndex: 100,
+                                }}/>
+                        );
+                    }
+                })()}
+            </ReactCSSTransitionGroup>
         );
     }
 }
