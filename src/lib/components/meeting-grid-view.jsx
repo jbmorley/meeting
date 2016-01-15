@@ -35,6 +35,9 @@ export default class MeetingGridView extends React.Component {
         var self = this;
         return (
             <MeetingContentResizer
+                style={{
+                    position: 'relative',
+                }}
                 onWindowResize={(dimensions) => {
                     this.setState({
                         width: dimensions.content.width,
@@ -64,11 +67,20 @@ export default class MeetingGridView extends React.Component {
                     }
 
                     return this.props.items.map((item, index) => {
+
+                        var row = Math.floor(index / columns);
+                        var column = index % columns;
+
+                        var left = column * (width + margin + margin);
+                        var top = row * (height + titleHeight + margin + margin);
+
                         return (
                             <MeetingGridViewItem
                                 key={item.uuid}
                                 title={item.title}
                                 url={item.url}
+                                left={left}
+                                top={top}
                                 width={width}
                                 height={height}
                                 onSelect={() => this.props.onSelect(index)}

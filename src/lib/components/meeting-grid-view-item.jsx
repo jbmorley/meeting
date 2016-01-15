@@ -43,6 +43,9 @@ export default class MeetingGridViewItem extends React.Component {
 
             <Card
                 style={{
+                    position: 'absolute',
+                    top: this.props.top + 'px',
+                    left: this.props.left + 'px',
                     boxSizing: 'border-box',
                     display: 'inline-block',
                     boxShadow: "0px 1px 6px rgba(0, 0, 0, 0.06), 0px 1px 4px rgba(0, 0, 0, 0.06)",
