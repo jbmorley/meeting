@@ -85,9 +85,10 @@ app.post('/upload', function(req, res) {
 
             if (extension == '.jpg' || extension == '.jpeg' || extension == '.png') {
 
+                var imagePath = uploadPath;
                 gm(uploadPath).autoOrient().write(uploadPath, function() {
                     completion(path.basename(filename, extension), uploadPath, () => {
-                        fs.unlink(uploadPath, function(error) {
+                        fs.unlink(imagePath, function(error) {
                             if (error) {
                                 console.log(error);
                             }
