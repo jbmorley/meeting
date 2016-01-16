@@ -111,11 +111,14 @@ export default class MeetingGridView extends React.Component {
             columns = columns + 1;
         }
 
+        var viewHeight = rows * height;
+
         return (
             <div
                 ref='root'
                 style={{
                     position: 'relative',
+                    height: viewHeight + 'px',
                 }}>
 
                 <MeetingScrollLock
