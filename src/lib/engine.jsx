@@ -38,8 +38,6 @@ export default class Engine {
     }
 
     setState(state) {
-        // TODO Diff the state.
-        // TODO Immtable copy here please.
         this.state = state;
         for (var i in this.stateObservers) {
             this.stateObservers[i](state);
