@@ -34,6 +34,7 @@ export default class MeetingGridView extends React.Component {
     }
 
     render() {
+
         var self = this;
         return (
             <MeetingContentResizer
@@ -76,8 +77,6 @@ export default class MeetingGridView extends React.Component {
                 </ReactCSSTransitionGroup>
 
                 {(() => {
-                    var titleHeight = 48;
-                    var margin = 8
                     var ratio = 4 / 3;
                     var width = 0;
                     var height = 0;
@@ -87,9 +86,9 @@ export default class MeetingGridView extends React.Component {
                     var columns = 1;
                     while (self.props.items.length) {
                         var rows = Math.ceil(self.props.items.length / columns);
-                        width = ((self.state.width / columns) - (margin * 2));
+                        width = (self.state.width / columns);
                         height = width / ratio;
-                        if (((height + titleHeight) * rows) < self.state.height ||
+                        if ((height * rows) < self.state.height ||
                             columns >= maxColumns) {
                             break;
                         }
@@ -100,19 +99,34 @@ export default class MeetingGridView extends React.Component {
 
                         var row = Math.floor(index / columns);
                         var column = index % columns;
+                        var left = column * width;
+                        var top = row * height;
 
-                        var left = column * (width + margin + margin);
-                        var top = row * (height + titleHeight + margin + margin);
+                        var frame = {
+                            left: left,
+                            top: top,
+                            width: width,
+                            height: height
+                        }
+
+                        // const SELECTED_WIDTH = 600;
+                        // const SELECTED_HEIGHT = 400;
+                        const SELECTED_WIDTH = 2000;
+                        const SELECTED_HEIGHT = 2000;
+
+                        if (this.props.selection == item.uuid) {
+                            frame.width = Math.min(SELECTED_WIDTH, this.state.width);
+                            frame.height = Math.min(SELECTED_HEIGHT, this.state.height);
+                            frame.left = Math.floor((this.state.width - frame.width) / 2);
+                            frame.top = Math.floor((this.state.height - frame.height) / 2);
+                        }
 
                         return (
                             <MeetingGridViewItem
                                 key={item.uuid}
                                 title={item.title}
                                 url={item.url}
-                                left={left}
-                                top={top}
-                                size={{width: width, height: height}}
-                                bounds={{width: this.state.width, height: this.state.height}}
+                                frame={frame}
                                 selected={this.props.selection == item.uuid}
                                 onSelect={() => this.props.onSelect(item.uuid)}
                                 onRemove={() => {

@@ -27,6 +27,8 @@ import MeetingProgressView from './meeting-progress-view.jsx';
 
 export default class MeetingGridViewItem extends React.Component {
 
+    TITLE_HEIGHT = 48;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -35,34 +37,24 @@ export default class MeetingGridViewItem extends React.Component {
     }
 
     render() {
-        const titleHeight = 48;
-        const margin = 8;
-
-        var width = this.props.size.width;
-        var height = this.props.size.height;
-        if (this.props.selected) {
-            width = 600;
-            height = 400;
-        }
 
         var style = {
             position: 'absolute',
-            top: this.props.top + 'px',
-            left: this.props.left + 'px',
+            top: this.props.frame.top + 'px',
+            left: this.props.frame.left + 'px',
+            width: this.props.frame.width + 'px',
+            height: this.props.frame.height + 'px',
             boxSizing: 'border-box',
             display: 'inline-block',
             boxShadow: "0px 1px 6px rgba(0, 0, 0, 0.06), 0px 1px 4px rgba(0, 0, 0, 0.06)",
-            width: width + 'px',
-            height: (height + titleHeight) + 'px',
-            margin: margin + 'px',
         };
 
         if (this.props.selected) {
             style.zIndex = 20;
-            style.left = ((this.props.bounds.width - width - margin - margin) / 2) + 'px';
-            style.top = ((this.props.bounds.height - height - titleHeight - margin - margin) / 2) + 'px';
             style.boxShadow = "0px 1px 10px rgba(0, 0, 0, 0.3), 0px 1px 10px rgba(0, 0, 0, 0.3)";
         }
+
+        var frameHeight = this.props.frame.height - this.TITLE_HEIGHT;
 
         return (
 
@@ -73,8 +65,8 @@ export default class MeetingGridViewItem extends React.Component {
                     style={{
                         padding: 0,
                         position: 'relative',
-                        height: '48px',
-                        lineHeight: '48px',
+                        height: this.TITLE_HEIGHT + 'px',
+                        lineHeight: this.TITLE_HEIGHT + 'px',
                     }} >
                     <div
                         style={{
@@ -85,8 +77,8 @@ export default class MeetingGridViewItem extends React.Component {
                             textOverflow: 'ellipsis',
                             overflow: 'auto',
                             whiteSpace: 'nowrap',
-                            marginRight: '48px',
-                            width: (width - 48) + 'px'
+                            marginRight: this.TITLE_HEIGHT + 'px',
+                            width: (this.props.frame.width - this.TITLE_HEIGHT) + 'px'
                         }} >
                         {this.props.title}
                     </div>
@@ -105,8 +97,8 @@ export default class MeetingGridViewItem extends React.Component {
                     <div
                         style={{
                             position: "relative",
-                            width: width + 'px',
-                            height: height + 'px',
+                            width: this.props.frame.width + 'px',
+                            height: frameHeight + 'px',
                         }} >
 
                         <iframe
@@ -115,8 +107,8 @@ export default class MeetingGridViewItem extends React.Component {
                                 top: 0,
                                 left: 0,
                                 border: 0,
-                                width: width + 'px',
-                                height: height + 'px',
+                                width: this.props.frame.width + 'px',
+                                height: frameHeight + 'px',
                             }}
                             scrolling="no"
                             src={this.props.url}
@@ -127,8 +119,8 @@ export default class MeetingGridViewItem extends React.Component {
                                 position: 'absolute',
                                 top: 0,
                                 left: 0,
-                                width: width + 'px',
-                                height: height + 'px'
+                                width: this.props.frame.width + 'px',
+                                height: frameHeight + 'px'
                             }}
                             open={this.state.loading} />
                         <div
@@ -136,8 +128,8 @@ export default class MeetingGridViewItem extends React.Component {
                                 position: "absolute",
                                 top: 0,
                                 left: 0,
-                                width: width + 'px',
-                                height: height + 'px',
+                                width: this.props.frame.width + 'px',
+                                height: frameHeight + 'px',
                                 cursor: 'zoom-in',
                             }}
                             onTouchTap={() => this.props.onSelect()} >
