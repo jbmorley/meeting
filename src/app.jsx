@@ -135,6 +135,14 @@ class MeetingApp extends React.Component {
                     title: "Continuous Improvement",
                     url: "uploads/table.html"
                 })} />,
+            <MenuItem
+                key="add-shared-notes-menu-item"
+                primaryText="Add shared notes"
+                leftIcon={<Star />}
+                onTouchTap={() => engine.addItem({
+                    title: "Shared Notes",
+                    url: "http://46.101.84.147/p/meeting-notes"
+                })} />,
             <Divider
                 key="divider-2" />,
             <MenuItem
