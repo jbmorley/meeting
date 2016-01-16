@@ -51,7 +51,6 @@ export default class Engine {
         self._socket = io()
         self._socket.on('server-set-state', parse_message(function(state) {
 
-            console.log(state);
             self.setState(state);
 
             if (state.answer != undefined && webRTC.state == webRTC.OFFERING) {
