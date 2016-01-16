@@ -92,6 +92,7 @@ class MeetingApp extends React.Component {
 
     componentDidMount() {
         engine.addStateObserver(this.engineStateObserver);
+        engine.connect();
     }
 
     componentWillUnmount() {
@@ -325,6 +326,3 @@ webRTC.onAttachLocalStream = function(stream) { engine.setLocalStream(stream); }
 webRTC.onAttachRemoteStream = function(stream) { engine.setRemoteStream(stream); }
 webRTC.onStateChange = function(state) { engine.setCallState(state); }
 webRTC.setup();
-
-engine.connect();
-
