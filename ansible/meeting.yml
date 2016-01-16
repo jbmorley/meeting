@@ -61,6 +61,10 @@
       notify:
         - restart node
 
+    - name: set upload directory permissions
+      file: dest=/var/www/{{ domain }}/static/uploads mode=0777 recurse=yes
+      become: no
+
     - name: create Node.js service
       template: src="nodejs-service.conf" dest="/etc/init/{{ service.name }}.conf"
       become: yes
