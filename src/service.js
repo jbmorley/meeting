@@ -154,8 +154,9 @@ function broadcastState() {
 
 io.on('connection', function(socket) {
 
-    state.users[socket] = {
-        uuid: uuid.v4(),
+    socket.uuid = uuid.v4(),
+    state.users[socket.uuid] = {
+        uuid: socket.uuid,
         name: 'Jason Morley',
         email: 'jason.morley@inseven.co.uk',
         avatar: gravatar.imageUrl('jason.morley@inseven.co.uk', { "size": "128" })
@@ -164,7 +165,7 @@ io.on('connection', function(socket) {
 
   socket.on('disconnect', function() {
 
-    delete state.users[socket];
+    delete state.users[socket.uuid];
     if (offerSocket == socket) {
       state.offer = undefined;
       state.answer = undefined;
