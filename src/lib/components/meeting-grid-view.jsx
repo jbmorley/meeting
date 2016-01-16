@@ -16,21 +16,78 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-const React = require('react');
+import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import update from 'react-addons-update';
 
-import MeetingContentResizer from './meeting-content-resizer.jsx';
 import MeetingGridViewItem from './meeting-grid-view-item.jsx';
 import MeetingScrollLock from './meeting-scroll-lock.jsx';
 
 export default class MeetingGridView extends React.Component {
+
+    ITEM_MARGIN = 8;
 
     constructor(props) {
         super(props);
         this.state = {
             width: 0,
             height: 0,
+        };
+    }
+
+    updateDimensions = () => {
+        var documentElement = document.documentElement,
+            body = document.getElementsByTagName('body')[0],
+            width = window.innerWidth || documentElement.clientWidth || body.clientWidth,
+            height = window.innerHeight || documentElement.clientHeight|| body.clientHeight,
+            scrollLeft = window.pageXOffset || body.scrollLeft,
+            scrollTop = window.pageYOffset || body.scrollTop;
+
+        var visibleRect = {
+            left: scrollLeft,
+            top: scrollTop,
+            width: 0,
+            height: 0,
         }
+
+        if (this.refs.root) {
+
+            var visibleRect = {
+                left: scrollLeft,
+                top: scrollTop,
+                width: width,
+                height: height - this.refs.root.getBoundingClientRect().top - scrollTop,
+            };
+
+            console.log(visibleRect);
+
+            this.setState(visibleRect);
+
+        }
+    }
+
+    componentWillMount() {
+        this.updateDimensions();
+    }
+
+    componentDidMount() {
+        window.addEventListener("resize", this.updateDimensions);
+        window.addEventListener("scroll", this.updateDimensions);
+        this.updateDimensions();
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.updateDimensions);
+        window.removeEventListener("scroll", this.updateDimensions);
+    }
+
+    insetRect(frame, margin) {
+        return update(frame, {
+            left: {$set: frame.left + margin},
+            top: {$set: frame.top + margin},
+            width: {$set: frame.width - (2 * margin)},
+            height: {$set: frame.height - (2 * margin)},
+        });
     }
 
     render() {
@@ -55,19 +112,14 @@ export default class MeetingGridView extends React.Component {
         }
 
         return (
-            <MeetingContentResizer
+            <div
+                ref='root'
                 style={{
                     position: 'relative',
-                }}
-                onWindowResize={(dimensions) => {
-                    this.setState({
-                        width: dimensions.content.width,
-                        height: dimensions.window.height - dimensions.content.top
-                    });
                 }}>
 
                 <MeetingScrollLock
-                    active={this.props.selection != undefined}/>
+                    active={this.props.selection}/>
 
                 <ReactCSSTransitionGroup
                     transitionName="fade"
@@ -110,16 +162,18 @@ export default class MeetingGridView extends React.Component {
                             height: height
                         }
 
+                        frame = this.insetRect(frame, this.ITEM_MARGIN);
+
                         // const SELECTED_WIDTH = 600;
                         // const SELECTED_HEIGHT = 400;
-                        const SELECTED_WIDTH = 2000;
-                        const SELECTED_HEIGHT = 2000;
+                        const SELECTED_WIDTH = 600;
+                        const SELECTED_HEIGHT = 500;
 
                         if (this.props.selection == item.uuid) {
                             frame.width = Math.min(SELECTED_WIDTH, this.state.width);
                             frame.height = Math.min(SELECTED_HEIGHT, this.state.height);
-                            frame.left = Math.floor((this.state.width - frame.width) / 2);
-                            frame.top = Math.floor((this.state.height - frame.height) / 2);
+                            frame.left = Math.floor((this.state.width - frame.width) / 2) + this.state.left;
+                            frame.top = Math.floor((this.state.height - frame.height) / 2) + this.state.top;
                         }
 
                         return (
@@ -141,7 +195,7 @@ export default class MeetingGridView extends React.Component {
                         );
                     });
                 })()}
-            </MeetingContentResizer>
+            </div>
         );
     }
 
