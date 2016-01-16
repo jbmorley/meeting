@@ -120,9 +120,7 @@ export default class MeetingGridViewItem extends React.Component {
                             }}
                             scrolling="no"
                             src={this.props.url}
-                            onLoad={() => {
-                                this.setState({loading: false});
-                            }} />
+                            onLoad={() => this.setState({loading: false})} />
 
                         <MeetingProgressView
                             style={{

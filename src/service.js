@@ -73,10 +73,14 @@ app.post('/upload', function(req, res) {
 
             var completion = function(title, filename, cleanup) {
 
+                // N.B. We explicitly specify the URL here (inc. 'index.html') to ensure this URL is different
+                // to the top-level URL of the application itself. For some reason, when the two paths match,
+                // Firefox will not load the contents of the iframes.
+                // Doubtless there is 'correct' solution to this, but time is short.
                 state.items.push({
                     uuid: uuid.v4(),
                     title: title,
-                    url: "/#/viewer/" + path.basename(filename),
+                    url: "/index.html#/viewer/" + path.basename(filename),
                     cleanup: cleanup
                 });
                 broadcastState();
