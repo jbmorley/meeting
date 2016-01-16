@@ -21,6 +21,7 @@
         - nodejs
         - npm
         - ghostscript
+        - graphicsmagick
       become: yes
 
     - name: create virtual host file

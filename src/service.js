@@ -108,10 +108,9 @@ app.post('/upload', function(req, res) {
                     if (error) {
                         console.log("Encountered an error generating PDF preview.");
                         console.log(error);
+                        res.sendStatus(500);
                         return;
                     }
-
-                    console.log(util.format("Generated thumbnail '%s'.", thumbnailPath));
 
                     completion(path.basename(filename, extension), thumbnailPath, function() {
                         fs.unlink(uploadPath, function(error) {
