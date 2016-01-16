@@ -51,14 +51,8 @@ export default class Engine {
         self._socket = io()
         self._socket.on('server-set-state', parse_message(function(state) {
 
-            self.setState({
-                title: state.title,
-                items: state.items,
-                users: values(state.users),
-                selection: state.selection != undefined ? state.items[state.selection] : undefined,
-                offer: state.offer,
-                answer: state.answer,
-            });
+            console.log(state);
+            self.setState(state);
 
             if (state.answer != undefined && webRTC.state == webRTC.OFFERING) {
                 webRTC.setAnswer(state.answer);
@@ -91,8 +85,12 @@ export default class Engine {
         this._sendMessage('client-remove-item', {index: index});
     }
 
-    setSelection(index) {
-        this._sendMessage('client-set-selection', {index: index});
+    setSelection(uuid) {
+        this._sendMessage('client-set-selection', {uuid: uuid});
+    }
+
+    clearSelection() {
+        this._sendMessage('client-clear-selection', {});
     }
 
     startCall() {
@@ -148,7 +146,6 @@ export default class Engine {
     }
 
     uploadFile(file, callback) {
-        console.log(`Uploading file '${file.name}'...`);
         var xhr = new XMLHttpRequest();
         var formData = new FormData();
         formData.append("file", file);

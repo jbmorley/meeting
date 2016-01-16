@@ -101,7 +101,6 @@ class MeetingApp extends React.Component {
     uploadFiles(files) {
         this.setState({showProgress: true});
         engine.uploadFiles(files, () => {
-            console.log("Finished uploading files...");
             this.setState({showProgress: false});
         });
     }
@@ -272,9 +271,9 @@ class Live extends React.Component {
             <MeetingGridView
                 items={this.state.items}
                 onRemoveItem={(index) => engine.removeItem(index)}
-                selection={this.state.selection ? this.state.selection.uuid : undefined}
-                onSelect={(index) => engine.setSelection(index)}
-                onDeselect={() => engine.setSelection(undefined)}/>
+                selection={this.state.selection}
+                onSelect={(uuid) => engine.setSelection(uuid)}
+                onDeselect={() => engine.clearSelection()}/>
         );
     }
 

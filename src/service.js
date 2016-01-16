@@ -16,10 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-var update = require('react-addons-update')
-var values = require('./lib/values')
-var parse_message = require('./lib/parse-message')
-
 var Express = require('express'),
     path = require('path'),
     HTTP = require('http'),
@@ -31,7 +27,11 @@ var Express = require('express'),
     uuid = require('node-uuid'),
     exec = require('child_process').exec,
     util = require('util'),
-    gravatar = require('nodejs-gravatar');
+    gravatar = require('nodejs-gravatar'),
+    update = require('react-addons-update');
+
+var values = require('./lib/values'),
+    parse_message = require('./lib/parse-message');
 
 var app = Express(),
     server = HTTP.Server(app),
@@ -40,7 +40,7 @@ var app = Express(),
 state = {
   title: "Example Meeting",
   items: [],
-  selection: undefined,
+  selection: false,
   users: {},
   offer: undefined,
   answer: undefined,
@@ -145,12 +145,11 @@ app.post('/upload', function(req, res) {
 
 offerSocket = undefined;
 
-io.emitJSON = function(message, parameters) {
-  io.emit(message, JSON.stringify(parameters))
-}
-
 function broadcastState() {
-  io.emitJSON('server-set-state', state)
+    var clientState = update(state, {
+        users: {$set: values(state.users)}
+    })
+    io.emit('server-set-state', JSON.stringify(clientState));
 }
 
 io.on('connection', function(socket) {
@@ -195,7 +194,12 @@ io.on('connection', function(socket) {
 
   })).on('client-set-selection', parse_message(function(message) {
 
-    state.selection = message.index;
+    state.selection = message.uuid;
+    broadcastState();
+
+  })).on('client-clear-selection', parse_message(function(message) {
+
+    state.selection = false;
     broadcastState();
 
   })).on('client-call-add-ice-candidate', function(candidate) {

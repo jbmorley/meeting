@@ -114,7 +114,7 @@ export default class MeetingGridView extends React.Component {
                                 size={{width: width, height: height}}
                                 bounds={{width: this.state.width, height: this.state.height}}
                                 selected={this.props.selection == item.uuid}
-                                onSelect={() => this.props.onSelect(index)}
+                                onSelect={() => this.props.onSelect(item.uuid)}
                                 onRemove={() => {
                                     if (this.props.selection) {
                                         this.props.onDeselect();
