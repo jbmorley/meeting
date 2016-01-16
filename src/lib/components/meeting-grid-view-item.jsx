@@ -123,17 +123,24 @@ export default class MeetingGridViewItem extends React.Component {
                                 height: frameHeight + 'px'
                             }}
                             open={this.state.loading} />
-                        <div
-                            style={{
-                                position: "absolute",
-                                top: 0,
-                                left: 0,
-                                width: this.props.frame.width + 'px',
-                                height: frameHeight + 'px',
-                                cursor: 'zoom-in',
-                            }}
-                            onTouchTap={() => this.props.onSelect()} >
-                        </div>
+
+                        {(() => {
+                            if (!this.props.selected) {
+                                return (
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            top: 0,
+                                            left: 0,
+                                            width: this.props.frame.width + 'px',
+                                            height: frameHeight + 'px',
+                                            cursor: 'zoom-in',
+                                        }}
+                                        onTouchTap={() => this.props.onSelect()}/>
+                                );
+                            }
+                        })()}
+
                     </div>
                 </CardText>
 

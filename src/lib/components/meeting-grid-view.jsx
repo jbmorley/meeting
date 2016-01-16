@@ -35,7 +35,25 @@ export default class MeetingGridView extends React.Component {
 
     render() {
 
-        var self = this;
+        // Determine the correct dimensions.
+        var ratio = 4 / 3;
+        var width = 0;
+        var height = 0;
+        var minWidth = 300;
+        var maxColumns = this.state.width / minWidth;
+
+        var columns = 1;
+        while (this.props.items.length) {
+            var rows = Math.ceil(this.props.items.length / columns);
+            width = (this.state.width / columns);
+            height = width / ratio;
+            if ((height * rows) < this.state.height ||
+                columns >= maxColumns) {
+                break;
+            }
+            columns = columns + 1;
+        }
+
         return (
             <MeetingContentResizer
                 style={{
@@ -77,23 +95,6 @@ export default class MeetingGridView extends React.Component {
                 </ReactCSSTransitionGroup>
 
                 {(() => {
-                    var ratio = 4 / 3;
-                    var width = 0;
-                    var height = 0;
-                    var minWidth = 300;
-                    var maxColumns = self.state.width / minWidth;
-
-                    var columns = 1;
-                    while (self.props.items.length) {
-                        var rows = Math.ceil(self.props.items.length / columns);
-                        width = (self.state.width / columns);
-                        height = width / ratio;
-                        if ((height * rows) < self.state.height ||
-                            columns >= maxColumns) {
-                            break;
-                        }
-                        columns = columns + 1;
-                    }
 
                     return this.props.items.map((item, index) => {
 

@@ -48,7 +48,6 @@ export default class MeetingAppScreen extends React.Component {
                 <div
                     style={{
                         marginTop: "64px",
-                        padding: "8px"
                     }}>
                     {this.props.children}
                 </div>
