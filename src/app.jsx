@@ -44,6 +44,7 @@ import MeetingDragTarget from './lib/components/meeting-drag-target.jsx';
 import MeetingGridView from './lib/components/meeting-grid-view.jsx';
 import MeetingTheme from './lib/components/meeting-theme.jsx';
 import MeetingWebRTC from './lib/components/meeting-web-rtc.jsx';
+import MeetingProgressView from './lib/components/meeting-progress-view.jsx';
 
 import Engine from './lib/engine.jsx';
 import webRTC from './lib/webrtc.jsx';
@@ -69,6 +70,7 @@ class MeetingApp extends React.Component {
 
             showNavigation: false,
             showAddItemDialog: false,
+            showProgress: false,
 
             callState: webRTC.UNSUPPORTED,
             offer: undefined,
@@ -94,6 +96,14 @@ class MeetingApp extends React.Component {
 
     componentWillUnmount() {
         engine.removeStateObserver(this.engineStateObserver);
+    }
+
+    uploadFiles(files) {
+        this.setState({showProgress: true});
+        engine.uploadFiles(files, () => {
+            console.log("Finished uploading files...");
+            this.setState({showProgress: false});
+        });
     }
 
     render() {
@@ -171,10 +181,22 @@ class MeetingApp extends React.Component {
                     id="file"
                     name="file"
                     ref="input"
-                    onChange={(event) => engine.uploadFiles(event.target.files, () => {
-                        console.log("Finished uploading files!");
-                    })}
+                    onChange={(event) => this.uploadFiles(event.target.files)}
                     hidden />
+
+                <MeetingDragTarget 
+                    onDropFile={(files) => this.uploadFiles(files)}/>
+
+                <MeetingProgressView 
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        zIndex: 1200,
+                    }}
+                    open={this.state.showProgress}/>
 
                 <MeetingAppScreen
                     title={this.state.title}
@@ -182,11 +204,6 @@ class MeetingApp extends React.Component {
                     menuItems={menuItems}
                     showNavigation={this.state.showNavigation}
                     onShowNavigation={(show) => this.setState({showNavigation: show})}>
-
-                    <MeetingDragTarget 
-                        onDropFile={(files) => engine.uploadFiles(files, () => {
-                            console.log("Finished uploading files...");
-                        })}/>
 
                     {this.props.children}                    
 

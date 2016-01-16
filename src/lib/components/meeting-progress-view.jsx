@@ -39,23 +39,26 @@ export default class MeetingProgressView extends React.Component {
                     if (this.props.open) {
                         return (
                             <div
-                                key='progress-overlay'
-                                style={{
-                                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                                    width: '100%',
-                                    height: '100%',
-                                    position: 'relative',
-                                    textAlign: 'center',
-                                }}>
-                                <CircularProgress
-                                    mode="indeterminate"
+                                key='meeting-progress-view-root'
+                                style={this.props.style}>
+                                <div
+                                    key='progress-overlay'
                                     style={{
-                                        margin: 0,
-                                        padding: 0,
-                                        // position: 'absolute',
-                                        top: '50%',
-                                        transform: 'translateY(-50%)',
-                                    }} />
+                                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                                        width: '100%',
+                                        height: '100%',
+                                        position: 'relative',
+                                        textAlign: 'center',
+                                    }}>
+                                    <CircularProgress
+                                        mode="indeterminate"
+                                        style={{
+                                            margin: 0,
+                                            padding: 0,
+                                            top: '50%',
+                                            transform: 'translateY(-50%)',
+                                        }} />
+                                </div>
                             </div>
                         );
                     }
