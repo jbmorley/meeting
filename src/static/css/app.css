@@ -20,6 +20,10 @@ body  {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     background-color: #eee;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
 }
 
 .video-remote {
