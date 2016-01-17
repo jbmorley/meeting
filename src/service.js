@@ -249,7 +249,7 @@ io.on('connection', function(socket) {
 
   })).on('client-remove-item', parse_message(function(message) {
 
-    var item = state.items[0];
+    var item = state.items[message.index];
     if (item.cleanup) {
         item.cleanup();
     }
