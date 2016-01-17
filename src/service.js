@@ -89,6 +89,7 @@ app.use(passport.session());
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(busboy());
+app.use('/css/app.css', express.static(path.join(__dirname, 'static/css/app.css')));
 app.use('/login', express.static(path.join(__dirname, 'static/login.html')));
 app.post('/login', passport.authenticate('local', {
     successRedirect: '/',
