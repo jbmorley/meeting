@@ -96,7 +96,7 @@ export default class MeetingGridView extends React.Component {
         var ratio = 4 / 3;
         var width = 0;
         var height = 0;
-        var minWidth = 300;
+        var minWidth = 400;
         var maxColumns = this.state.width / minWidth;
 
         var columns = 1;
@@ -167,14 +167,20 @@ export default class MeetingGridView extends React.Component {
 
                         frame = this.insetRect(frame, this.ITEM_MARGIN);
 
-                        // const SELECTED_WIDTH = 600;
-                        // const SELECTED_HEIGHT = 400;
-                        const SELECTED_WIDTH = 600;
-                        const SELECTED_HEIGHT = 500;
+                        const SELECTED_WIDTH = 700;
+                        const SELECTED_HEIGHT = 525;
 
                         if (this.props.selection == item.uuid) {
-                            frame.width = Math.min(SELECTED_WIDTH, this.state.width);
-                            frame.height = Math.min(SELECTED_HEIGHT, this.state.height);
+
+                            if (SELECTED_WIDTH >= this.state.width ||
+                                SELECTED_HEIGHT >= this.state.height) {
+                                frame.width = this.state.width;
+                                frame.height = this.state.height;
+                            } else {
+                                frame.width = SELECTED_WIDTH;
+                                frame.height = SELECTED_HEIGHT;
+                            }
+
                             frame.left = Math.floor((this.state.width - frame.width) / 2) + this.state.left;
                             frame.top = Math.floor((this.state.height - frame.height) / 2) + this.state.top;
                         }
