@@ -105,8 +105,7 @@ def build(options):
     copyfiles(SRC_DIR, BUILD_DIR, ["service.js",
                                    "lib/values.js",
                                    "lib/parse-message.js",
-                                   ".htpasswd",
-                                   ".htgroup"])
+                                   "lib/config.js"])
     sync(os.path.join(SRC_DIR, "static"), static_dir)
     with Chdir(ROOT_DIR):
         babelify(source=os.path.join(SRC_DIR, "app.jsx"), target=os.path.join(static_dir, "app.js"))

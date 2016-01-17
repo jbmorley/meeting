@@ -16,27 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-var Express = require('express'),
-    path = require('path'),
-    HTTP = require('http'),
-    SocketIO = require('socket.io'),
-    fs = require('fs'),
-    busboyBodyParser = require('busboy-body-parser'),
-    busboy = require('connect-busboy'),
-    gm = require('gm'),
-    uuid = require('node-uuid'),
-    exec = require('child_process').exec,
-    util = require('util'),
-    gravatar = require('nodejs-gravatar'),
-    update = require('react-addons-update');
+var express = require('express');
+var path = require('path');
+var HTTP = require('http');
+var SocketIO = require('socket.io');
+var fs = require('fs');
+var busboyBodyParser = require('busboy-body-parser');
+var busboy = require('connect-busboy');
+var gm = require('gm');
+var uuid = require('node-uuid');
+var exec = require('child_process').exec;
+var util = require('util');
+var gravatar = require('nodejs-gravatar');
+var update = require('react-addons-update');
+var session = require('express-session');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var bodyParser = require('body-parser');
 
-var values = require('./lib/values'),
-    parse_message = require('./lib/parse-message');
+var values = require('./lib/values');
+var parse_message = require('./lib/parse-message');
+var config = require('./lib/config');
 
-var app = Express(),
-    server = HTTP.Server(app),
-    io = SocketIO(server);
+var app = express();
+var server = HTTP.Server(app);
+var io = SocketIO(server);
 
+// Application state.
 state = {
   title: "Example Meeting",
   items: [],
@@ -46,13 +52,63 @@ state = {
   answer: undefined,
 }
 
-const uploadDir = __dirname + '/static/uploads/';
+passport.serializeUser(function(user, done) {
+    console.log("Serialize user '" + user.username + "'.");
+    done(null, user.username);
+});
 
-// Support parsing multipart/form-data.
-app.use(busboy())
+passport.deserializeUser(function(id, done) {
+    console.log("Deserialize user '" + id + "'.");
+    done(null, {username: id});
+});
 
-// Render static pages.
-app.use(Express.static(path.join(__dirname, 'static')))
+// Configure passport with a local authentication strategy.
+// This is an extremely simple dictionary look-up and should be replaced with a database model in the future.
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+        if (username in config.users && config.users[username] == password) {
+            console.log("Successfully authenticated user '" + username + "'.");
+            return done(null, {username: username});
+        } else {
+            console.log("Failed to authenticate user '" + username + "'.");
+            return done(null, false, {message: 'Unable to sign in.'})
+        }
+    }
+));
+
+// Configure the basic routes and middleware.
+app.use(session({
+    secret: config.secret,
+    proxy: true,
+    resave: true,
+    saveUninitialized: true,
+    cookie: { path: '/', httpOnly: true, secure: false, maxAge: 3600000 * 72 }
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(bodyParser.urlencoded());
+app.use(bodyParser.json());
+app.use(busboy());
+app.use('/login', express.static(path.join(__dirname, 'static/login.html')));
+app.post('/login', passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/login',
+}));
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/login');
+});
+app.all('*', function(req, res, next) {
+    console.log("Checking authentication...");
+    if (req.isAuthenticated()) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+});
+app.use(express.static(path.join(__dirname, 'static')));
+
+// Post route for performing the authentication and setting the session state.
 
 // Accept file uploads.
 app.post('/upload', function(req, res) {

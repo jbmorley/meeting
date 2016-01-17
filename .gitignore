@@ -1,12 +1,12 @@
 meeting.sublime-workspace
 
+# Build and package directories.
 node_modules
-
 build
 
-src/.htpasswd
-src/.htgroup
+# Configuration files.
 src/config.jsx
+src/lib/config.js
 
 src/static/uploads
 

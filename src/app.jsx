@@ -299,13 +299,16 @@ class MeetingList extends React.Component {
 
     render() {
         return (
-            <ul>
-                {this.state.meetings.map(function(item, index) {
-                    return (
-                        <li key={item.uuid}><Link to={`/meeting/${item.uuid}`}>{item.title}</Link></li>
-                    );
-                })}
-            </ul>
+            <div>
+                <ul>
+                    {this.state.meetings.map(function(item, index) {
+                        return (
+                            <li key={item.uuid}><Link to={`/meeting/${item.uuid}`}>{item.title}</Link></li>
+                        );
+                    })}
+                </ul>
+                <a href="/logout">Logout</a>
+            </div>
         );
     }
 
