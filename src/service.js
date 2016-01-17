@@ -33,6 +33,7 @@ var session = require('express-session');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 
 var values = require('./lib/values');
 var parse_message = require('./lib/parse-message');
@@ -52,21 +53,25 @@ state = {
   answer: undefined,
 }
 
-passport.serializeUser(function(user, done) {
-    console.log("Serialize user '" + user.username + "'.");
+function serializeUser(user, done) {
     done(null, user.username);
-});
+}
 
-passport.deserializeUser(function(id, done) {
-    console.log("Deserialize user '" + id + "'.");
-    done(null, {username: id});
-});
+function deserializeUser(id, done) {
+    var user = update(config.users[id], {
+        username: {$set: id},
+    });
+    done(null, user);
+}
+
+passport.serializeUser(serializeUser);
+passport.deserializeUser(deserializeUser);
 
 // Configure passport with a local authentication strategy.
 // This is an extremely simple dictionary look-up and should be replaced with a database model in the future.
 passport.use(new LocalStrategy(
     function(username, password, done) {
-        if (username in config.users && config.users[username] == password) {
+        if (username in config.users && config.users[username].password == password) {
             console.log("Successfully authenticated user '" + username + "'.");
             return done(null, {username: username});
         } else {
@@ -77,7 +82,9 @@ passport.use(new LocalStrategy(
 ));
 
 // Configure the basic routes and middleware.
+var store = new session.MemoryStore();
 app.use(session({
+    store: store,
     secret: config.secret,
     proxy: true,
     resave: true,
@@ -111,8 +118,6 @@ app.all('*', function(req, res, next) {
     }
 });
 app.use(express.static(path.join(__dirname, 'static')));
-
-// Post route for performing the authentication and setting the session state.
 
 // Accept file uploads.
 app.post('/upload', function(req, res) {
@@ -215,16 +220,55 @@ function broadcastState() {
     io.emit('server-set-state', JSON.stringify(clientState));
 }
 
+// Somewhat inelegant function to bind an authenticated passport user into an incoming socket.
+// There is presumably a much cleaner solution to this but it's unclear where to look.
+function getSocketUser(socket, callback) {
+    parser = cookieParser(config.secret);
+    var req = {
+        headers: {
+            cookie: socket.handshake.headers.cookie
+        }
+    };
+    parser(req, {}, function(error) {
+        if (error) {
+            callback(error, null);
+        } else {
+            store.get(req.signedCookies['connect.sid'], function(error, session) {
+                if (error) {
+                    callback(error, null);
+                } else if (session == undefined ||
+                           session.passport == undefined ||
+                           session.passport.user == undefined)  {
+                    callback("Missing passport data", null);
+                } else {
+                    deserializeUser(session.passport.user, callback);
+                }                
+            });
+        }
+    });
+}
+
 io.on('connection', function(socket) {
 
-    socket.uuid = uuid.v4(),
-    state.users[socket.uuid] = {
-        uuid: socket.uuid,
-        name: 'Jason Morley',
-        email: 'jason.morley@inseven.co.uk',
-        avatar: gravatar.imageUrl('jason.morley@inseven.co.uk', { "size": "128" })
-    }
-    broadcastState();
+    getSocketUser(socket, function(error, user) {
+
+        if (error) {
+            // TODO Reject the socket.
+            return;
+        }
+
+        // Bind in the socket details.
+        socket.uuid = uuid.v4();
+        socket.user = user;
+
+        // Update the list of connected users.
+        state.users[socket.uuid] = update(user, {
+            uuid: {$set: socket.uuid},
+            avatar: {$set: gravatar.imageUrl(user.email, { "size": "128" })},
+        });
+        broadcastState();
+
+    });
 
   socket.on('disconnect', function() {
 
