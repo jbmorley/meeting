@@ -147,9 +147,11 @@ class MeetingApp extends React.Component {
                 key="divider-2" />,
             <MenuItem
                 key="leave-meeting-menu-item"
-                primaryText="Leave meeting"
+                primaryText="Log out"
                 leftIcon={<ExitToApp />}
-                onTouchTap={() => this.context.history.push('/')} />
+                onTouchTap={() => {
+                    window.location.href = "/logout";
+                }} />
         ];
 
         const defaultNavigationItems = [
@@ -288,36 +290,9 @@ class Live extends React.Component {
 
 }
 
-class MeetingList extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            meetings: [{title: 'Default Meeting', uuid: '39872239'}]
-        };
-    }
-
-    render() {
-        return (
-            <div>
-                <ul>
-                    {this.state.meetings.map(function(item, index) {
-                        return (
-                            <li key={item.uuid}><Link to={`/meeting/${item.uuid}`}>{item.title}</Link></li>
-                        );
-                    })}
-                </ul>
-                <a href="/logout">Logout</a>
-            </div>
-        );
-    }
-
-}
-
 ReactDOM.render((
     <Router history={browserHistory}>
-        <Route path="/" component={MeetingList} />
-        <Route path="/meeting/:uuid" component={MeetingApp}>
+        <Route path="/" component={MeetingApp}>
             <IndexRoute component={Live} />
         </Route>
         <Route path="/viewer/:path" component={MeetingDocumentViewer} />
