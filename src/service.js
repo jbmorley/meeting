@@ -45,7 +45,7 @@ var io = SocketIO(server);
 
 // Application state.
 state = {
-  title: "Example Meeting",
+  title: config.name ? config.name : 'Meeting',
   items: [],
   selection: false,
   users: {},
