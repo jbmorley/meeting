@@ -27,6 +27,9 @@ export default class MeetingGridView extends React.Component {
 
     ITEM_MARGIN = 8;
 
+    MIN_SELECTED_WIDTH = 700;
+    MIN_SELECTED_HEIGHT = 525;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -113,6 +116,14 @@ export default class MeetingGridView extends React.Component {
 
         var viewHeight = rows * height;
 
+        // Calculate the preferred maximised dimensions.
+        var selectedWidth = Math.floor(Math.max(this.MIN_SELECTED_WIDTH, this.state.width * 0.8));
+        var selectedHeight = Math.floor(Math.max(this.MIN_SELECTED_HEIGHT, this.state.height * 0.8));
+        if (selectedWidth >= this.state.width || selectedHeight >= this.state.height) {
+            selectedWidth = this.state.width;
+            selectedHeight = this.state.height;
+        }
+
         return (
             <div
                 ref='root'
@@ -167,20 +178,9 @@ export default class MeetingGridView extends React.Component {
 
                         frame = this.insetRect(frame, this.ITEM_MARGIN);
 
-                        const SELECTED_WIDTH = 700;
-                        const SELECTED_HEIGHT = 525;
-
                         if (this.props.selection == item.uuid) {
-
-                            if (SELECTED_WIDTH >= this.state.width ||
-                                SELECTED_HEIGHT >= this.state.height) {
-                                frame.width = this.state.width;
-                                frame.height = this.state.height;
-                            } else {
-                                frame.width = SELECTED_WIDTH;
-                                frame.height = SELECTED_HEIGHT;
-                            }
-
+                            frame.width = selectedWidth;
+                            frame.height = selectedHeight;
                             frame.left = Math.floor((this.state.width - frame.width) / 2) + this.state.left;
                             frame.top = Math.floor((this.state.height - frame.height) / 2) + this.state.top;
                         }
