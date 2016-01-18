@@ -298,6 +298,9 @@ io.on('connection', function(socket) {
         item.cleanup();
     }
     state.items.splice(message.index, 1);
+    if (state.selection == item.uuid) {
+        state.selection = false;
+    }
     broadcastState();
 
   })).on('client-set-selection', parse_message(function(message) {
