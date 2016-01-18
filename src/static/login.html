@@ -27,18 +27,23 @@
         <link rel="apple-touch-icon-precomposed" href="images/icon.png">
     </head>
     <body>
-        <form action="/login" method="post">
-            <div>
-                <label>Username:</label>
-                <input type="text" name="username"/>
-            </div>
-            <div>
-                <label>Password:</label>
-                <input type="password" name="password"/>
-            </div>
-            <div>
-                <input type="submit" value="Log In"/>
-            </div>
-        </form>
+        <div class="login">
+            <form action="/login" method="post">
+                <table>
+                    <tr>
+                        <th>Username</th>
+                        <td><input class="login-input" type="text" name="username"/></td>
+                    </tr>
+                    <tr>
+                        <th>Password</th>
+                        <td><input class="login-input" type="password" name="password"/></td>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <td><input type="submit" value="Log In"/></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
     </body>
 </html>

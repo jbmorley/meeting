@@ -89,3 +89,24 @@ body  {
   opacity: 0.0;
   transition: opacity 300ms ease-in;
 }
+
+.login {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    margin: 100px auto;
+    width: 300px;
+    padding: 20px;
+}
+
+.login table {
+    width: 100%;
+}
+
+.login table th {
+    text-align: right;
+    font-weight: normal;
+}
+
+.login-input {
+    width: 100%;
+}
