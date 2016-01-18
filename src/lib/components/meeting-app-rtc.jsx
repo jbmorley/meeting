@@ -47,7 +47,7 @@ export default class MeetingAppRTC extends React.Component {
                                         height: "100%",
                                         border: 0,
                                     }}
-                                    src="https://apprtc.webrtc.org/r/047684326" />
+                                    src="https://apprtc.webrtc.org/r/752653697" />
                             </Paper>
                             )
                     } else {
