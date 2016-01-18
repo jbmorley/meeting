@@ -31,6 +31,7 @@ import InsertLink from 'material-ui/lib/svg-icons/editor/insert-link';
 import List from 'material-ui/lib/lists/list';
 import ListItem from 'material-ui/lib/lists/list-item';
 import MenuItem from 'material-ui/lib/menus/menu-item';
+import ModeEdit from 'material-ui/lib/svg-icons/editor/mode-edit';
 import Photo from 'material-ui/lib/svg-icons/image/photo';
 import RaisedButton from 'material-ui/lib/raised-button';
 import RemoveRedEye from 'material-ui/lib/svg-icons/image/remove-red-eye';
@@ -138,7 +139,7 @@ class MeetingApp extends React.Component {
             <MenuItem
                 key="add-shared-notes-menu-item"
                 primaryText="Add shared notes"
-                leftIcon={<Star />}
+                leftIcon={<ModeEdit />}
                 onTouchTap={() => engine.addItem({
                     title: "Shared Notes",
                     url: "http://46.101.84.147/p/meeting-notes"
