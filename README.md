@@ -11,13 +11,13 @@ All development thus-far has been performed on OS X. It is anticipated that the 
 From the root directory of the project:
 
 ```bash
-# submodules
-git submodule update --init --recursive
-
 # global requirements
 brew install ansible
 brew install nodejs
 brew install npm
+brew install graphicsmagick
+brew install ghostscript
+
 npm install -g browserify
 npm install -g nodemon
 
