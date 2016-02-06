@@ -2,6 +2,8 @@
 
 Suite of applications for performing distributed group video conferences and managing shared meeting boards.
 
+![Example Meeting Board](screenshot.png)
+
 ## Development
 
 All development thus-far has been performed on OS X. It is anticipated that the same mechanisms described here will also work on Linux systems.
