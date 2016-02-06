@@ -55,13 +55,13 @@ WebRTC requires that you provide some STUN and/or TURN (hole-punching and relay 
    };
    ```
    
-    Mozilla and Google host ICE servers but do not provide TURN servers (as these are costly to run). Both the Mozilla and Google STUN servers should be safe to use, but you will need to bring your own TURN server (`relay.inseven.co.uk` does not exist).
+Mozilla and Google host ICE servers but do not provide TURN servers (as these are costly to run). Both the Mozilla and Google STUN servers should be safe to use, but you will need to bring your own TURN server (`relay.inseven.co.uk` does not exist).
     
-    If you are using [TurnServer](http://turnserver.sourceforge.net), you will need to ensure it is configured with a suitable user in your `turnusers.txt` file (`/etc/turnserver/turnusers.txt` on Ubuntu). For example,
+If you are using [TurnServer](http://turnserver.sourceforge.net), you will need to ensure it is configured with a suitable user in your `turnusers.txt` file (`/etc/turnserver/turnusers.txt` on Ubuntu). For example,
     
-    ```
-    user:pass:domain.org:authorized
-    ```
+```
+user:pass:domain.org:authorized
+```
     
 #### Authentication
 
